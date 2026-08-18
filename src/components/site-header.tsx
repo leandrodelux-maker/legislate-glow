@@ -103,15 +103,15 @@ export function SiteHeader() {
 
       {/* WHITE HEADER — logo + search + CTAs */}
       <div className="bg-white border-b border-slate-100">
-        <div className="container-page py-5 flex items-center justify-between gap-6">
+        <div className="container-page py-3.5 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-3 shrink-0">
             {settings?.header_logo_url || logoAsset.url ? (
               <img
                 src={settings?.header_logo_url || logoAsset.url}
                 alt="Logo Câmara Municipal"
                 decoding="async"
-                style={{ height: `${(settings?.header_logo_height || 80) * 1.15}px` }}
-                className="w-auto object-contain"
+                style={{ height: `${(settings?.header_logo_height || 80) * 0.65}px` }}
+                className="w-auto max-w-[200px] object-contain"
               />
             ) : (
               <>
@@ -130,8 +130,8 @@ export function SiteHeader() {
             )}
           </Link>
 
-          <div className="hidden lg:flex ml-auto w-full max-w-[240px]">
-            <div className="relative w-full flex items-stretch h-[60px] rounded-xl bg-slate-100 overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-all">
+          <div className="hidden lg:flex ml-auto w-full max-w-[260px]">
+            <div className="relative w-full flex items-stretch h-[48px] rounded-xl bg-slate-100 overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-all">
               <input
                 placeholder="Buscar serviços, notícia"
                 className="flex-1 min-w-0 h-full pl-4 pr-3 bg-transparent text-sm placeholder:text-slate-400 focus:outline-none"
@@ -139,27 +139,27 @@ export function SiteHeader() {
               <button
                 type="button"
                 aria-label="Buscar"
-                className="h-full w-12 shrink-0 grid place-items-center bg-primary hover:bg-primary-deep text-white transition-colors"
+                className="h-full w-10 shrink-0 grid place-items-center bg-primary hover:bg-primary-deep text-white transition-colors"
               >
                 <Search className="h-5 w-5" />
               </button>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             <a
               href="https://radardatransparencia.atricon.org.br/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 h-[60px] px-4 rounded-xl bg-white hover:bg-slate-50 text-primary-deep font-semibold text-sm shadow-sm ring-1 ring-slate-200 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 h-[48px] px-3 rounded-xl bg-white hover:bg-slate-50 text-primary-deep font-semibold text-sm shadow-sm ring-1 ring-slate-200 transition-colors whitespace-nowrap"
               aria-label="Radar da Transparência Pública"
             >
-              <img src={radarLogo.url} alt="" className="h-9 w-auto" />
+              <img src={radarLogo.url} alt="" className="h-7 w-auto" />
               <span className="hidden xl:inline">Radar da Transparência</span>
             </a>
             <Link
               to={ROUTES.transparencia}
-              className="inline-flex items-center gap-2 h-[60px] px-5 rounded-xl bg-primary hover:bg-primary-deep text-white font-semibold text-sm shadow-sm transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 h-[48px] px-4 rounded-xl bg-primary hover:bg-primary-deep text-white font-semibold text-sm shadow-sm transition-colors whitespace-nowrap"
             >
               <Info className="h-4 w-4" /> Acesso a Transparência
             </Link>
