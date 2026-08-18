@@ -92,7 +92,7 @@ const contato = useContactInfo();
         const isUuid = UUID_RE.test(slug);
         const query = (supabase as any)
           .from("vereadores")
-          .select("id, nome, partido, cargo, foto_url, biografia, gabinete, mandato_inicio, mandato_fim, ativo, ordem, created_at, updated_at, naturalidade, escolaridade, profissao, redes_sociais, stats, data_posse, mandato_atual, slug, legislatura, comissoes")
+          .select("id, nome, partido, cargo, foto_url, biografia, gabinete, email, telefone, mandato_inicio, mandato_fim, ativo, ordem, created_at, updated_at, naturalidade, escolaridade, profissao, redes_sociais, stats, data_posse, mandato_atual, slug, legislatura, comissoes")
           .limit(1);
         const { data: vData, error: vErr } = isUuid
           ? await query.eq("id", slug).maybeSingle()
