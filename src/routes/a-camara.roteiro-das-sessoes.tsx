@@ -73,6 +73,21 @@ const ICON_MAP: Record<string, any> = {
 };
 
 function RoteiroPage() {
+  const [etapas, setEtapas] = useState<RoteiroEtapa[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("roteiro_sessoes")
+        .select("*")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true });
+      if (!error && data) setEtapas(data as RoteiroEtapa[]);
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <main className="min-h-screen bg-background">
       {/* HERO */}
@@ -126,38 +141,49 @@ function RoteiroPage() {
             title="Passo a passo dos trabalhos"
             description="Sequência prevista no Regimento Interno da Casa Legislativa."
           />
-          <ol className="mt-8 space-y-4">
-            {ETAPAS.map((e) => (
-              <li
-                key={e.n}
-                className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-6"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-bold text-primary-foreground">
-                    {e.n}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <e.icon className="h-4 w-4 text-primary" />
-                      <h3 className="font-display text-base font-bold text-foreground md:text-lg">
-                        {e.title}
-                      </h3>
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <ol className="mt-8 space-y-4">
+              {etapas.map((e) => {
+                const Icon = (e.icone && ICON_MAP[e.icone]) || List;
+                return (
+                  <li
+                    key={e.id}
+                    className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-6"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-bold text-primary-foreground">
+                        {e.numero_etapa}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4 text-primary" />
+                          <h3 className="font-display text-base font-bold text-foreground md:text-lg">
+                            {e.titulo}
+                          </h3>
+                        </div>
+                        <p className="mt-2 text-sm leading-7 text-muted-foreground whitespace-pre-wrap">
+                          {e.descricao}
+                        </p>
+                        {e.nota_quorum && (
+                          <p className="mt-3 flex items-start gap-2 rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs leading-6 text-foreground">
+                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                            <span>
+                              <strong className="font-semibold">Quórum: </strong>
+                              {e.nota_quorum}
+                            </span>
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">{e.text}</p>
-                    {e.note && (
-                      <p className="mt-3 flex items-start gap-2 rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs leading-6 text-foreground">
-                        <Info className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                        <span>
-                          <strong className="font-semibold">Quórum: </strong>
-                          {e.note}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
         </div>
       </section>
 
