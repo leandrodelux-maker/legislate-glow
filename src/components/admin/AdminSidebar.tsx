@@ -82,6 +82,8 @@ const groups: Group[] = [
       { label: "Comissões", path: "/admin/comissoes", icon: Scale },
       { label: "Membros das Comissões", path: "/admin/comissoes-membros", icon: Users },
       { label: "Documentos Oficiais", path: "/admin/documentos-oficiais", icon: BookOpen },
+      { label: "Portarias", path: "/admin/portarias", icon: ScrollText },
+
       { label: "Projetos", path: "/admin/projetos", icon: Gavel },
       { label: "Sessões", path: "/admin/sessoes", icon: Calendar },
     ],
