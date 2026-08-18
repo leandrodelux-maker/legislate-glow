@@ -148,7 +148,7 @@ export function SiteHeader() {
 
           <div className="hidden md:flex items-center gap-3">
             <a
-              href="https://radardatransparencia.com.br/"
+              href="https://radardatransparencia.atricon.org.br/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 h-[60px] px-4 rounded-xl bg-white hover:bg-slate-50 text-primary-deep font-semibold text-sm shadow-sm ring-1 ring-slate-200 transition-colors whitespace-nowrap"
@@ -297,7 +297,7 @@ export function SiteHeader() {
                 <Info className="h-4 w-4" /> Acesso a Transparência
               </Link>
               <a
-                href="https://radardatransparencia.com.br/"
+                href="https://radardatransparencia.atricon.org.br/"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}

@@ -2,7 +2,7 @@ import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export const CONTACT_FALLBACK = {
   nome: "Câmara Municipal de Cachoeira de Goiás",
-  endereco: "Avenida Anicuns, 140, Setor Central, Cachoeira de Goiás-GO",
+  endereco: "R. Goiás, 40-84, Centro, Cachoeira de Goiás-GO, 76125-000",
   telefone: "(64) 99233-6171",
   email: "contato@camaracachoeiradegoias.go.gov.br",
   horario: "Segunda a Sexta 08h às 11h e 13h às 17h",
