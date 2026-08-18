@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { getTransparencyIcon } from "@/lib/transparency-icons";
 import { getTransparencyUrl } from "@/lib/transparency-url";
+import { OfficialDatasets } from "@/components/transparencia/official-datasets";
 
 export const Route = createFileRoute("/transparencia-portal")({
   head: () => ({
