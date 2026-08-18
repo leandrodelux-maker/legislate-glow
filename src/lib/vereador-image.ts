@@ -33,11 +33,20 @@ function extractVereadorPath(urlOrPath: string): string | null {
  * a URL retornada não será acessível sem token.
  */
 export function getVereadorPublicUrl(urlOrPath: string | null | undefined): string | null {
-  const path = extractVereadorPath(urlOrPath || "");
+  const value = (urlOrPath || "").trim();
+  if (!value) return null;
+
+  // URL externa (ex.: foto hospedada no site oficial) — usa como está
+  if (/^https?:\/\//i.test(value) && !value.includes("/storage/v1/object/")) {
+    return value;
+  }
+
+  const path = extractVereadorPath(value);
   if (!path) return null;
   const { data } = supabase.storage.from("vereadores").getPublicUrl(path);
   return data.publicUrl;
 }
+
 
 /**
  * Verifica se um valor já é uma URL pública do bucket vereadores.
