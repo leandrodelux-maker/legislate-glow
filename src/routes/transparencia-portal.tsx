@@ -169,8 +169,6 @@ function TransparenciaPortalPage() {
   const [settings, setSettings] = useState<TransparencySettings | null>(null);
   const [links, setLinks] = useState<TransparencyLink[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCat, setActiveCat] = useState<string | null>(null);
-  const [q, setQ] = useState("");
 
   useEffect(() => {
     let mounted = true;
