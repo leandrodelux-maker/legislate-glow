@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/projetos")({
   head: () => ({
     meta: [
-      { title: "Atos Legislativos — Câmara Municipal de Adelândia" },
+      { title: "Atos Legislativos — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content: "Entenda como as leis são criadas e pesquise por matérias específicas.",

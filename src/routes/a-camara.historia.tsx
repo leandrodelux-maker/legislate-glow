@@ -18,17 +18,17 @@ import { ROUTES } from "@/lib/site-links";
 export const Route = createFileRoute("/a-camara/historia")({
   head: () => ({
     meta: [
-      { title: "História de Adelândia — Câmara Municipal" },
+      { title: "História de Cachoeira de Goiás — Câmara Municipal" },
       {
         name: "description",
         content:
-          "Conheça a história do município de Adelândia (GO): fundação em 1987, a Capital do Feijão, economia, população e indicadores oficiais.",
+          "Conheça a história do município de Cachoeira de Goiás (GO): origem, emancipação em 1958, economia agropecuária e indicadores do município.",
       },
-      { property: "og:title", content: "História de Adelândia — Câmara Municipal" },
+      { property: "og:title", content: "História de Cachoeira de Goiás — Câmara Municipal" },
       {
         property: "og:description",
         content:
-          "Origem do município, emancipação em 1987, economia agropecuária e indicadores sociais de Adelândia (GO).",
+          "Origem do município, emancipação em 1958, economia agropecuária e panorama atual de Cachoeira de Goiás (GO).",
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -38,100 +38,96 @@ export const Route = createFileRoute("/a-camara/historia")({
 });
 
 const FACTS = [
-  { icon: CalendarDays, label: "Fundação", value: "1987" },
-  { icon: Sprout, label: "Aniversário", value: "1º de junho" },
-  { icon: Users, label: "População", value: "2.515 hab." },
-  { icon: Ruler, label: "Área", value: "115,39 km²" },
-  { icon: MapPin, label: "Gentílico", value: "Adelandense" },
-  { icon: Landmark, label: "Microrregião", value: "Anicuns" },
+  { icon: CalendarDays, label: "Emancipação", value: "1958" },
+  { icon: Sprout, label: "Bioma", value: "Cerrado" },
+  { icon: Users, label: "População", value: "≈ 1,2 mil hab." },
+  { icon: Ruler, label: "Área", value: "≈ 400 km²" },
+  { icon: MapPin, label: "Gentílico", value: "Cachoeirense" },
+  { icon: Landmark, label: "Microrregião", value: "Iporá" },
 ];
 
 const INDICATORS: { title: string; icon: typeof Users; rows: [string, string][] }[] = [
   {
-    title: "População",
+    title: "População e território",
     icon: Users,
     rows: [
-      ["População estimada (2021)", "2.515"],
-      ["População no último censo (2010)", "2.477"],
-      ["Densidade demográfica (2010)", "21,47 hab/km²"],
+      ["População (Censo 2022)", "≈ 1,2 mil"],
+      ["Área territorial", "≈ 400 km²"],
+      ["Densidade demográfica", "≈ 3 hab/km²"],
+      ["Região imediata", "São Luís de Montes Belos"],
     ],
   },
   {
-    title: "Trabalho e rendimento",
+    title: "Economia",
     icon: Coins,
     rows: [
-      ["Salário médio mensal (2020)", "1,5 salário mínimo"],
-      ["Pessoal ocupado (2020)", "508 pessoas"],
-      ["População ocupada (2020)", "20,2%"],
-      ["Rendimento até ½ salário mínimo (2010)", "34,7%"],
+      ["Base econômica", "Agropecuária"],
+      ["Destaques", "Pecuária de corte e leite"],
+      ["Serviços públicos", "Principal empregador formal"],
+      ["Região intermediária", "São Luís de Montes Belos – Iporá"],
     ],
   },
   {
     title: "Educação",
     icon: GraduationCap,
     rows: [
-      ["Escolarização de 6 a 14 anos (2010)", "100%"],
-      ["IDEB anos iniciais (2021)", "5,1"],
-      ["IDEB anos finais (2021)", "4,8"],
-      ["Matrículas no ensino fundamental (2021)", "256"],
-      ["Matrículas no ensino médio (2021)", "96"],
-    ],
-  },
-  {
-    title: "Economia",
-    icon: Landmark,
-    rows: [
-      ["PIB per capita (2020)", "R$ 16.858,06"],
-      ["Receitas de fontes externas (2015)", "93,9%"],
-      ["IDHM (2010)", "0,702"],
-      ["Receitas realizadas (2017)", "R$ 12.780,35 mil"],
-      ["Despesas empenhadas (2017)", "R$ 11.340,79 mil"],
+      ["Rede de ensino", "Municipal e estadual"],
+      ["Etapas atendidas", "Infantil, fundamental e médio"],
+      ["Transporte escolar", "Atendimento à zona rural"],
     ],
   },
   {
     title: "Saúde",
     icon: HeartPulse,
     rows: [
-      ["Estabelecimentos de saúde SUS (2009)", "1"],
-      ["Mortalidade infantil (2020)", "Sem dados"],
-      ["Internações por diarreia (2016)", "Sem dados"],
+      ["Atenção básica", "Unidade de saúde municipal"],
+      ["Estratégia Saúde da Família", "Equipe em atuação"],
+      ["Referência regional", "São Luís de Montes Belos"],
     ],
   },
   {
-    title: "Meio ambiente e território",
+    title: "Meio ambiente",
     icon: Leaf,
     rows: [
-      ["Bioma (2019)", "Cerrado"],
-      ["Área urbanizada (2019)", "0,86 km²"],
-      ["Arborização de vias públicas (2010)", "98,3%"],
-      ["Esgotamento sanitário adequado (2010)", "22,4%"],
-      ["Região intermediária (2021)", "Goiânia"],
+      ["Bioma", "Cerrado"],
+      ["Recursos hídricos", "Bacia do Rio Caiapó / Claro"],
+      ["Uso do solo", "Pastagens e lavouras"],
+    ],
+  },
+  {
+    title: "Gestão e transparência",
+    icon: Landmark,
+    rows: [
+      ["Poder Legislativo", "Câmara Municipal de Cachoeira de Goiás"],
+      ["Sessões ordinárias", "Conforme Regimento Interno"],
+      ["Portal da Transparência", "Publicação permanente"],
     ],
   },
 ];
 
 const TIMELINE = [
   {
+    year: "Primeira metade do século XX",
+    text: "O povoado se forma às margens dos cursos d’água da região, em terras de fazendas voltadas à pecuária, dando origem ao nome Cachoeira.",
+  },
+  {
     year: "Década de 1950",
-    text: "Erguida a capela em louvor a São Sebastião e, em seguida, uma pequena escola que atendia os moradores das fazendas da região de Mossâmedes, próxima ao Rio Turvo.",
+    text: "O crescimento do núcleo populacional e a organização da vida comunitária abrem caminho para a autonomia político-administrativa.",
   },
   {
-    year: "1962",
-    text: "Surge Adelândia, nome em homenagem a dona Adélia, esposa do fazendeiro Domingos Alves Sobrinho, que doou as terras onde se formou o núcleo populacional. No mesmo ano, o povoado é elevado a distrito de Mossâmedes.",
+    year: "1958",
+    text: "Cachoeira de Goiás é emancipada e passa a integrar a lista de municípios do estado de Goiás, na região Centro-Oeste do país.",
   },
   {
-    year: "Década de 1980",
-    text: "A fertilidade das terras e a grande produção de feijão rendem ao município o título de “Capital do Feijão”, marca histórica presente na bandeira municipal.",
+    year: "Décadas seguintes",
+    text: "A economia se consolida na agropecuária, com destaque para a pecuária de corte e de leite, enquanto o município integra a microrregião de Iporá.",
   },
   {
-    year: "30 de dezembro de 1987",
-    text: "Com a Lei nº 10.396, Adelândia é emancipada e torna-se município. O hino municipal foi escolhido por concurso público, vencido pela professora Waldir da Silva Avelar.",
-  },
-  {
-    year: "A partir de 1988",
-    text: "Na primeira eleição direta foram eleitos Lourival Lobó (prefeito) e Francisco Quintiliano de Avelar Filho (vice). Seguiram-se Antonio dos Reis Pereira, André Gomes Duarte, Maurício Martins de Freitas, Victor Leonardo de Lima Soares (dois mandatos), Joaquim dos Reis e, em 2020, Edson Vieira de Paula.",
+    year: "Hoje",
+    text: "A Câmara Municipal exerce as funções legislativa e fiscalizadora, com sessões públicas, comissões permanentes e publicação dos atos no Portal da Transparência.",
   },
 ];
+
 
 function HistoriaPage() {
   return (
@@ -148,8 +144,8 @@ function HistoriaPage() {
           </span>
           <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">História</h1>
           <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Da capela de São Sebastião à emancipação em 1987: conheça a trajetória de Adelândia, a
-            Capital do Feijão, e os números que retratam o município hoje.
+            Das primeiras fazendas às margens dos cursos d’água à emancipação em 1958: conheça a
+            trajetória de Cachoeira de Goiás e o panorama do município hoje.
           </p>
 
           <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -176,7 +172,7 @@ function HistoriaPage() {
             <SectionHeading eyebrow="Nossa história" title="A cidade e sua origem" />
             <div className="mt-6 space-y-4 text-[15px] leading-8 text-muted-foreground">
               <p>
-                Adelândia é um município brasileiro do interior do estado de Goiás, na Região
+                Cachoeira de Goiás é um município brasileiro do interior do estado de Goiás, na Região
                 Centro-Oeste do país, integrante da microrregião de Anicuns. A população, formada
                 originalmente por trabalhadores rurais, mantém forte vínculo com o campo.
               </p>
@@ -186,7 +182,7 @@ function HistoriaPage() {
                 com quatro empresas do gênero. Na área de laticínios, o município conta com uma das
                 indústrias mais prósperas da região. Há também potencial expressivo em confecções e
                 facções, além da usina de álcool e açúcar instalada em Anicuns, a 25 km, que gera
-                empregos para a população adelandense.
+                empregos para a população cachoeirense.
               </p>
               <p>
                 A grande concentração de pequenas propriedades rurais fixa a economia na região e
@@ -211,7 +207,7 @@ function HistoriaPage() {
       <section className="border-y border-border bg-secondary/40">
         <div className="container-page py-10 md:py-14">
           <SectionHeading
-            eyebrow="Adelândia em números"
+            eyebrow="Cachoeira de Goiás em números"
             title="Indicadores oficiais do município"
             description="Dados de população, economia, educação, saúde e território reunidos a partir das bases públicas do IBGE."
           />

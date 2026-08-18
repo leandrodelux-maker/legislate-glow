@@ -11,13 +11,13 @@ import { useOfficialDocuments } from "@/lib/official-documents";
 export const Route = createFileRoute("/atos-legislativos/lei-organica-municipal")({
   head: () => ({
     meta: [
-      { title: "Lei Orgânica Municipal — Câmara de Adelândia" },
+      { title: "Lei Orgânica Municipal — Câmara de Cachoeira de Goiás" },
       {
         name: "description",
         content:
-          "Leia e baixe a Lei Orgânica do Município de Adelândia, a norma máxima que organiza os poderes, competências e direitos no âmbito municipal.",
+          "Leia e baixe a Lei Orgânica do Município de Cachoeira de Goiás, a norma máxima que organiza os poderes, competências e direitos no âmbito municipal.",
       },
-      { property: "og:title", content: "Lei Orgânica Municipal — Câmara de Adelândia" },
+      { property: "og:title", content: "Lei Orgânica Municipal — Câmara de Cachoeira de Goiás" },
       {
         property: "og:description",
         content: "Norma fundamental do município, disponível para consulta e download.",
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/atos-legislativos/lei-organica-municipal"
 
 const FALLBACK_DOCS: LegalDocument[] = [
   {
-    title: "Lei Orgânica do Município de Adelândia",
+    title: "Lei Orgânica do Município de Cachoeira de Goiás",
     date: "06/10/2023",
     description: "Texto consolidado da Lei Orgânica Municipal.",
     downloadUrl: WPFD_DOWNLOAD(68, 6813),
@@ -65,7 +65,7 @@ function LeiOrganicaPage() {
       <DocumentPageHero
         eyebrow="Atos Legislativos"
         title="Lei Orgânica Municipal"
-        description="A Lei Orgânica é a 'Constituição do município': organiza os Poderes, fixa competências e assegura os direitos do cidadão adelandense."
+        description="A Lei Orgânica é a 'Constituição do município': organiza os Poderes, fixa competências e assegura os direitos do cidadão cachoeirense."
       />
 
       <section className="container-page py-12 md:py-16">

@@ -7,12 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/noticias/")({
   head: () => ({
     meta: [
-      { title: "Notícias — Câmara Municipal de Adelândia" },
+      { title: "Notícias — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content: "Cobertura das sessões, audiências públicas e ações do legislativo municipal.",
       },
-      { property: "og:title", content: "Notícias — Câmara Municipal de Adelândia" },
+      { property: "og:title", content: "Notícias — Câmara Municipal de Cachoeira de Goiás" },
       { property: "og:description", content: "Últimas notícias da Câmara Municipal." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

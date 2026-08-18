@@ -83,7 +83,7 @@ export const SITE_SECTIONS: SiteSection[] = [
 
     title: "A Câmara",
     links: [
-      { to: ROUTES.historia, label: "História", description: "Origem e trajetória do município de Adelândia." },
+      { to: ROUTES.historia, label: "História", description: "Origem e trajetória do município de Cachoeira de Goiás." },
       { to: ROUTES.mesaDiretora, label: "Mesa Diretora", description: "Composição da direção da Casa Legislativa." },
       { to: ROUTES.comissoes, label: "Comissões", description: "Comissões permanentes e seus membros." },
       { to: ROUTES.roteiroSessoes, label: "Roteiro das Sessões", description: "Passo a passo de uma sessão plenária." },

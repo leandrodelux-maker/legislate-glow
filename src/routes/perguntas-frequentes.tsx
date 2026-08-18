@@ -75,7 +75,7 @@ const FAQS: Faq[] = [
   {
     cat: "LGPD",
     q: "Quem é o Encarregado de Dados (DPO)?",
-    a: "O Encarregado de Dados é indicado por portaria e disponível pelo e-mail contato@camaradeadelandia.go.gov.br para atender solicitações relacionadas à proteção de dados.",
+    a: "O Encarregado de Dados é indicado por portaria e disponível pelo e-mail contato@camaracachoeiradegoias.go.gov.br para atender solicitações relacionadas à proteção de dados.",
   },
   {
     cat: "Ouvidoria",

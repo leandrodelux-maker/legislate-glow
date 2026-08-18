@@ -16,13 +16,13 @@ import { ROUTES } from "@/lib/site-links";
 export const Route = createFileRoute("/a-camara/roteiro-das-sessoes")({
   head: () => ({
     meta: [
-      { title: "Roteiro das Sessões — Câmara Municipal de Adelândia" },
+      { title: "Roteiro das Sessões — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content:
           "Passo a passo das sessões da Câmara Municipal: abertura, leitura da ata, apresentação de proposituras, Ordem do Dia, Tribuna Livre e explicações pessoais.",
       },
-      { property: "og:title", content: "Roteiro das Sessões — Câmara Municipal de Adelândia" },
+      { property: "og:title", content: "Roteiro das Sessões — Câmara Municipal de Cachoeira de Goiás" },
       {
         property: "og:description",
         content: "Como funciona, etapa por etapa, uma sessão plenária do Legislativo municipal.",
