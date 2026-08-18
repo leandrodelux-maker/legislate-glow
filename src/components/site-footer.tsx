@@ -1,3 +1,4 @@
+import logoAsset from "@/assets/logo-camara.png.asset.json";
 import { Link } from "@tanstack/react-router";
 import { Landmark, Mail, MapPin, Phone, Clock, MessageSquare as FacebookIcon, Camera as InstagramIcon, PlayCircle as YoutubeIcon } from "lucide-react";
 
@@ -32,13 +33,13 @@ export function SiteFooter() {
       <div className="container-page py-14 grid gap-10 md:grid-cols-5">
         <div className="md:col-span-1">
           <div className="flex items-center gap-3">
-            {settings?.footer_logo_url ? (
+            {settings?.footer_logo_url || logoAsset.url ? (
               <img 
-                src={settings.footer_logo_url} 
+                src={settings?.footer_logo_url || logoAsset.url} 
                 alt="Logo Câmara Municipal"
                 loading="lazy"
                 decoding="async"
-                style={{ height: `${settings.footer_logo_height}px` }}
+                style={{ height: `${settings?.footer_logo_height}px` }}
                 className="w-auto object-contain"
               />
             ) : (
