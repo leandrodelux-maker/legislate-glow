@@ -17,9 +17,8 @@ import {
   Globe,
   type LucideIcon,
 } from "lucide-react";
-import type { QuickAccessIcon } from "@/lib/quick-access-store";
 
-const MAP: Record<QuickAccessIcon, LucideIcon> = {
+const MAP: Record<string, LucideIcon> = {
   FileText,
   ClipboardList,
   Monitor,
@@ -42,7 +41,7 @@ export function QuickAccessIconRender({
   name,
   className,
 }: {
-  name: QuickAccessIcon;
+  name: string;
   className?: string;
 }) {
   const Icon = MAP[name] ?? FileText;

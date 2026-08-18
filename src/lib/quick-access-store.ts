@@ -17,7 +17,6 @@ interface QuickAccessState {
   fetchItems: () => Promise<void>;
   addItem: (item: Omit<QuickAccessItem, "id">) => Promise<void>;
   removeItem: (labelOrId: string) => Promise<void>;
-  resetToDefault: () => Promise<void>;
 }
 
 export const useQuickAccessStore = create<QuickAccessState>()(
@@ -44,7 +43,7 @@ export const useQuickAccessStore = create<QuickAccessState>()(
       addItem: async (item) => {
         const { data, error } = await supabase
           .from("acesso_rapido")
-          .insert([item])
+          .insert([item as any])
           .select()
           .single();
 
@@ -64,12 +63,6 @@ export const useQuickAccessStore = create<QuickAccessState>()(
             items: state.items.filter((i) => i.label !== labelOrId && i.id !== labelOrId),
           }));
         }
-      },
-
-      resetToDefault: async () => {
-        // No portal sincronizado, o reset não faz sentido client-side.
-        // O admin gerencia a lista oficial.
-        await get().fetchItems();
       },
     }),
     {
