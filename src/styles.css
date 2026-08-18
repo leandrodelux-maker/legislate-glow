@@ -83,9 +83,9 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.03 255);
 
-  --primary: oklch(0.34 0.13 252);          /* azul institucional */
+  --primary: oklch(0.408 0.079 230);        /* azul-petróleo do logo */
   --primary-foreground: oklch(0.99 0.005 250);
-  --primary-deep: oklch(0.22 0.10 255);     /* azul profundo */
+  --primary-deep: oklch(0.289 0.054 228);   /* azul profundo do logo */
 
   --secondary: oklch(0.96 0.008 250);        /* cinza claro */
   --secondary-foreground: oklch(0.22 0.05 255);
@@ -104,16 +104,16 @@
 
   --border: oklch(0.91 0.012 250);
   --input: oklch(0.92 0.012 250);
-  --ring: oklch(0.55 0.12 252);
+  --ring: oklch(0.52 0.08 230);
 
   --sidebar: oklch(0.98 0.005 250);
   --sidebar-foreground: oklch(0.18 0.03 255);
-  --sidebar-primary: oklch(0.34 0.13 252);
+  --sidebar-primary: oklch(0.408 0.079 230);
   --sidebar-primary-foreground: oklch(0.99 0.005 250);
   --sidebar-accent: oklch(0.94 0.012 250);
   --sidebar-accent-foreground: oklch(0.22 0.08 255);
   --sidebar-border: oklch(0.91 0.012 250);
-  --sidebar-ring: oklch(0.55 0.12 252);
+  --sidebar-ring: oklch(0.52 0.08 230);
 }
 
 .dark {
@@ -126,9 +126,9 @@
   --popover: oklch(0.18 0.03 255);
   --popover-foreground: oklch(0.97 0.005 250);
 
-  --primary: oklch(0.68 0.14 250);
+  --primary: oklch(0.70 0.09 230);
   --primary-foreground: oklch(0.14 0.02 255);
-  --primary-deep: oklch(0.30 0.12 252);
+  --primary-deep: oklch(0.34 0.07 229);
 
   --secondary: oklch(0.22 0.03 255);
   --secondary-foreground: oklch(0.97 0.005 250);
@@ -147,16 +147,16 @@
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.60 0.14 252);
+  --ring: oklch(0.60 0.09 230);
 
   --sidebar: oklch(0.16 0.03 255);
   --sidebar-foreground: oklch(0.97 0.005 250);
-  --sidebar-primary: oklch(0.68 0.14 250);
+  --sidebar-primary: oklch(0.70 0.09 230);
   --sidebar-primary-foreground: oklch(0.14 0.02 255);
   --sidebar-accent: oklch(0.24 0.04 255);
   --sidebar-accent-foreground: oklch(0.97 0.005 250);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.60 0.14 252);
+  --sidebar-ring: oklch(0.60 0.09 230);
 }
 
 @utility glass {
