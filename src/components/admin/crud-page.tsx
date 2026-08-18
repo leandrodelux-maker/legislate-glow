@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -33,6 +34,12 @@ export type FieldDef = {
   optionValue?: string;
 };
 
+export type CrudTab = {
+  id: string;
+  label: string;
+  fieldNames: string[];
+};
+
 export type ColumnDef<T> = {
   key: keyof T | string;
   label: string;
@@ -45,12 +52,165 @@ type Props<T extends { id: string }> = {
   table: string;
   columns: ColumnDef<T>[];
   fields: FieldDef[];
+  tabs?: CrudTab[];
   orderBy?: { column: string; ascending?: boolean };
   defaultValues?: Partial<T>;
 };
 
+type FieldInputProps = {
+  field: FieldDef;
+  editing: any;
+  form: Record<string, any>;
+  setForm: (value: React.SetStateAction<Record<string, any>>) => void;
+  saving: boolean;
+  setSaving: (value: boolean) => void;
+  externalOptions: Record<string, { label: string; value: string }[]>;
+};
+
+function FieldInput({ field: f, editing, form, setForm, saving, setSaving, externalOptions }: FieldInputProps) {
+  return (
+    <div>
+      <Label htmlFor={f.name}>{f.label}{f.required && " *"}</Label>
+      {f.type === "textarea" ? (
+        <Textarea
+          id={f.name}
+          required={f.required}
+          placeholder={f.placeholder}
+          value={String(form[f.name] ?? "")}
+          onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
+          rows={4}
+        />
+      ) : f.type === "checkbox" ? (
+        <div className="flex items-center gap-2 pt-2">
+          <input
+            id={f.name}
+            type="checkbox"
+            checked={Boolean(form[f.name])}
+            onChange={(e) => setForm({ ...form, [f.name]: e.target.checked })}
+            className="w-4 h-4"
+          />
+          <span className="text-sm text-slate-600">{f.placeholder ?? "Sim"}</span>
+        </div>
+      ) : f.type === "select" ? (
+        <Select
+          value={String(form[f.name] ?? "")}
+          onValueChange={(v) => setForm({ ...form, [f.name]: v })}
+          required={f.required}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={f.placeholder || "Selecione..."} />
+          </SelectTrigger>
+          <SelectContent>
+            {(f.options || externalOptions[f.name])?.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : f.type === "file" ? (
+        <div className="space-y-2">
+          <Input
+            id={f.name}
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+              if (!allowedTypes.includes(file.type)) {
+                toast.error("Formato de imagem inválido. Use JPG, PNG ou WebP.");
+                return;
+              }
+
+              const maxSize = 2 * 1024 * 1024;
+              if (file.size > maxSize) {
+                toast.error("Imagem muito grande. O tamanho máximo permitido é 2MB.");
+                return;
+              }
+              
+              setSaving(true);
+              const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+              
+              const safeFileName = file.name
+                .split('.')[0]
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/gi, '-')
+                .toLowerCase();
+
+              const fileName = `${Date.now()}-${safeFileName}.${fileExt}`;
+              const filePath = fileName;
+
+              console.log(`Iniciando upload para o bucket 'vereadores'...`, filePath);
+
+              const { data, error: uploadError } = await supabase.storage
+                .from('vereadores')
+                .upload(filePath, file, {
+                  cacheControl: '3600',
+                  upsert: true,
+                  contentType: file.type
+                });
+
+              if (uploadError) {
+                console.error("Erro no upload:", uploadError);
+                toast.error("Erro no upload: " + uploadError.message);
+                setSaving(false);
+                return;
+              }
+
+              console.log("Upload concluído com sucesso:", data);
+
+              const { data: signed } = await supabase.storage
+                .from('vereadores')
+                .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
+
+              if (!signed?.signedUrl) {
+                toast.error("Falha ao gerar URL assinada");
+                setSaving(false);
+                return;
+              }
+
+              setForm((prev) => ({ ...prev, [f.name]: signed.signedUrl }));
+              setSaving(false);
+              toast.success("Foto enviada com sucesso!");
+            }}
+
+          />
+          {form[f.name] ? (
+            <div className="mt-2 relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
+              <img 
+                src={`${String(form[f.name])}${String(form[f.name]).includes('?') ? '&' : '?'}t=${Date.now()}`} 
+                alt="Preview" 
+                className="w-full h-full object-cover" 
+              />
+
+            </div>
+          ) : null}
+        </div>
+      ) : f.type === "custom" ? (
+        f.renderCustom?.(editing, form, setForm)
+      ) : (
+        <Input
+          id={f.name}
+          type={f.type ?? "text"}
+          required={f.required}
+          placeholder={f.placeholder}
+          value={
+            f.type === "datetime-local" && form[f.name]
+              ? String(form[f.name]).slice(0, 16)
+              : String(form[f.name] ?? "")
+          }
+          onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
+        />
+      )}
+    </div>
+  );
+}
+
 export function CrudPage<T extends { id: string }>({
-  title, description, table, columns, fields, orderBy, defaultValues = {},
+  title, description, table, columns, fields, tabs, orderBy, defaultValues = {},
 }: Props<T>) {
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -216,148 +376,39 @@ export function CrudPage<T extends { id: string }>({
               <DialogTitle>{editing ? "Editar" : "Criar"} registro</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSave} className="space-y-4">
-              {fields.map((f) => (
-                <div key={f.name}>
-                  <Label htmlFor={f.name}>{f.label}{f.required && " *"}</Label>
-                  {f.type === "textarea" ? (
-                    <Textarea
-                      id={f.name}
-                      required={f.required}
-                      placeholder={f.placeholder}
-                      value={String(form[f.name] ?? "")}
-                      onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
-                      rows={4}
-                    />
-                  ) : f.type === "checkbox" ? (
-                    <div className="flex items-center gap-2 pt-2">
-                      <input
-                        id={f.name}
-                        type="checkbox"
-                        checked={Boolean(form[f.name])}
-                        onChange={(e) => setForm({ ...form, [f.name]: e.target.checked })}
-                        className="w-4 h-4"
-                      />
-                      <span className="text-sm text-slate-600">{f.placeholder ?? "Sim"}</span>
-                    </div>
-                  ) : f.type === "select" ? (
-                    <Select
-                      value={String(form[f.name] ?? "")}
-                      onValueChange={(v) => setForm({ ...form, [f.name]: v })}
-                      required={f.required}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={f.placeholder || "Selecione..."} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(f.options || externalOptions[f.name])?.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </SelectItem>
+              {(() => {
+                if (!tabs) {
+                  return fields.map((f) => <FieldInput key={f.name} field={f} editing={editing} form={form} setForm={setForm} saving={saving} setSaving={setSaving} externalOptions={externalOptions} />);
+                }
+                const tabFieldNames = new Set(tabs.flatMap((t) => t.fieldNames));
+                const outsideTabFields = fields.filter((f) => !tabFieldNames.has(f.name));
+                return (
+                  <>
+                    {outsideTabFields.map((f) => (
+                      <FieldInput key={f.name} field={f} editing={editing} form={form} setForm={setForm} saving={saving} setSaving={setSaving} externalOptions={externalOptions} />
+                    ))}
+                    <Tabs defaultValue={tabs[0]?.id} className="w-full">
+                      <TabsList className="w-full flex-wrap h-auto gap-1">
+                        {tabs.map((t) => (
+                          <TabsTrigger key={t.id} value={t.id} className="text-xs">
+                            {t.label}
+                          </TabsTrigger>
                         ))}
-                      </SelectContent>
-                    </Select>
-                  ) : f.type === "file" ? (
-                    <div className="space-y-2">
-                      <Input
-                        id={f.name}
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-
-                          // Validação de tipo
-                          const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-                          if (!allowedTypes.includes(file.type)) {
-                            toast.error("Formato de imagem inválido. Use JPG, PNG ou WebP.");
-                            return;
-                          }
-
-                          // Validação de tamanho (máximo 2MB)
-                          const maxSize = 2 * 1024 * 1024;
-                          if (file.size > maxSize) {
-                            toast.error("Imagem muito grande. O tamanho máximo permitido é 2MB.");
-                            return;
-                          }
-                          
-                          setSaving(true);
-                          const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                          
-                          // Normalização do nome do arquivo (apenas caracteres alfanuméricos e hífens)
-                          const safeFileName = file.name
-                            .split('.')[0]
-                            .normalize('NFD')
-                            .replace(/[\u0300-\u036f]/g, '')
-                            .replace(/[^a-z0-9]/gi, '-')
-                            .toLowerCase();
-
-                          const fileName = `${Date.now()}-${safeFileName}.${fileExt}`;
-                          const filePath = fileName;
-
-                          console.log(`Iniciando upload para o bucket 'vereadores'...`, filePath);
-
-                          const { data, error: uploadError } = await supabase.storage
-                            .from('vereadores')
-                            .upload(filePath, file, {
-                              cacheControl: '3600',
-                              upsert: true,
-                              contentType: file.type
-                            });
-
-                          if (uploadError) {
-                            console.error("Erro no upload:", uploadError);
-                            toast.error("Erro no upload: " + uploadError.message);
-                            setSaving(false);
-                            return;
-                          }
-
-                          console.log("Upload concluído com sucesso:", data);
-
-                          const { data: signed } = await supabase.storage
-                            .from('vereadores')
-                            .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
-
-                          if (!signed?.signedUrl) {
-                            toast.error("Falha ao gerar URL assinada");
-                            setSaving(false);
-                            return;
-                          }
-
-                          setForm((prev) => ({ ...prev, [f.name]: signed.signedUrl }));
-                          setSaving(false);
-                          toast.success("Foto enviada com sucesso!");
-                        }}
-
-                      />
-                      {form[f.name] ? (
-                        <div className="mt-2 relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
-                          <img 
-                            src={`${String(form[f.name])}${String(form[f.name]).includes('?') ? '&' : '?'}t=${Date.now()}`} 
-                            alt="Preview" 
-                            className="w-full h-full object-cover" 
-                          />
-
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : f.type === "custom" ? (
-                    f.renderCustom?.(editing, form, setForm)
-                  ) : (
-                    <Input
-                      id={f.name}
-                      type={f.type ?? "text"}
-                      required={f.required}
-                      placeholder={f.placeholder}
-                      value={
-                        f.type === "datetime-local" && form[f.name]
-                          ? String(form[f.name]).slice(0, 16)
-                          : String(form[f.name] ?? "")
-                      }
-                      onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
-                    />
-                  )}
-                </div>
-              ))}
+                      </TabsList>
+                      {tabs.map((t) => {
+                        const tabFields = fields.filter((f) => t.fieldNames.includes(f.name));
+                        return (
+                          <TabsContent key={t.id} value={t.id} className="space-y-4">
+                            {tabFields.map((f) => (
+                              <FieldInput key={f.name} field={f} editing={editing} form={form} setForm={setForm} saving={saving} setSaving={setSaving} externalOptions={externalOptions} />
+                            ))}
+                          </TabsContent>
+                        );
+                      })}
+                    </Tabs>
+                  </>
+                );
+              })()}
               <DialogFooter>
                 <Button type="submit" disabled={saving} className="bg-primary-deep">
                   {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

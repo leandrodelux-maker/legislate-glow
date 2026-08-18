@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CrudPage } from "@/components/admin/crud-page";
+import { CrudPage, type CrudTab } from "@/components/admin/crud-page";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { VereadorAvatar } from "@/components/vereador-avatar";
 import { VereadorPhotoUploader } from "@/components/admin/VereadorPhotoUploader";
 import { History, Images } from "lucide-react";
+
+const tabs: CrudTab[] = [
+  { id: "dados", label: "Dados", fieldNames: ["nome", "slug", "partido", "cargo", "legislatura", "comissoes", "biografia"] },
+  { id: "contato", label: "Contato", fieldNames: ["email", "telefone", "gabinete"] },
+  { id: "perfil", label: "Perfil", fieldNames: ["data_nascimento", "naturalidade", "escolaridade", "profissao"] },
+  { id: "mandato", label: "Mandato", fieldNames: ["data_posse", "mandato_atual", "mandato_inicio", "mandato_fim"] },
+  { id: "redes", label: "Redes sociais", fieldNames: ["redes_sociais"] },
+];
 
 export const Route = createFileRoute("/admin/vereadores/")({
   component: AdminVereadores,
@@ -150,6 +158,7 @@ function AdminVereadores() {
           { name: "ordem", label: "Ordem de exibição", type: "number" },
           { name: "ativo", label: "Ativo", type: "checkbox", placeholder: "Mostrar no site" },
         ]}
+        tabs={tabs}
       />
     </div>
   );
