@@ -80,6 +80,7 @@ import { Route as AdminTransparenciaIndexRouteImport } from './routes/admin/tran
 import { Route as AdminVereadoresIndexRouteImport } from './routes/admin/vereadores/index'
 import { Route as AdminVereadoresGaleriaRouteImport } from './routes/admin/vereadores/galeria'
 import { Route as AdminVereadoresMandatosRouteImport } from './routes/admin/vereadores/mandatos'
+import { Route as AdminVereadoresRankingRouteImport } from './routes/admin/vereadores/ranking'
 import { Route as AdminCmsPaginasIdRouteImport } from './routes/admin/cms/paginas.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -443,6 +444,11 @@ const AdminVereadoresMandatosRoute = AdminVereadoresMandatosRouteImport.update({
   path: '/vereadores/mandatos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminVereadoresRankingRoute = AdminVereadoresRankingRouteImport.update({
+  id: '/vereadores/ranking',
+  path: '/vereadores/ranking',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCmsPaginasIdRoute = AdminCmsPaginasIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -512,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/admin/configuracoes/seo': typeof AdminConfiguracoesSeoRoute
   '/admin/vereadores/galeria': typeof AdminVereadoresGaleriaRoute
   '/admin/vereadores/mandatos': typeof AdminVereadoresMandatosRoute
+  '/admin/vereadores/ranking': typeof AdminVereadoresRankingRoute
   '/admin/acesso-rapido/': typeof AdminAcessoRapidoIndexRoute
   '/admin/comunicacao/': typeof AdminComunicacaoIndexRoute
   '/admin/config/': typeof AdminConfigIndexRoute
@@ -584,6 +591,7 @@ export interface FileRoutesByTo {
   '/admin/configuracoes/seo': typeof AdminConfiguracoesSeoRoute
   '/admin/vereadores/galeria': typeof AdminVereadoresGaleriaRoute
   '/admin/vereadores/mandatos': typeof AdminVereadoresMandatosRoute
+  '/admin/vereadores/ranking': typeof AdminVereadoresRankingRoute
   '/admin/acesso-rapido': typeof AdminAcessoRapidoIndexRoute
   '/admin/comunicacao': typeof AdminComunicacaoIndexRoute
   '/admin/config': typeof AdminConfigIndexRoute
@@ -659,6 +667,7 @@ export interface FileRoutesById {
   '/admin/configuracoes/seo': typeof AdminConfiguracoesSeoRoute
   '/admin/vereadores/galeria': typeof AdminVereadoresGaleriaRoute
   '/admin/vereadores/mandatos': typeof AdminVereadoresMandatosRoute
+  '/admin/vereadores/ranking': typeof AdminVereadoresRankingRoute
   '/admin/acesso-rapido/': typeof AdminAcessoRapidoIndexRoute
   '/admin/comunicacao/': typeof AdminComunicacaoIndexRoute
   '/admin/config/': typeof AdminConfigIndexRoute
@@ -735,6 +744,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes/seo'
     | '/admin/vereadores/galeria'
     | '/admin/vereadores/mandatos'
+    | '/admin/vereadores/ranking'
     | '/admin/acesso-rapido/'
     | '/admin/comunicacao/'
     | '/admin/config/'
@@ -807,6 +817,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes/seo'
     | '/admin/vereadores/galeria'
     | '/admin/vereadores/mandatos'
+    | '/admin/vereadores/ranking'
     | '/admin/acesso-rapido'
     | '/admin/comunicacao'
     | '/admin/config'
@@ -881,6 +892,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes/seo'
     | '/admin/vereadores/galeria'
     | '/admin/vereadores/mandatos'
+    | '/admin/vereadores/ranking'
     | '/admin/acesso-rapido/'
     | '/admin/comunicacao/'
     | '/admin/config/'
@@ -1422,6 +1434,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVereadoresMandatosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/vereadores/ranking': {
+      id: '/admin/vereadores/ranking'
+      path: '/vereadores/ranking'
+      fullPath: '/admin/vereadores/ranking'
+      preLoaderRoute: typeof AdminVereadoresRankingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cms/paginas/$id': {
       id: '/admin/cms/paginas/$id'
       path: '/$id'
@@ -1478,6 +1497,7 @@ interface AdminRouteChildren {
   AdminConfiguracoesSeoRoute: typeof AdminConfiguracoesSeoRoute
   AdminVereadoresGaleriaRoute: typeof AdminVereadoresGaleriaRoute
   AdminVereadoresMandatosRoute: typeof AdminVereadoresMandatosRoute
+  AdminVereadoresRankingRoute: typeof AdminVereadoresRankingRoute
   AdminAcessoRapidoIndexRoute: typeof AdminAcessoRapidoIndexRoute
   AdminComunicacaoIndexRoute: typeof AdminComunicacaoIndexRoute
   AdminConfigIndexRoute: typeof AdminConfigIndexRoute
@@ -1523,6 +1543,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminConfiguracoesSeoRoute: AdminConfiguracoesSeoRoute,
   AdminVereadoresGaleriaRoute: AdminVereadoresGaleriaRoute,
   AdminVereadoresMandatosRoute: AdminVereadoresMandatosRoute,
+  AdminVereadoresRankingRoute: AdminVereadoresRankingRoute,
   AdminAcessoRapidoIndexRoute: AdminAcessoRapidoIndexRoute,
   AdminComunicacaoIndexRoute: AdminComunicacaoIndexRoute,
   AdminConfigIndexRoute: AdminConfigIndexRoute,
