@@ -212,7 +212,7 @@ function FieldInput({ field: f, editing, form, setForm, saving, setSaving, exter
 }
 
 export function CrudPage<T extends { id: string }>({
-  title, description, table, columns, fields, tabs, orderBy, defaultValues = {},
+  title, description, table, columns, fields, tabs, orderBy, defaultValues = {}, filter,
 }: Props<T>) {
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -225,8 +225,10 @@ export function CrudPage<T extends { id: string }>({
   const load = async () => {
     setLoading(true);
     let q = (supabase as any).from(table).select("*");
+    if (filter) for (const [k, v] of Object.entries(filter)) q = q.eq(k, v);
     if (orderBy) q = q.order(orderBy.column, { ascending: orderBy.ascending ?? false });
     const { data, error, status } = await q;
+
     if (error) {
       console.error(`[CRUD SELECT] ${table} falhou`, { status, code: error.code, message: error.message, details: error.details, hint: error.hint });
       toast.error(`Falha ao carregar "${table}" (${error.code || status}): ${error.message}`);
