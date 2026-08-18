@@ -287,71 +287,8 @@ function TransparenciaPortalPage() {
         </div>
       </section>
 
-      {/* CATEGORY ICONS — inspired by Megasoft */}
-      <section className="border-b border-border bg-card">
-        <div className="container-page py-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
-            {CATEGORIES.map((c) => {
-              const Icon = c.icon;
-              const isActive = activeCat === c.key;
-              const count = linksByCat.get(c.key)?.length ?? 0;
-              return (
-                <button
-                  key={c.key}
-                  onClick={() => setActiveCat(isActive ? null : c.key)}
-                  className={`group flex flex-col items-center gap-2 rounded-xl border p-3 text-center transition-all ${
-                    isActive
-                      ? "border-primary bg-primary/5 shadow-sm"
-                      : "border-transparent hover:border-border hover:bg-secondary/40"
-                  }`}
-                >
-                  <div
-                    className={`grid h-16 w-16 place-items-center rounded-full text-white shadow-md transition-transform group-hover:scale-105 ${c.color}`}
-                  >
-                    <Icon className="h-7 w-7" />
-                  </div>
-                  <span className="text-xs font-semibold leading-tight text-foreground">{c.label}</span>
-                  <span className="text-[10px] text-muted-foreground">{count} itens</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
-      {/* SEARCH BAR */}
-      <section className="border-b border-border bg-secondary/40">
-        <div className="container-page py-6">
-          <div className="mx-auto flex max-w-3xl overflow-hidden rounded-full border border-border bg-white shadow-sm">
-            <div className="hidden bg-primary-deep px-6 py-3 text-sm font-semibold text-primary-foreground sm:block">
-              Pesquisar
-            </div>
-            <div className="relative flex-1">
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Busca em todo o Portal..."
-                className="h-full w-full bg-transparent px-5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-              />
-              <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            </div>
-          </div>
-          {activeCat && (
-            <div className="mt-4 flex items-center justify-center gap-3 text-sm text-muted-foreground">
-              Filtrando por{" "}
-              <span className="font-semibold text-foreground">
-                {CATEGORIES.find((c) => c.key === activeCat)?.label}
-              </span>
-              <button
-                onClick={() => setActiveCat(null)}
-                className="rounded-full border border-border px-3 py-1 text-xs hover:border-primary hover:text-primary"
-              >
-                Limpar filtro
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
+
 
       {/* DADOS OFICIAIS (Megasoft) */}
       <OfficialDatasets baseUrl={portalUrl || undefined} />
