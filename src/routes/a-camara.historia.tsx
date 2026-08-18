@@ -38,100 +38,96 @@ export const Route = createFileRoute("/a-camara/historia")({
 });
 
 const FACTS = [
-  { icon: CalendarDays, label: "Fundação", value: "1987" },
-  { icon: Sprout, label: "Aniversário", value: "1º de junho" },
-  { icon: Users, label: "População", value: "2.515 hab." },
-  { icon: Ruler, label: "Área", value: "115,39 km²" },
+  { icon: CalendarDays, label: "Emancipação", value: "1958" },
+  { icon: Sprout, label: "Bioma", value: "Cerrado" },
+  { icon: Users, label: "População", value: "≈ 1,2 mil hab." },
+  { icon: Ruler, label: "Área", value: "≈ 400 km²" },
   { icon: MapPin, label: "Gentílico", value: "Cachoeirense" },
-  { icon: Landmark, label: "Microrregião", value: "Anicuns" },
+  { icon: Landmark, label: "Microrregião", value: "Iporá" },
 ];
 
 const INDICATORS: { title: string; icon: typeof Users; rows: [string, string][] }[] = [
   {
-    title: "População",
+    title: "População e território",
     icon: Users,
     rows: [
-      ["População estimada (2021)", "2.515"],
-      ["População no último censo (2010)", "2.477"],
-      ["Densidade demográfica (2010)", "21,47 hab/km²"],
+      ["População (Censo 2022)", "≈ 1,2 mil"],
+      ["Área territorial", "≈ 400 km²"],
+      ["Densidade demográfica", "≈ 3 hab/km²"],
+      ["Região imediata", "São Luís de Montes Belos"],
     ],
   },
   {
-    title: "Trabalho e rendimento",
+    title: "Economia",
     icon: Coins,
     rows: [
-      ["Salário médio mensal (2020)", "1,5 salário mínimo"],
-      ["Pessoal ocupado (2020)", "508 pessoas"],
-      ["População ocupada (2020)", "20,2%"],
-      ["Rendimento até ½ salário mínimo (2010)", "34,7%"],
+      ["Base econômica", "Agropecuária"],
+      ["Destaques", "Pecuária de corte e leite"],
+      ["Serviços públicos", "Principal empregador formal"],
+      ["Região intermediária", "São Luís de Montes Belos – Iporá"],
     ],
   },
   {
     title: "Educação",
     icon: GraduationCap,
     rows: [
-      ["Escolarização de 6 a 14 anos (2010)", "100%"],
-      ["IDEB anos iniciais (2021)", "5,1"],
-      ["IDEB anos finais (2021)", "4,8"],
-      ["Matrículas no ensino fundamental (2021)", "256"],
-      ["Matrículas no ensino médio (2021)", "96"],
-    ],
-  },
-  {
-    title: "Economia",
-    icon: Landmark,
-    rows: [
-      ["PIB per capita (2020)", "R$ 16.858,06"],
-      ["Receitas de fontes externas (2015)", "93,9%"],
-      ["IDHM (2010)", "0,702"],
-      ["Receitas realizadas (2017)", "R$ 12.780,35 mil"],
-      ["Despesas empenhadas (2017)", "R$ 11.340,79 mil"],
+      ["Rede de ensino", "Municipal e estadual"],
+      ["Etapas atendidas", "Infantil, fundamental e médio"],
+      ["Transporte escolar", "Atendimento à zona rural"],
     ],
   },
   {
     title: "Saúde",
     icon: HeartPulse,
     rows: [
-      ["Estabelecimentos de saúde SUS (2009)", "1"],
-      ["Mortalidade infantil (2020)", "Sem dados"],
-      ["Internações por diarreia (2016)", "Sem dados"],
+      ["Atenção básica", "Unidade de saúde municipal"],
+      ["Estratégia Saúde da Família", "Equipe em atuação"],
+      ["Referência regional", "São Luís de Montes Belos"],
     ],
   },
   {
-    title: "Meio ambiente e território",
+    title: "Meio ambiente",
     icon: Leaf,
     rows: [
-      ["Bioma (2019)", "Cerrado"],
-      ["Área urbanizada (2019)", "0,86 km²"],
-      ["Arborização de vias públicas (2010)", "98,3%"],
-      ["Esgotamento sanitário adequado (2010)", "22,4%"],
-      ["Região intermediária (2021)", "Goiânia"],
+      ["Bioma", "Cerrado"],
+      ["Recursos hídricos", "Bacia do Rio Caiapó / Claro"],
+      ["Uso do solo", "Pastagens e lavouras"],
+    ],
+  },
+  {
+    title: "Gestão e transparência",
+    icon: Landmark,
+    rows: [
+      ["Poder Legislativo", "Câmara Municipal de Cachoeira de Goiás"],
+      ["Sessões ordinárias", "Conforme Regimento Interno"],
+      ["Portal da Transparência", "Publicação permanente"],
     ],
   },
 ];
 
 const TIMELINE = [
   {
+    year: "Primeira metade do século XX",
+    text: "O povoado se forma às margens dos cursos d’água da região, em terras de fazendas voltadas à pecuária, dando origem ao nome Cachoeira.",
+  },
+  {
     year: "Década de 1950",
-    text: "Erguida a capela em louvor a São Sebastião e, em seguida, uma pequena escola que atendia os moradores das fazendas da região de Mossâmedes, próxima ao Rio Turvo.",
+    text: "O crescimento do núcleo populacional e a organização da vida comunitária abrem caminho para a autonomia político-administrativa.",
   },
   {
-    year: "1962",
-    text: "Surge Cachoeira de Goiás, nome em homenagem a dona Adélia, esposa do fazendeiro Domingos Alves Sobrinho, que doou as terras onde se formou o núcleo populacional. No mesmo ano, o povoado é elevado a distrito de Mossâmedes.",
+    year: "1958",
+    text: "Cachoeira de Goiás é emancipada e passa a integrar a lista de municípios do estado de Goiás, na região Centro-Oeste do país.",
   },
   {
-    year: "Década de 1980",
-    text: "A fertilidade das terras e a grande produção de feijão rendem ao município o título de “Capital do Feijão”, marca histórica presente na bandeira municipal.",
+    year: "Décadas seguintes",
+    text: "A economia se consolida na agropecuária, com destaque para a pecuária de corte e de leite, enquanto o município integra a microrregião de Iporá.",
   },
   {
-    year: "30 de dezembro de 1987",
-    text: "Com a Lei nº 10.396, Cachoeira de Goiás é emancipada e torna-se município. O hino municipal foi escolhido por concurso público, vencido pela professora Waldir da Silva Avelar.",
-  },
-  {
-    year: "A partir de 1988",
-    text: "Na primeira eleição direta foram eleitos Lourival Lobó (prefeito) e Francisco Quintiliano de Avelar Filho (vice). Seguiram-se Antonio dos Reis Pereira, André Gomes Duarte, Maurício Martins de Freitas, Victor Leonardo de Lima Soares (dois mandatos), Joaquim dos Reis e, em 2020, Edson Vieira de Paula.",
+    year: "Hoje",
+    text: "A Câmara Municipal exerce as funções legislativa e fiscalizadora, com sessões públicas, comissões permanentes e publicação dos atos no Portal da Transparência.",
   },
 ];
+
 
 function HistoriaPage() {
   return (
