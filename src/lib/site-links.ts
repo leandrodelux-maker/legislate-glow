@@ -34,6 +34,7 @@ export const ROUTES = {
   cartaServicos: "/atos-legislativos/carta-de-servicos",
   leiOrganica: "/atos-legislativos/lei-organica-municipal",
   regimentoInterno: "/atos-legislativos/regimento-interno",
+  portarias: "/atos-legislativos/portarias",
   transparencia: "/transparencia-portal",
   contato: "/contato",
   esic: "/e-sic",
@@ -66,6 +67,7 @@ export const ATOS_LEGISLATIVOS_LINKS: SiteLink[] = [
   { to: ROUTES.cartaServicos, label: "Carta de Serviços" },
   { to: ROUTES.leiOrganica, label: "Lei Orgânica Municipal" },
   { to: ROUTES.regimentoInterno, label: "Regimento Interno" },
+  { to: ROUTES.portarias, label: "Portarias" },
   { to: ROUTES.sessoes, label: "Sessões Plenárias" },
 ];
 
@@ -77,6 +79,7 @@ export const SITE_SECTIONS: SiteSection[] = [
       { to: ROUTES.cartaServicos, label: "Carta de Serviços", description: "Serviços prestados pela Câmara ao cidadão." },
       { to: ROUTES.leiOrganica, label: "Lei Orgânica Municipal", description: "Norma máxima de organização do município." },
       { to: ROUTES.regimentoInterno, label: "Regimento Interno", description: "Regras de funcionamento da Casa Legislativa." },
+      { to: ROUTES.portarias, label: "Portarias", description: "Atos administrativos da Presidência da Câmara." },
     ],
   },
   {

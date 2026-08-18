@@ -69,7 +69,7 @@ function AdminDocumentosOficiais() {
   return (
     <CrudPage<DocRow>
       title="Documentos Oficiais"
-      description="Carta de Serviços, Lei Orgânica Municipal e Regimento Interno exibidos em Atos Legislativos."
+      description="Carta de Serviços, Lei Orgânica, Regimento Interno e Portarias exibidos em Atos Legislativos."
       table="documentos_oficiais"
       columns={columns}
       fields={fields}
