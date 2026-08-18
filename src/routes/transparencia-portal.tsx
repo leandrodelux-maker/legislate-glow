@@ -220,21 +220,8 @@ function TransparenciaPortalPage() {
     return map;
   }, [links]);
 
-  const filteredLinks = useMemo(() => {
-    let list = links;
-    if (activeCat) {
-      const cat = CATEGORIES.find((c) => c.key === activeCat);
-      if (cat) list = list.filter(cat.match);
-      else list = linksByCat.get("outros") ?? [];
-    }
-    if (q.trim()) {
-      const s = q.toLowerCase();
-      list = list.filter(
-        (l) => l.title.toLowerCase().includes(s) || l.description.toLowerCase().includes(s),
-      );
-    }
-    return list;
-  }, [links, activeCat, q, linksByCat]);
+
+
 
   const linkHref = (l: TransparencyLink) =>
     l.external_url?.trim() ? l.external_url.trim() : portalUrl ? getTransparencyUrl(portalUrl, l.path) : "#";
