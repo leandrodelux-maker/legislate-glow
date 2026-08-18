@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   ListOrdered,
   Gavel,
@@ -9,9 +10,12 @@ import {
   Info,
   ArrowRight,
   CalendarDays,
+  Loader2,
+  List,
 } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { ROUTES } from "@/lib/site-links";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/a-camara/roteiro-das-sessoes")({
   head: () => ({
@@ -49,45 +53,24 @@ const TIPOS = [
   },
 ];
 
-const ETAPAS = [
-  {
-    n: "1º",
-    icon: Gavel,
-    title: "Abertura dos trabalhos",
-    text: "Constatado o quórum regimental, o Presidente pronuncia: “Em nome de Deus declaro aberto os trabalhos da presente sessão”.",
-    note: "A Câmara somente se reúne com a presença de, no mínimo, 1/3 dos vereadores. Para deliberar sobre qualquer matéria, é exigida a presença da maioria absoluta dos membros.",
-  },
-  {
-    n: "2º",
-    icon: FileText,
-    title: "Leitura e votação da ata",
-    text: "É feita a leitura da ata da sessão anterior, submetida em seguida à votação do plenário.",
-  },
-  {
-    n: "3º",
-    icon: ListOrdered,
-    title: "Apresentação das proposituras",
-    text: "O 1º Secretário faz a leitura das proposituras apresentadas no dia — projetos, indicações, requerimentos e moções.",
-  },
-  {
-    n: "4º",
-    icon: CheckCircle2,
-    title: "Ordem do Dia",
-    text: "O Presidente declara aberta a Ordem do Dia, período destinado à apreciação das matérias constantes da pauta. Esgotada a pauta, anuncia a Ordem do Dia da sessão seguinte e concede as inscrições para a Tribuna Livre.",
-  },
-  {
-    n: "5º",
-    icon: Mic,
-    title: "Explicações pessoais",
-    text: "Com duração de 45 minutos, destinam-se ao pronunciamento dos vereadores inscritos até o final da Ordem do Dia — ou, alternativamente, por sorteio entre os presentes — por 7 minutos cada, facultado 1/3 a mais do tempo aos líderes.",
-  },
-  {
-    n: "6º",
-    icon: MessageSquare,
-    title: "Encerramento",
-    text: "Após as explicações pessoais, não havendo mais nada a tratar, o Presidente declara encerrados os trabalhos e convida os presentes para a próxima sessão ordinária.",
-  },
-];
+type RoteiroEtapa = {
+  id: string;
+  numero_etapa: string;
+  titulo: string;
+  descricao: string;
+  nota_quorum: string | null;
+  icone: string | null;
+};
+
+const ICON_MAP: Record<string, any> = {
+  Gavel,
+  FileText,
+  ListOrdered,
+  CheckCircle2,
+  Mic,
+  MessageSquare,
+  List,
+};
 
 function RoteiroPage() {
   return (
