@@ -146,7 +146,7 @@ function AdminTransparenciaAtiva() {
                   required
                   value={settings.portal_url}
                   onChange={(event) => setSettings({ ...settings, portal_url: event.target.value })}
-                  placeholder="https://camaraadelandia.megasofttransparencia.com.br/"
+                  placeholder="https://camaracachoeiradegoias.megasofttransparencia.com.br/"
                 />
               </div>
             </div>

@@ -3,7 +3,7 @@
 // atualize todas as páginas de Atos Legislativos de uma só vez.
 
 const WPFD_BASE =
-  "https://camaradeadelandia.go.gov.br/wp-admin/admin-ajax.php?juwpfisadmin=false&action=wpfd&task=file.download";
+  "https://camaracachoeiradegoias.go.gov.br/wp-admin/admin-ajax.php?juwpfisadmin=false&action=wpfd&task=file.download";
 
 /** URL de download direto do arquivo. */
 export function WPFD_DOWNLOAD(categoryId: number, fileId: number) {

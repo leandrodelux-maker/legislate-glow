@@ -11,13 +11,13 @@ import { useOfficialDocuments } from "@/lib/official-documents";
 export const Route = createFileRoute("/atos-legislativos/regimento-interno")({
   head: () => ({
     meta: [
-      { title: "Regimento Interno — Câmara Municipal de Adelândia" },
+      { title: "Regimento Interno — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content:
-          "Consulte e baixe o Regimento Interno da Câmara Municipal de Adelândia: funcionamento das sessões, comissões, tramitação e ordem dos trabalhos.",
+          "Consulte e baixe o Regimento Interno da Câmara Municipal de Cachoeira de Goiás: funcionamento das sessões, comissões, tramitação e ordem dos trabalhos.",
       },
-      { property: "og:title", content: "Regimento Interno — Câmara Municipal de Adelândia" },
+      { property: "og:title", content: "Regimento Interno — Câmara Municipal de Cachoeira de Goiás" },
       {
         property: "og:description",
         content: "Regras de funcionamento interno do Legislativo municipal.",

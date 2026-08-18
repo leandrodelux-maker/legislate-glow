@@ -18,17 +18,17 @@ import { ROUTES } from "@/lib/site-links";
 export const Route = createFileRoute("/a-camara/historia")({
   head: () => ({
     meta: [
-      { title: "História de Adelândia — Câmara Municipal" },
+      { title: "História de Cachoeira de Goiás — Câmara Municipal" },
       {
         name: "description",
         content:
-          "Conheça a história do município de Adelândia (GO): fundação em 1987, a Capital do Feijão, economia, população e indicadores oficiais.",
+          "Conheça a história do município de Cachoeira de Goiás (GO): fundação em 1987, a Capital do Feijão, economia, população e indicadores oficiais.",
       },
-      { property: "og:title", content: "História de Adelândia — Câmara Municipal" },
+      { property: "og:title", content: "História de Cachoeira de Goiás — Câmara Municipal" },
       {
         property: "og:description",
         content:
-          "Origem do município, emancipação em 1987, economia agropecuária e indicadores sociais de Adelândia (GO).",
+          "Origem do município, emancipação em 1987, economia agropecuária e indicadores sociais de Cachoeira de Goiás (GO).",
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -42,7 +42,7 @@ const FACTS = [
   { icon: Sprout, label: "Aniversário", value: "1º de junho" },
   { icon: Users, label: "População", value: "2.515 hab." },
   { icon: Ruler, label: "Área", value: "115,39 km²" },
-  { icon: MapPin, label: "Gentílico", value: "Adelandense" },
+  { icon: MapPin, label: "Gentílico", value: "Cachoeirense" },
   { icon: Landmark, label: "Microrregião", value: "Anicuns" },
 ];
 
@@ -117,7 +117,7 @@ const TIMELINE = [
   },
   {
     year: "1962",
-    text: "Surge Adelândia, nome em homenagem a dona Adélia, esposa do fazendeiro Domingos Alves Sobrinho, que doou as terras onde se formou o núcleo populacional. No mesmo ano, o povoado é elevado a distrito de Mossâmedes.",
+    text: "Surge Cachoeira de Goiás, nome em homenagem a dona Adélia, esposa do fazendeiro Domingos Alves Sobrinho, que doou as terras onde se formou o núcleo populacional. No mesmo ano, o povoado é elevado a distrito de Mossâmedes.",
   },
   {
     year: "Década de 1980",
@@ -125,7 +125,7 @@ const TIMELINE = [
   },
   {
     year: "30 de dezembro de 1987",
-    text: "Com a Lei nº 10.396, Adelândia é emancipada e torna-se município. O hino municipal foi escolhido por concurso público, vencido pela professora Waldir da Silva Avelar.",
+    text: "Com a Lei nº 10.396, Cachoeira de Goiás é emancipada e torna-se município. O hino municipal foi escolhido por concurso público, vencido pela professora Waldir da Silva Avelar.",
   },
   {
     year: "A partir de 1988",
@@ -148,7 +148,7 @@ function HistoriaPage() {
           </span>
           <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">História</h1>
           <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Da capela de São Sebastião à emancipação em 1987: conheça a trajetória de Adelândia, a
+            Da capela de São Sebastião à emancipação em 1987: conheça a trajetória de Cachoeira de Goiás, a
             Capital do Feijão, e os números que retratam o município hoje.
           </p>
 
@@ -176,7 +176,7 @@ function HistoriaPage() {
             <SectionHeading eyebrow="Nossa história" title="A cidade e sua origem" />
             <div className="mt-6 space-y-4 text-[15px] leading-8 text-muted-foreground">
               <p>
-                Adelândia é um município brasileiro do interior do estado de Goiás, na Região
+                Cachoeira de Goiás é um município brasileiro do interior do estado de Goiás, na Região
                 Centro-Oeste do país, integrante da microrregião de Anicuns. A população, formada
                 originalmente por trabalhadores rurais, mantém forte vínculo com o campo.
               </p>
@@ -186,7 +186,7 @@ function HistoriaPage() {
                 com quatro empresas do gênero. Na área de laticínios, o município conta com uma das
                 indústrias mais prósperas da região. Há também potencial expressivo em confecções e
                 facções, além da usina de álcool e açúcar instalada em Anicuns, a 25 km, que gera
-                empregos para a população adelandense.
+                empregos para a população cachoeirense.
               </p>
               <p>
                 A grande concentração de pequenas propriedades rurais fixa a economia na região e
@@ -211,7 +211,7 @@ function HistoriaPage() {
       <section className="border-y border-border bg-secondary/40">
         <div className="container-page py-10 md:py-14">
           <SectionHeading
-            eyebrow="Adelândia em números"
+            eyebrow="Cachoeira de Goiás em números"
             title="Indicadores oficiais do município"
             description="Dados de população, economia, educação, saúde e território reunidos a partir das bases públicas do IBGE."
           />

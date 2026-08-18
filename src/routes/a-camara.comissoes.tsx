@@ -11,13 +11,13 @@ import type { LucideIcon } from "lucide-react";
 export const Route = createFileRoute("/a-camara/comissoes")({
   head: () => ({
     meta: [
-      { title: "Comissões Permanentes — Câmara Municipal de Adelândia" },
+      { title: "Comissões Permanentes — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content:
           "Composição das comissões permanentes da Câmara Municipal: Constituição e Justiça; Finanças e Orçamento; Educação, Saúde e Meio Ambiente.",
       },
-      { property: "og:title", content: "Comissões Permanentes — Câmara Municipal de Adelândia" },
+      { property: "og:title", content: "Comissões Permanentes — Câmara Municipal de Cachoeira de Goiás" },
       {
         property: "og:description",
         content: "Presidentes, vice-presidentes e relatores das comissões permanentes do Legislativo.",

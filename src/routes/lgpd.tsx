@@ -118,8 +118,8 @@ function LgpdPage() {
             </div>
             <div className="rounded-lg border border-border bg-secondary/40 p-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">E-mail</div>
-              <a href="mailto:contato@camaradeadelandia.go.gov.br" className="mt-0.5 block font-semibold text-primary hover:underline">
-                contato@camaradeadelandia.go.gov.br
+              <a href="mailto:contato@camaracachoeiradegoias.go.gov.br" className="mt-0.5 block font-semibold text-primary hover:underline">
+                contato@camaracachoeiradegoias.go.gov.br
               </a>
             </div>
           </div>
@@ -139,7 +139,7 @@ function LgpdPage() {
             </li>
             <li className="inline-flex items-center gap-1.5">
               <Mail className="h-3.5 w-3.5 text-primary" />
-              <a href="mailto:contato@camaradeadelandia.go.gov.br" className="text-primary hover:underline">contato@camaradeadelandia.go.gov.br</a>
+              <a href="mailto:contato@camaracachoeiradegoias.go.gov.br" className="text-primary hover:underline">contato@camaracachoeiradegoias.go.gov.br</a>
             </li>
           </ul>
         </div>

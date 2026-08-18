@@ -1,10 +1,10 @@
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export const CONTACT_FALLBACK = {
-  nome: "Câmara Municipal de Adelândia",
-  endereco: "Avenida Anicuns, 140, Setor Central, Adelândia-GO",
+  nome: "Câmara Municipal de Cachoeira de Goiás",
+  endereco: "Avenida Anicuns, 140, Setor Central, Cachoeira de Goiás-GO",
   telefone: "(64) 99233-6171",
-  email: "contato@camaradeadelandia.go.gov.br",
+  email: "contato@camaracachoeiradegoias.go.gov.br",
   horario: "Segunda a Sexta 08h às 11h e 13h às 17h",
   whatsapp: "(64) 99233-6171",
 };

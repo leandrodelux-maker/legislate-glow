@@ -11,13 +11,13 @@ import { useOfficialDocuments } from "@/lib/official-documents";
 export const Route = createFileRoute("/atos-legislativos/carta-de-servicos")({
   head: () => ({
     meta: [
-      { title: "Carta de Serviços — Câmara Municipal de Adelândia" },
+      { title: "Carta de Serviços — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content:
-          "Consulte e baixe a Carta de Serviços ao Usuário da Câmara Municipal de Adelândia, com os serviços oferecidos, requisitos e prazos de atendimento.",
+          "Consulte e baixe a Carta de Serviços ao Usuário da Câmara Municipal de Cachoeira de Goiás, com os serviços oferecidos, requisitos e prazos de atendimento.",
       },
-      { property: "og:title", content: "Carta de Serviços — Câmara Municipal de Adelândia" },
+      { property: "og:title", content: "Carta de Serviços — Câmara Municipal de Cachoeira de Goiás" },
       {
         property: "og:description",
         content: "Documento oficial com os serviços prestados pelo Legislativo municipal.",

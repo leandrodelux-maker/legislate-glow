@@ -9,13 +9,13 @@ import { ROUTES } from "@/lib/site-links";
 export const Route = createFileRoute("/a-camara/mesa-diretora")({
   head: () => ({
     meta: [
-      { title: "Mesa Diretora — Câmara Municipal de Adelândia" },
+      { title: "Mesa Diretora — Câmara Municipal de Cachoeira de Goiás" },
       {
         name: "description",
         content:
           "Composição da Mesa Diretora da Câmara Municipal: presidente, vice-presidente e secretários eleitos para o biênio em exercício.",
       },
-      { property: "og:title", content: "Mesa Diretora — Câmara Municipal de Adelândia" },
+      { property: "og:title", content: "Mesa Diretora — Câmara Municipal de Cachoeira de Goiás" },
       {
         property: "og:description",
         content: "Conheça os parlamentares que compõem a Mesa Diretora do Legislativo municipal.",
