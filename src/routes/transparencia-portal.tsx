@@ -334,8 +334,8 @@ function TransparenciaPortalPage() {
                 <CardGrid links={linksByCat.get("outros") ?? []} hrefFor={linkHref} />
               </div>
             )}
-          </div>
-        )}
+        </div>
+
 
         {/* Footer info block */}
         <div className="mt-16 grid gap-5 md:grid-cols-3">
