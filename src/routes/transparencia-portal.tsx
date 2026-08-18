@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { getTransparencyIcon } from "@/lib/transparency-icons";
 import { getTransparencyUrl } from "@/lib/transparency-url";
+import { OfficialDatasets } from "@/components/transparencia/official-datasets";
 
 export const Route = createFileRoute("/transparencia-portal")({
   head: () => ({
@@ -351,6 +352,9 @@ function TransparenciaPortalPage() {
           )}
         </div>
       </section>
+
+      {/* DADOS OFICIAIS (Megasoft) */}
+      <OfficialDatasets baseUrl={portalUrl || undefined} />
 
       {/* CONTENT */}
       <section className="container-page py-12 md:py-16">
