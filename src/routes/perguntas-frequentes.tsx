@@ -87,7 +87,7 @@ function FaqPage() {
             />
           </div>
           <div className="flex flex-wrap justify-center gap-2">
-            {CATS.map((c) => (
+            {cats.map((c) => (
               <button
                 key={c}
                 onClick={() => setCat(c)}
@@ -106,7 +106,11 @@ function FaqPage() {
 
       {/* LISTA */}
       <section className="container-page py-10 md:py-14">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
             Nenhuma pergunta encontrada.
           </div>
@@ -114,20 +118,20 @@ function FaqPage() {
           <Accordion type="single" collapsible className="space-y-3">
             {filtered.map((f, i) => (
               <AccordionItem
-                key={i}
-                value={`item-${i}`}
+                key={f.id}
+                value={f.id}
                 className="rounded-xl border border-border bg-card px-4"
               >
                 <AccordionTrigger className="text-left text-base font-semibold">
                   <div className="flex items-start gap-3">
                     <span className="mt-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-                      {f.cat}
+                      {f.categoria}
                     </span>
-                    <span>{f.q}</span>
+                    <span>{f.pergunta}</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground leading-7">
-                  {f.a}
+                <AccordionContent className="text-sm text-muted-foreground leading-7 whitespace-pre-wrap">
+                  {f.resposta}
                 </AccordionContent>
               </AccordionItem>
             ))}
