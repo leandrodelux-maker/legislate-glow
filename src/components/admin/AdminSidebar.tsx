@@ -34,6 +34,7 @@ import {
   Images,
   GalleryHorizontalEnd,
   Video,
+  ListOrdered,
 } from "lucide-react";
 import {
   Sidebar,
