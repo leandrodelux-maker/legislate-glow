@@ -10,10 +10,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Upload, Trash2, Crop as CropIcon } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Loader2, Upload, Trash2, Crop as CropIcon, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { VereadorAvatar } from "@/components/vereador-avatar";
+import { getVereadorPublicUrl } from "@/lib/vereador-image";
+
+// Lazy load: background-removal pulls WASM on demand only when the user enables it.
+const removeBackground = async (src: string | Blob | File) => {
+  const mod = await import("@imgly/background-removal");
+  const fn = (mod as any).default || (mod as any).removeBackground;
+  return await fn(src, { output: { format: "image/jpeg", quality: 0.9 } });
+};
 
 type Area = { x: number; y: number; width: number; height: number };
 
@@ -49,10 +59,8 @@ async function uploadToVereadores(blob: Blob, filename: string): Promise<string 
     toast.error(error.message);
     return null;
   }
-  const { data } = await supabase.storage
-    .from("vereadores")
-    .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-  return data?.signedUrl ?? null;
+  // Armazena apenas o caminho; a exibição usa getPublicUrl() para URL pública.
+  return path;
 }
 
 export function VereadorPhotoUploader({
@@ -73,6 +81,9 @@ export function VereadorPhotoUploader({
   const [areaPx, setAreaPx] = useState<Area | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const [removeBg, setRemoveBg] = useState(false);
+  const [processingBg, setProcessingBg] = useState(false);
+
   const onPick = async (file: File) => {
     if (!file) return;
     setRawFile(file);
@@ -80,11 +91,33 @@ export function VereadorPhotoUploader({
     setOpen(true);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRemoveBg(false);
+    setAreaPx(null);
   };
 
   const onCropComplete = useCallback((_: Area, areaPx: Area) => {
     setAreaPx(areaPx);
   }, []);
+
+  const toggleRemoveBg = async (enabled: boolean) => {
+    if (!rawFile) return;
+    setRemoveBg(enabled);
+    if (enabled) {
+      setProcessingBg(true);
+      try {
+        const blob = await removeBackground(rawFile);
+        setPreviewUrl(URL.createObjectURL(blob));
+      } catch (e: any) {
+        console.error("[VereadorPhotoUploader] background removal error", e);
+        toast.error("Falha ao remover fundo: " + (e?.message || "erro desconhecido"));
+        setRemoveBg(false);
+      } finally {
+        setProcessingBg(false);
+      }
+    } else {
+      setPreviewUrl(URL.createObjectURL(rawFile));
+    }
+  };
 
   const confirm = async () => {
     if (!rawFile || !areaPx) return;
@@ -169,22 +202,41 @@ export function VereadorPhotoUploader({
                 onCropComplete={onCropComplete}
               />
             )}
+            {processingBg && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10">
+                <Loader2 className="w-8 h-8 text-white animate-spin" />
+                <span className="ml-2 text-white text-sm">Removendo fundo...</span>
+              </div>
+            )}
           </div>
-          <div className="space-y-2">
-            <div className="text-xs text-slate-500">Zoom</div>
-            <Slider
-              value={[zoom]}
-              min={1}
-              max={3}
-              step={0.05}
-              onValueChange={(v) => setZoom(v[0])}
-            />
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-2 flex-1">
+              <div className="text-xs text-slate-500">Zoom</div>
+              <Slider
+                value={[zoom]}
+                min={1}
+                max={3}
+                step={0.05}
+                onValueChange={(v) => setZoom(v[0])}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                id="remove-bg"
+                checked={removeBg}
+                onCheckedChange={toggleRemoveBg}
+                disabled={processingBg}
+              />
+              <Label htmlFor="remove-bg" className="text-xs flex items-center gap-1">
+                <Wand2 className="w-3.5 h-3.5" /> Remover fundo
+              </Label>
+            </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setOpen(false)} disabled={busy}>
+            <Button variant="ghost" onClick={() => setOpen(false)} disabled={busy || processingBg}>
               Cancelar
             </Button>
-            <Button onClick={confirm} disabled={busy}>
+            <Button onClick={confirm} disabled={busy || processingBg}>
               {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Salvar foto
             </Button>

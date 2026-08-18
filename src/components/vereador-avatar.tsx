@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { User, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSupabaseAuth } from "@/hooks/use-supabase-auth";
+import { getVereadorPublicUrl } from "@/lib/vereador-image";
 
 const PLACEHOLDER = "/placeholder-vereador.webp";
 
@@ -55,16 +56,17 @@ export function VereadorAvatar({
   fill = false,
 }: Props) {
   const { isAdmin } = useSupabaseAuth();
+  const publicUrl = useMemo(() => getVereadorPublicUrl(foto), [foto]);
   const [state, setState] = useState<"loading" | "ok" | "placeholder" | "initials">(
-    foto ? "loading" : "initials",
+    publicUrl ? "loading" : "initials",
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Reset quando a foto muda
   useEffect(() => {
-    setState(foto ? "loading" : "initials");
+    setState(publicUrl ? "loading" : "initials");
     setErrorMsg(null);
-  }, [foto]);
+  }, [publicUrl]);
 
   const ini = initials(nome || "?");
   const radius = {
@@ -100,16 +102,16 @@ export function VereadorAvatar({
       aria-label={nome}
       title={nome}
     >
-      {(state === "loading" || state === "ok") && foto && (
+      {(state === "loading" || state === "ok") && publicUrl && (
         <img
-          src={foto}
+          src={publicUrl}
           alt={nome}
           loading="lazy"
           className={cn("w-full h-full", fit === "contain" ? "object-contain" : "object-cover")}
           style={{ objectPosition: fit === "contain" ? "center top" : objectPosition }}
           onLoad={() => setState("ok")}
           onError={(e) => {
-            reportError("remote", foto);
+            reportError("remote", publicUrl);
             // troca para o placeholder local conforme solicitado
             e.currentTarget.onerror = () => {
               reportError("placeholder", PLACEHOLDER);

@@ -47,7 +47,18 @@ function AdminMesaDiretora() {
       required: true,
       options: vereadores.map((v) => ({ label: v.nome, value: v.id })),
     },
-    { name: "cargo", label: "Cargo na Mesa", required: true, placeholder: "Ex: Presidente, 1º Secretário..." },
+    {
+      name: "cargo",
+      label: "Cargo na Mesa",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Presidente", value: "Presidente" },
+        { label: "Vice-Presidente", value: "Vice-Presidente" },
+        { label: "1º Secretário", value: "1º Secretário" },
+        { label: "2º Secretário", value: "2º Secretário" },
+      ],
+    },
     { name: "ordem", label: "Ordem de exibição", type: "number" },
     { name: "ativo", label: "Ativo", type: "checkbox" },
   ];

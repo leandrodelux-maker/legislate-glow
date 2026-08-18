@@ -9,6 +9,7 @@ import {
   FileText,
   Settings,
   LogOut,
+  Trophy,
   Globe,
   BarChart3,
   Palette,
@@ -74,6 +75,7 @@ const groups: Group[] = [
     label: "Legislativo",
     items: [
       { label: "Vereadores", path: "/admin/vereadores", icon: Users },
+      { label: "Ranking", path: "/admin/vereadores/ranking", icon: Trophy },
       { label: "Mandatos", path: "/admin/vereadores/mandatos", icon: ScrollText },
       { label: "Galeria", path: "/admin/vereadores/galeria", icon: ImageIcon },
       { label: "Mesa Diretora", path: "/admin/mesa-diretora", icon: Crown },
