@@ -298,8 +298,8 @@ const contato = useContactInfo();
               <CardContent className="p-6 space-y-4">
                 <h3 className="font-display font-bold text-xl mb-2">Contato</h3>
                 <div className="space-y-4">
-                  <ContactRow icon={<Mail className="w-5 h-5 text-primary" />} label="E-mail institucional" value={contato.email} />
-                  <ContactRow icon={<Phone className="w-5 h-5 text-primary" />} label="Telefone institucional" value={contato.telefone} />
+                  <ContactRow icon={<Mail className="w-5 h-5 text-primary" />} label="E-mail" value={vereador.email || contato.email} />
+                  <ContactRow icon={<Phone className="w-5 h-5 text-primary" />} label="Telefone" value={vereador.telefone || contato.telefone} />
                   <ContactRow icon={<MapPin className="w-5 h-5 text-primary" />} label="Gabinete" value={vereador.gabinete || "Câmara Municipal"} />
                 </div>
                 <p className="text-[11px] text-slate-400">
