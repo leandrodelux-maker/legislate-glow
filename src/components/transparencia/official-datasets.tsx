@@ -1,4 +1,16 @@
-import { ArrowUpRight, Gavel, HandCoins, Receipt, TrendingDown, type LucideIcon } from "lucide-react";
+import {
+  ArrowUpRight,
+  BookOpen,
+  Gavel,
+  HandCoins,
+  MessagesSquare,
+  Receipt,
+  Scale,
+  Target,
+  TrendingDown,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 import { getTransparencyUrl } from "@/lib/transparency-url";
 
 export const MEGASOFT_BASE_URL =
