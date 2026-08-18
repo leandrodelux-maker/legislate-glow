@@ -34,6 +34,7 @@ export const ROUTES = {
   cartaServicos: "/atos-legislativos/carta-de-servicos",
   leiOrganica: "/atos-legislativos/lei-organica-municipal",
   regimentoInterno: "/atos-legislativos/regimento-interno",
+  portarias: "/atos-legislativos/portarias",
   transparencia: "/transparencia-portal",
   contato: "/contato",
   esic: "/e-sic",
