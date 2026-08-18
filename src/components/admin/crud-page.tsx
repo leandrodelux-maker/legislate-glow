@@ -297,6 +297,8 @@ export function CrudPage<T extends { id: string }>({
       if (v === "" || v === undefined) v = null;
       payload[f.name] = v;
     });
+    if (filter) Object.assign(payload, filter);
+
 
     const operation = editing ? "UPDATE" : "INSERT";
     const startedAt = performance.now();
