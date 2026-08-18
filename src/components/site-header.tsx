@@ -1,3 +1,4 @@
+import logoAsset from "@/assets/logo-camara.png.asset.json";
 import { Link } from "@tanstack/react-router";
 import { CONTACT_FALLBACK } from "@/hooks/use-contact-info";
 
@@ -104,12 +105,12 @@ export function SiteHeader() {
       <div className="bg-white border-b border-slate-100">
         <div className="container-page py-5 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0">
-            {settings?.header_logo_url ? (
+            {settings?.header_logo_url || logoAsset.url ? (
               <img
-                src={settings.header_logo_url}
+                src={settings?.header_logo_url || logoAsset.url}
                 alt="Logo Câmara Municipal"
                 decoding="async"
-                style={{ height: `${(settings.header_logo_height || 80) * 1.15}px` }}
+                style={{ height: `${(settings?.header_logo_height || 80) * 1.15}px` }}
                 className="w-auto object-contain"
               />
             ) : (

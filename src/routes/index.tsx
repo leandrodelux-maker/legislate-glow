@@ -25,7 +25,8 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import heroImg from "@/assets/hero-camara.jpg";
+import heroAsset from "@/assets/hero-cachoeira.jpg.asset.json";
+const heroImg = heroAsset.url;
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
