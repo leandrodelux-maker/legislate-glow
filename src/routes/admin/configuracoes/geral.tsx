@@ -34,6 +34,7 @@ function GeralPage() {
       redes_sociais: settings.redes_sociais,
       footer_text: settings.footer_text,
       plenario_image_url: settings.plenario_image_url,
+      dpo_name: settings.dpo_name,
     });
   };
 
@@ -67,6 +68,7 @@ function GeralPage() {
           <div><Label>E-mail</Label><Input type="email" value={settings.contact_email ?? ""} onChange={(e) => update({ contact_email: e.target.value })} /></div>
           <div><Label>Horário de Funcionamento</Label><Input value={settings.contact_hours ?? ""} onChange={(e) => update({ contact_hours: e.target.value })} /></div>
           <div className="md:col-span-2"><Label>Endereço</Label><Textarea rows={2} value={settings.endereco ?? ""} onChange={(e) => update({ endereco: e.target.value })} /></div>
+          <div className="md:col-span-2"><Label>Encarregado de Dados (DPO)</Label><Input value={settings.dpo_name ?? ""} onChange={(e) => update({ dpo_name: e.target.value })} placeholder="Nome do DPO" /></div>
         </div>
       </section>
 
