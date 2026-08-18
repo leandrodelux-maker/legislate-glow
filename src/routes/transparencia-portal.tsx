@@ -305,15 +305,8 @@ function TransparenciaPortalPage() {
           </Alert>
         )}
 
-        {q.trim() || activeCat ? (
-          <div>
-            <h2 className="font-display text-2xl font-bold text-foreground">
-              {filteredLinks.length} resultado{filteredLinks.length !== 1 ? "s" : ""}
-            </h2>
-            <CardGrid links={filteredLinks} hrefFor={linkHref} />
-          </div>
-        ) : (
-          <div className="space-y-14">
+        <div className="space-y-14">
+
             {GROUPS.map((group) => {
               const groupLinks = group.keys.flatMap((k) => linksByCat.get(k) ?? []);
               if (!groupLinks.length) return null;
