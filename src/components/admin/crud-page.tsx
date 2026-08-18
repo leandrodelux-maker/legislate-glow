@@ -55,6 +55,8 @@ type Props<T extends { id: string }> = {
   tabs?: CrudTab[];
   orderBy?: { column: string; ascending?: boolean };
   defaultValues?: Partial<T>;
+  /** Filtro fixo (ex: { categoria: "portarias" }) aplicado na listagem e ao salvar. */
+  filter?: Record<string, string | number | boolean>;
 };
 
 type FieldInputProps = {
