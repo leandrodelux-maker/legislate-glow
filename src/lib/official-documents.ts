@@ -8,6 +8,7 @@ export const DOCUMENT_CATEGORIES = [
   { value: "carta-de-servicos", label: "Carta de Serviços" },
   { value: "lei-organica-municipal", label: "Lei Orgânica Municipal" },
   { value: "regimento-interno", label: "Regimento Interno" },
+  { value: "portarias", label: "Portarias" },
 ] as const;
 
 export type OfficialDocumentRow = {
