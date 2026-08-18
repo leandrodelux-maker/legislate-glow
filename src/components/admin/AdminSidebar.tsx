@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   FileText,
   Settings,
+  LogOut,
   Trophy,
   Globe,
   BarChart3,
