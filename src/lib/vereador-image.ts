@@ -36,10 +36,14 @@ export function getVereadorPublicUrl(urlOrPath: string | null | undefined): stri
   const value = (urlOrPath || "").trim();
   if (!value) return null;
 
-  // URL externa (ex.: foto hospedada no site oficial) — usa como está
+  // Caminho local servido pelo próprio site (ex.: /vereadores/nome.webp)
+  if (value.startsWith("/")) return value;
+
+  // URL externa (ex.: foto hospedada em outro domínio) — usa como está
   if (/^https?:\/\//i.test(value) && !value.includes("/storage/v1/object/")) {
     return value;
   }
+
 
   const path = extractVereadorPath(value);
   if (!path) return null;
