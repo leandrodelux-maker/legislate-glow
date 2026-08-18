@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   BookOpen,
@@ -6,9 +7,11 @@ import {
   MessagesSquare,
   Receipt,
   Scale,
+  Search,
   Target,
   TrendingDown,
   Users,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { getTransparencyUrl } from "@/lib/transparency-url";
