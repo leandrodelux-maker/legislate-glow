@@ -375,6 +375,39 @@ export type Database = {
         }
         Relationships: []
       }
+      faq: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          created_at: string | null
+          id: string
+          ordem: number
+          pergunta: string
+          resposta: string
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          categoria?: string
+          created_at?: string | null
+          id?: string
+          ordem?: number
+          pergunta: string
+          resposta: string
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          created_at?: string | null
+          id?: string
+          ordem?: number
+          pergunta?: string
+          resposta?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       galeria_albuns: {
         Row: {
           capa_url: string | null
@@ -842,6 +875,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      roteiro_sessoes: {
+        Row: {
+          ativo: boolean
+          created_at: string | null
+          descricao: string
+          icone: string | null
+          id: string
+          nota_quorum: string | null
+          numero_etapa: string
+          ordem: number
+          titulo: string
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string | null
+          descricao: string
+          icone?: string | null
+          id?: string
+          nota_quorum?: string | null
+          numero_etapa: string
+          ordem?: number
+          titulo: string
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string | null
+          descricao?: string
+          icone?: string | null
+          id?: string
+          nota_quorum?: string | null
+          numero_etapa?: string
+          ordem?: number
+          titulo?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       sessoes: {
         Row: {

@@ -34,6 +34,7 @@ import {
   Images,
   GalleryHorizontalEnd,
   Video,
+  ListOrdered,
 } from "lucide-react";
 import {
   Sidebar,
@@ -92,6 +93,8 @@ const groups: Group[] = [
     label: "Comunicação",
     items: [
       { label: "Notícias", path: "/admin/noticias", icon: Newspaper },
+      { label: "FAQ", path: "/admin/cms/faq", icon: MessageSquare },
+      { label: "Roteiro de Sessões", path: "/admin/cms/roteiro-sessoes", icon: ListOrdered },
       { label: "Categorias", path: "/admin/cms/categorias", icon: FileEdit },
       { label: "Páginas", path: "/admin/cms/paginas", icon: FileText },
       { label: "Banners", path: "/admin/cms/banners", icon: GalleryHorizontalEnd },

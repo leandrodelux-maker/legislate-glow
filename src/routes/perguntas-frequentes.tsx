@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { HelpCircle, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { HelpCircle, Search, Loader2 } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/perguntas-frequentes")({
   head: () => ({
@@ -24,80 +25,36 @@ export const Route = createFileRoute("/perguntas-frequentes")({
   component: FaqPage,
 });
 
-type Faq = { q: string; a: string; cat: string };
-
-const FAQS: Faq[] = [
-  {
-    cat: "Institucional",
-    q: "O que faz a Câmara Municipal?",
-    a: "A Câmara Municipal é o Poder Legislativo do município. Cabe a ela elaborar leis, fiscalizar os atos do Poder Executivo, votar o orçamento e representar a população.",
-  },
-  {
-    cat: "Institucional",
-    q: "Quantos vereadores compõem a Câmara?",
-    a: "O número de vereadores é definido pela Constituição Federal com base na população do município. Consulte a página de Vereadores para a composição atual.",
-  },
-  {
-    cat: "Sessões",
-    q: "Como acompanhar as sessões da Câmara?",
-    a: "As sessões são abertas ao público e transmitidas ao vivo pelo portal. Acesse a página de Sessões para consultar a pauta e o calendário.",
-  },
-  {
-    cat: "Sessões",
-    q: "Posso participar de uma sessão presencialmente?",
-    a: "Sim. As sessões plenárias são públicas. Consulte a agenda e compareça ao plenário no dia e horário divulgados.",
-  },
-  {
-    cat: "Transparência",
-    q: "Onde encontro os dados de receitas, despesas e contratos?",
-    a: "Todos os dados obrigatórios estão disponíveis no Portal da Transparência, com informações sobre orçamento, licitações, contratos, folha de pagamento e prestação de contas.",
-  },
-  {
-    cat: "Transparência",
-    q: "Com que frequência os dados são atualizados?",
-    a: "Os dados financeiros são atualizados conforme a legislação vigente (LC nº 131/2009 e Lei nº 12.527/2011), normalmente em periodicidade diária ou mensal, dependendo da informação.",
-  },
-  {
-    cat: "e-SIC / LAI",
-    q: "Como faço um pedido de acesso à informação?",
-    a: "Pelo e-SIC, disponível no portal, preenchendo o formulário com seus dados e a descrição do pedido. Um número de protocolo será gerado para acompanhamento.",
-  },
-  {
-    cat: "e-SIC / LAI",
-    q: "Qual o prazo para receber a resposta?",
-    a: "O prazo legal é de até 20 dias corridos, prorrogáveis por mais 10 mediante justificativa, conforme a Lei nº 12.527/2011.",
-  },
-  {
-    cat: "LGPD",
-    q: "Como a Câmara trata meus dados pessoais?",
-    a: "Todos os dados são tratados conforme a Lei nº 13.709/2018 (LGPD), com finalidade específica, transparência e medidas de segurança. Consulte a página de LGPD para detalhes.",
-  },
-  {
-    cat: "LGPD",
-    q: "Quem é o Encarregado de Dados (DPO)?",
-    a: "O Encarregado de Dados é indicado por portaria e disponível pelo e-mail contato@camaracachoeiradegoias.go.gov.br para atender solicitações relacionadas à proteção de dados.",
-  },
-  {
-    cat: "Ouvidoria",
-    q: "Qual a diferença entre Ouvidoria e e-SIC?",
-    a: "A Ouvidoria recebe reclamações, sugestões, elogios e denúncias sobre os serviços da Câmara. O e-SIC é destinado especificamente a pedidos de acesso à informação previstos na LAI.",
-  },
-];
-
-const CATS = ["Todas", ...Array.from(new Set(FAQS.map((f) => f.cat)))];
+type Faq = { id: string; pergunta: string; resposta: string; categoria: string };
 
 function FaqPage() {
+  const [faqs, setFaqs] = useState<Faq[]>([]);
+  const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("Todas");
 
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("faq")
+        .select("*")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true });
+      if (!error && data) setFaqs(data as Faq[]);
+      setLoading(false);
+    })();
+  }, []);
+
+  const cats = useMemo(() => ["Todas", ...Array.from(new Set(faqs.map((f) => f.categoria)))], [faqs]);
+
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    return FAQS.filter(
+    return faqs.filter(
       (f) =>
-        (cat === "Todas" || f.cat === cat) &&
-        (!s || f.q.toLowerCase().includes(s) || f.a.toLowerCase().includes(s)),
+        (cat === "Todas" || f.categoria === cat) &&
+        (!s || f.pergunta.toLowerCase().includes(s) || f.resposta.toLowerCase().includes(s)),
     );
-  }, [q, cat]);
+  }, [faqs, q, cat]);
 
   return (
     <main className="min-h-screen bg-background">
@@ -130,7 +87,7 @@ function FaqPage() {
             />
           </div>
           <div className="flex flex-wrap justify-center gap-2">
-            {CATS.map((c) => (
+            {cats.map((c) => (
               <button
                 key={c}
                 onClick={() => setCat(c)}
@@ -149,7 +106,11 @@ function FaqPage() {
 
       {/* LISTA */}
       <section className="container-page py-10 md:py-14">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
             Nenhuma pergunta encontrada.
           </div>
@@ -157,20 +118,20 @@ function FaqPage() {
           <Accordion type="single" collapsible className="space-y-3">
             {filtered.map((f, i) => (
               <AccordionItem
-                key={i}
-                value={`item-${i}`}
+                key={f.id}
+                value={f.id}
                 className="rounded-xl border border-border bg-card px-4"
               >
                 <AccordionTrigger className="text-left text-base font-semibold">
                   <div className="flex items-start gap-3">
                     <span className="mt-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-                      {f.cat}
+                      {f.categoria}
                     </span>
-                    <span>{f.q}</span>
+                    <span>{f.pergunta}</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground leading-7">
-                  {f.a}
+                <AccordionContent className="text-sm text-muted-foreground leading-7 whitespace-pre-wrap">
+                  {f.resposta}
                 </AccordionContent>
               </AccordionItem>
             ))}

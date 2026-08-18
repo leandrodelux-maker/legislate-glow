@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, Lock, UserCheck, FileText, Mail, Scale, Database, Eye } from "lucide-react";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export const Route = createFileRoute("/lgpd")({
   head: () => ({
@@ -37,6 +38,10 @@ const DIREITOS = [
 ];
 
 function LgpdPage() {
+  const { settings } = useSiteSettings();
+  const dpoName = settings?.dpo_name || "A definir por portaria";
+  const contactEmail = settings?.email || "contato@camaracachoeiradegoias.go.gov.br";
+
   return (
     <main className="min-h-screen bg-background">
       {/* HERO */}
@@ -114,12 +119,12 @@ function LgpdPage() {
           <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
             <div className="rounded-lg border border-border bg-secondary/40 p-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">Nome</div>
-              <div className="mt-0.5 font-semibold">A definir por portaria</div>
+              <div className="mt-0.5 font-semibold">{dpoName}</div>
             </div>
             <div className="rounded-lg border border-border bg-secondary/40 p-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">E-mail</div>
-              <a href="mailto:contato@camaracachoeiradegoias.go.gov.br" className="mt-0.5 block font-semibold text-primary hover:underline">
-                contato@camaracachoeiradegoias.go.gov.br
+              <a href={`mailto:${contactEmail}`} className="mt-0.5 block font-semibold text-primary hover:underline">
+                {contactEmail}
               </a>
             </div>
           </div>
@@ -139,7 +144,7 @@ function LgpdPage() {
             </li>
             <li className="inline-flex items-center gap-1.5">
               <Mail className="h-3.5 w-3.5 text-primary" />
-              <a href="mailto:contato@camaracachoeiradegoias.go.gov.br" className="text-primary hover:underline">contato@camaracachoeiradegoias.go.gov.br</a>
+              <a href={`mailto:${contactEmail}`} className="text-primary hover:underline">{contactEmail}</a>
             </li>
           </ul>
         </div>
@@ -147,3 +152,4 @@ function LgpdPage() {
     </main>
   );
 }
+

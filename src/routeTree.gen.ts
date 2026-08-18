@@ -58,6 +58,7 @@ import { Route as AdminCmsCategoriasRouteImport } from './routes/admin/cms/categ
 import { Route as AdminCmsContratosRouteImport } from './routes/admin/cms/contratos'
 import { Route as AdminCmsDiarioOficialRouteImport } from './routes/admin/cms/diario-oficial'
 import { Route as AdminCmsEsicRouteImport } from './routes/admin/cms/esic'
+import { Route as AdminCmsFaqRouteImport } from './routes/admin/cms/faq'
 import { Route as AdminCmsFolhaRouteImport } from './routes/admin/cms/folha'
 import { Route as AdminCmsGaleriaRouteImport } from './routes/admin/cms/galeria'
 import { Route as AdminCmsLicitacoesRouteImport } from './routes/admin/cms/licitacoes'
@@ -65,6 +66,7 @@ import { Route as AdminCmsOuvidoriaRouteImport } from './routes/admin/cms/ouvido
 import { Route as AdminCmsPaginasRouteImport } from './routes/admin/cms/paginas'
 import { Route as AdminCmsPopupsRouteImport } from './routes/admin/cms/popups'
 import { Route as AdminCmsPrestacaoContasRouteImport } from './routes/admin/cms/prestacao-contas'
+import { Route as AdminCmsRoteiroSessoesRouteImport } from './routes/admin/cms/roteiro-sessoes'
 import { Route as AdminCmsSessoesExtrasRouteImport } from './routes/admin/cms/sessoes-extras'
 import { Route as AdminComunicacaoIndexRouteImport } from './routes/admin/comunicacao/index'
 import { Route as AdminComunicacaoNovoRouteImport } from './routes/admin/comunicacao/novo'
@@ -336,6 +338,11 @@ const AdminCmsEsicRoute = AdminCmsEsicRouteImport.update({
   path: '/cms/esic',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCmsFaqRoute = AdminCmsFaqRouteImport.update({
+  id: '/cms/faq',
+  path: '/cms/faq',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCmsFolhaRoute = AdminCmsFolhaRouteImport.update({
   id: '/cms/folha',
   path: '/cms/folha',
@@ -369,6 +376,11 @@ const AdminCmsPopupsRoute = AdminCmsPopupsRouteImport.update({
 const AdminCmsPrestacaoContasRoute = AdminCmsPrestacaoContasRouteImport.update({
   id: '/cms/prestacao-contas',
   path: '/cms/prestacao-contas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCmsRoteiroSessoesRoute = AdminCmsRoteiroSessoesRouteImport.update({
+  id: '/cms/roteiro-sessoes',
+  path: '/cms/roteiro-sessoes',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCmsSessoesExtrasRoute = AdminCmsSessoesExtrasRouteImport.update({
@@ -523,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/admin/cms/contratos': typeof AdminCmsContratosRoute
   '/admin/cms/diario-oficial': typeof AdminCmsDiarioOficialRoute
   '/admin/cms/esic': typeof AdminCmsEsicRoute
+  '/admin/cms/faq': typeof AdminCmsFaqRoute
   '/admin/cms/folha': typeof AdminCmsFolhaRoute
   '/admin/cms/galeria': typeof AdminCmsGaleriaRoute
   '/admin/cms/licitacoes': typeof AdminCmsLicitacoesRoute
@@ -530,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/admin/cms/paginas': typeof AdminCmsPaginasRouteWithChildren
   '/admin/cms/popups': typeof AdminCmsPopupsRoute
   '/admin/cms/prestacao-contas': typeof AdminCmsPrestacaoContasRoute
+  '/admin/cms/roteiro-sessoes': typeof AdminCmsRoteiroSessoesRoute
   '/admin/cms/sessoes-extras': typeof AdminCmsSessoesExtrasRoute
   '/admin/comunicacao/novo': typeof AdminComunicacaoNovoRoute
   '/admin/configuracoes/geral': typeof AdminConfiguracoesGeralRoute
@@ -599,6 +613,7 @@ export interface FileRoutesByTo {
   '/admin/cms/contratos': typeof AdminCmsContratosRoute
   '/admin/cms/diario-oficial': typeof AdminCmsDiarioOficialRoute
   '/admin/cms/esic': typeof AdminCmsEsicRoute
+  '/admin/cms/faq': typeof AdminCmsFaqRoute
   '/admin/cms/folha': typeof AdminCmsFolhaRoute
   '/admin/cms/galeria': typeof AdminCmsGaleriaRoute
   '/admin/cms/licitacoes': typeof AdminCmsLicitacoesRoute
@@ -606,6 +621,7 @@ export interface FileRoutesByTo {
   '/admin/cms/paginas': typeof AdminCmsPaginasRouteWithChildren
   '/admin/cms/popups': typeof AdminCmsPopupsRoute
   '/admin/cms/prestacao-contas': typeof AdminCmsPrestacaoContasRoute
+  '/admin/cms/roteiro-sessoes': typeof AdminCmsRoteiroSessoesRoute
   '/admin/cms/sessoes-extras': typeof AdminCmsSessoesExtrasRoute
   '/admin/comunicacao/novo': typeof AdminComunicacaoNovoRoute
   '/admin/configuracoes/geral': typeof AdminConfiguracoesGeralRoute
@@ -678,6 +694,7 @@ export interface FileRoutesById {
   '/admin/cms/contratos': typeof AdminCmsContratosRoute
   '/admin/cms/diario-oficial': typeof AdminCmsDiarioOficialRoute
   '/admin/cms/esic': typeof AdminCmsEsicRoute
+  '/admin/cms/faq': typeof AdminCmsFaqRoute
   '/admin/cms/folha': typeof AdminCmsFolhaRoute
   '/admin/cms/galeria': typeof AdminCmsGaleriaRoute
   '/admin/cms/licitacoes': typeof AdminCmsLicitacoesRoute
@@ -685,6 +702,7 @@ export interface FileRoutesById {
   '/admin/cms/paginas': typeof AdminCmsPaginasRouteWithChildren
   '/admin/cms/popups': typeof AdminCmsPopupsRoute
   '/admin/cms/prestacao-contas': typeof AdminCmsPrestacaoContasRoute
+  '/admin/cms/roteiro-sessoes': typeof AdminCmsRoteiroSessoesRoute
   '/admin/cms/sessoes-extras': typeof AdminCmsSessoesExtrasRoute
   '/admin/comunicacao/novo': typeof AdminComunicacaoNovoRoute
   '/admin/configuracoes/geral': typeof AdminConfiguracoesGeralRoute
@@ -758,6 +776,7 @@ export interface FileRouteTypes {
     | '/admin/cms/contratos'
     | '/admin/cms/diario-oficial'
     | '/admin/cms/esic'
+    | '/admin/cms/faq'
     | '/admin/cms/folha'
     | '/admin/cms/galeria'
     | '/admin/cms/licitacoes'
@@ -765,6 +784,7 @@ export interface FileRouteTypes {
     | '/admin/cms/paginas'
     | '/admin/cms/popups'
     | '/admin/cms/prestacao-contas'
+    | '/admin/cms/roteiro-sessoes'
     | '/admin/cms/sessoes-extras'
     | '/admin/comunicacao/novo'
     | '/admin/configuracoes/geral'
@@ -834,6 +854,7 @@ export interface FileRouteTypes {
     | '/admin/cms/contratos'
     | '/admin/cms/diario-oficial'
     | '/admin/cms/esic'
+    | '/admin/cms/faq'
     | '/admin/cms/folha'
     | '/admin/cms/galeria'
     | '/admin/cms/licitacoes'
@@ -841,6 +862,7 @@ export interface FileRouteTypes {
     | '/admin/cms/paginas'
     | '/admin/cms/popups'
     | '/admin/cms/prestacao-contas'
+    | '/admin/cms/roteiro-sessoes'
     | '/admin/cms/sessoes-extras'
     | '/admin/comunicacao/novo'
     | '/admin/configuracoes/geral'
@@ -912,6 +934,7 @@ export interface FileRouteTypes {
     | '/admin/cms/contratos'
     | '/admin/cms/diario-oficial'
     | '/admin/cms/esic'
+    | '/admin/cms/faq'
     | '/admin/cms/folha'
     | '/admin/cms/galeria'
     | '/admin/cms/licitacoes'
@@ -919,6 +942,7 @@ export interface FileRouteTypes {
     | '/admin/cms/paginas'
     | '/admin/cms/popups'
     | '/admin/cms/prestacao-contas'
+    | '/admin/cms/roteiro-sessoes'
     | '/admin/cms/sessoes-extras'
     | '/admin/comunicacao/novo'
     | '/admin/configuracoes/geral'
@@ -1319,6 +1343,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCmsEsicRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/cms/faq': {
+      id: '/admin/cms/faq'
+      path: '/cms/faq'
+      fullPath: '/admin/cms/faq'
+      preLoaderRoute: typeof AdminCmsFaqRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cms/folha': {
       id: '/admin/cms/folha'
       path: '/cms/folha'
@@ -1366,6 +1397,13 @@ declare module '@tanstack/react-router' {
       path: '/cms/prestacao-contas'
       fullPath: '/admin/cms/prestacao-contas'
       preLoaderRoute: typeof AdminCmsPrestacaoContasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/cms/roteiro-sessoes': {
+      id: '/admin/cms/roteiro-sessoes'
+      path: '/cms/roteiro-sessoes'
+      fullPath: '/admin/cms/roteiro-sessoes'
+      preLoaderRoute: typeof AdminCmsRoteiroSessoesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/cms/sessoes-extras': {
@@ -1541,6 +1579,7 @@ interface AdminRouteChildren {
   AdminCmsContratosRoute: typeof AdminCmsContratosRoute
   AdminCmsDiarioOficialRoute: typeof AdminCmsDiarioOficialRoute
   AdminCmsEsicRoute: typeof AdminCmsEsicRoute
+  AdminCmsFaqRoute: typeof AdminCmsFaqRoute
   AdminCmsFolhaRoute: typeof AdminCmsFolhaRoute
   AdminCmsGaleriaRoute: typeof AdminCmsGaleriaRoute
   AdminCmsLicitacoesRoute: typeof AdminCmsLicitacoesRoute
@@ -1548,6 +1587,7 @@ interface AdminRouteChildren {
   AdminCmsPaginasRoute: typeof AdminCmsPaginasRouteWithChildren
   AdminCmsPopupsRoute: typeof AdminCmsPopupsRoute
   AdminCmsPrestacaoContasRoute: typeof AdminCmsPrestacaoContasRoute
+  AdminCmsRoteiroSessoesRoute: typeof AdminCmsRoteiroSessoesRoute
   AdminCmsSessoesExtrasRoute: typeof AdminCmsSessoesExtrasRoute
   AdminComunicacaoNovoRoute: typeof AdminComunicacaoNovoRoute
   AdminConfiguracoesGeralRoute: typeof AdminConfiguracoesGeralRoute
@@ -1588,6 +1628,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCmsContratosRoute: AdminCmsContratosRoute,
   AdminCmsDiarioOficialRoute: AdminCmsDiarioOficialRoute,
   AdminCmsEsicRoute: AdminCmsEsicRoute,
+  AdminCmsFaqRoute: AdminCmsFaqRoute,
   AdminCmsFolhaRoute: AdminCmsFolhaRoute,
   AdminCmsGaleriaRoute: AdminCmsGaleriaRoute,
   AdminCmsLicitacoesRoute: AdminCmsLicitacoesRoute,
@@ -1595,6 +1636,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCmsPaginasRoute: AdminCmsPaginasRouteWithChildren,
   AdminCmsPopupsRoute: AdminCmsPopupsRoute,
   AdminCmsPrestacaoContasRoute: AdminCmsPrestacaoContasRoute,
+  AdminCmsRoteiroSessoesRoute: AdminCmsRoteiroSessoesRoute,
   AdminCmsSessoesExtrasRoute: AdminCmsSessoesExtrasRoute,
   AdminComunicacaoNovoRoute: AdminComunicacaoNovoRoute,
   AdminConfiguracoesGeralRoute: AdminConfiguracoesGeralRoute,

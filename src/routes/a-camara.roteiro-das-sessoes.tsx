@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   ListOrdered,
   Gavel,
@@ -9,9 +10,12 @@ import {
   Info,
   ArrowRight,
   CalendarDays,
+  Loader2,
+  List,
 } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { ROUTES } from "@/lib/site-links";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/a-camara/roteiro-das-sessoes")({
   head: () => ({
@@ -49,47 +53,41 @@ const TIPOS = [
   },
 ];
 
-const ETAPAS = [
-  {
-    n: "1º",
-    icon: Gavel,
-    title: "Abertura dos trabalhos",
-    text: "Constatado o quórum regimental, o Presidente pronuncia: “Em nome de Deus declaro aberto os trabalhos da presente sessão”.",
-    note: "A Câmara somente se reúne com a presença de, no mínimo, 1/3 dos vereadores. Para deliberar sobre qualquer matéria, é exigida a presença da maioria absoluta dos membros.",
-  },
-  {
-    n: "2º",
-    icon: FileText,
-    title: "Leitura e votação da ata",
-    text: "É feita a leitura da ata da sessão anterior, submetida em seguida à votação do plenário.",
-  },
-  {
-    n: "3º",
-    icon: ListOrdered,
-    title: "Apresentação das proposituras",
-    text: "O 1º Secretário faz a leitura das proposituras apresentadas no dia — projetos, indicações, requerimentos e moções.",
-  },
-  {
-    n: "4º",
-    icon: CheckCircle2,
-    title: "Ordem do Dia",
-    text: "O Presidente declara aberta a Ordem do Dia, período destinado à apreciação das matérias constantes da pauta. Esgotada a pauta, anuncia a Ordem do Dia da sessão seguinte e concede as inscrições para a Tribuna Livre.",
-  },
-  {
-    n: "5º",
-    icon: Mic,
-    title: "Explicações pessoais",
-    text: "Com duração de 45 minutos, destinam-se ao pronunciamento dos vereadores inscritos até o final da Ordem do Dia — ou, alternativamente, por sorteio entre os presentes — por 7 minutos cada, facultado 1/3 a mais do tempo aos líderes.",
-  },
-  {
-    n: "6º",
-    icon: MessageSquare,
-    title: "Encerramento",
-    text: "Após as explicações pessoais, não havendo mais nada a tratar, o Presidente declara encerrados os trabalhos e convida os presentes para a próxima sessão ordinária.",
-  },
-];
+type RoteiroEtapa = {
+  id: string;
+  numero_etapa: string;
+  titulo: string;
+  descricao: string;
+  nota_quorum: string | null;
+  icone: string | null;
+};
+
+const ICON_MAP: Record<string, any> = {
+  Gavel,
+  FileText,
+  ListOrdered,
+  CheckCircle2,
+  Mic,
+  MessageSquare,
+  List,
+};
 
 function RoteiroPage() {
+  const [etapas, setEtapas] = useState<RoteiroEtapa[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("roteiro_sessoes")
+        .select("*")
+        .eq("ativo", true)
+        .order("ordem", { ascending: true });
+      if (!error && data) setEtapas(data as RoteiroEtapa[]);
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <main className="min-h-screen bg-background">
       {/* HERO */}
@@ -143,38 +141,49 @@ function RoteiroPage() {
             title="Passo a passo dos trabalhos"
             description="Sequência prevista no Regimento Interno da Casa Legislativa."
           />
-          <ol className="mt-8 space-y-4">
-            {ETAPAS.map((e) => (
-              <li
-                key={e.n}
-                className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-6"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-bold text-primary-foreground">
-                    {e.n}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <e.icon className="h-4 w-4 text-primary" />
-                      <h3 className="font-display text-base font-bold text-foreground md:text-lg">
-                        {e.title}
-                      </h3>
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <ol className="mt-8 space-y-4">
+              {etapas.map((e) => {
+                const Icon = (e.icone && ICON_MAP[e.icone]) || List;
+                return (
+                  <li
+                    key={e.id}
+                    className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-6"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-bold text-primary-foreground">
+                        {e.numero_etapa}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4 text-primary" />
+                          <h3 className="font-display text-base font-bold text-foreground md:text-lg">
+                            {e.titulo}
+                          </h3>
+                        </div>
+                        <p className="mt-2 text-sm leading-7 text-muted-foreground whitespace-pre-wrap">
+                          {e.descricao}
+                        </p>
+                        {e.nota_quorum && (
+                          <p className="mt-3 flex items-start gap-2 rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs leading-6 text-foreground">
+                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                            <span>
+                              <strong className="font-semibold">Quórum: </strong>
+                              {e.nota_quorum}
+                            </span>
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">{e.text}</p>
-                    {e.note && (
-                      <p className="mt-3 flex items-start gap-2 rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs leading-6 text-foreground">
-                        <Info className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                        <span>
-                          <strong className="font-semibold">Quórum: </strong>
-                          {e.note}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
         </div>
       </section>
 
