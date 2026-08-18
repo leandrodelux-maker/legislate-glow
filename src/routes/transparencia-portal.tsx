@@ -352,6 +352,9 @@ function TransparenciaPortalPage() {
         </div>
       </section>
 
+      {/* DADOS OFICIAIS (Megasoft) */}
+      <OfficialDatasets baseUrl={portalUrl || undefined} />
+
       {/* CONTENT */}
       <section className="container-page py-12 md:py-16">
         {!portalUrl && (
