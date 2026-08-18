@@ -22,13 +22,13 @@ export const Route = createFileRoute("/a-camara/historia")({
       {
         name: "description",
         content:
-          "Conheça a história do município de Cachoeira de Goiás (GO): fundação em 1987, a Capital do Feijão, economia, população e indicadores oficiais.",
+          "Conheça a história do município de Cachoeira de Goiás (GO): origem, emancipação em 1958, economia agropecuária e indicadores do município.",
       },
       { property: "og:title", content: "História de Cachoeira de Goiás — Câmara Municipal" },
       {
         property: "og:description",
         content:
-          "Origem do município, emancipação em 1987, economia agropecuária e indicadores sociais de Cachoeira de Goiás (GO).",
+          "Origem do município, emancipação em 1958, economia agropecuária e panorama atual de Cachoeira de Goiás (GO).",
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
