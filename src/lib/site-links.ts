@@ -67,6 +67,7 @@ export const ATOS_LEGISLATIVOS_LINKS: SiteLink[] = [
   { to: ROUTES.cartaServicos, label: "Carta de Serviços" },
   { to: ROUTES.leiOrganica, label: "Lei Orgânica Municipal" },
   { to: ROUTES.regimentoInterno, label: "Regimento Interno" },
+  { to: ROUTES.portarias, label: "Portarias" },
   { to: ROUTES.sessoes, label: "Sessões Plenárias" },
 ];
 
