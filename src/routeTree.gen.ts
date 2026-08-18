@@ -16,6 +16,7 @@ import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ESicRouteImport } from './routes/e-sic'
 import { Route as LgpdRouteImport } from './routes/lgpd'
 import { Route as MapaDoSiteRouteImport } from './routes/mapa-do-site'
+import { Route as OrcamentoRouteImport } from './routes/orcamento'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as ProjetosRouteImport } from './routes/projetos'
 import { Route as SessoesRouteImport } from './routes/sessoes'
@@ -116,6 +117,11 @@ const LgpdRoute = LgpdRouteImport.update({
 const MapaDoSiteRoute = MapaDoSiteRouteImport.update({
   id: '/mapa-do-site',
   path: '/mapa-do-site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentoRoute = OrcamentoRouteImport.update({
+  id: '/orcamento',
+  path: '/orcamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
@@ -463,6 +469,7 @@ export interface FileRoutesByFullPath {
   '/e-sic': typeof ESicRoute
   '/lgpd': typeof LgpdRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
+  '/orcamento': typeof OrcamentoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/projetos': typeof ProjetosRoute
   '/sessoes': typeof SessoesRouteWithChildren
@@ -537,6 +544,7 @@ export interface FileRoutesByTo {
   '/e-sic': typeof ESicRoute
   '/lgpd': typeof LgpdRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
+  '/orcamento': typeof OrcamentoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/projetos': typeof ProjetosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -612,6 +620,7 @@ export interface FileRoutesById {
   '/e-sic': typeof ESicRoute
   '/lgpd': typeof LgpdRoute
   '/mapa-do-site': typeof MapaDoSiteRoute
+  '/orcamento': typeof OrcamentoRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/projetos': typeof ProjetosRoute
   '/sessoes': typeof SessoesRouteWithChildren
@@ -689,6 +698,7 @@ export interface FileRouteTypes {
     | '/e-sic'
     | '/lgpd'
     | '/mapa-do-site'
+    | '/orcamento'
     | '/perguntas-frequentes'
     | '/projetos'
     | '/sessoes'
@@ -763,6 +773,7 @@ export interface FileRouteTypes {
     | '/e-sic'
     | '/lgpd'
     | '/mapa-do-site'
+    | '/orcamento'
     | '/perguntas-frequentes'
     | '/projetos'
     | '/sitemap.xml'
@@ -837,6 +848,7 @@ export interface FileRouteTypes {
     | '/e-sic'
     | '/lgpd'
     | '/mapa-do-site'
+    | '/orcamento'
     | '/perguntas-frequentes'
     | '/projetos'
     | '/sessoes'
@@ -913,6 +925,7 @@ export interface RootRouteChildren {
   ESicRoute: typeof ESicRoute
   LgpdRoute: typeof LgpdRoute
   MapaDoSiteRoute: typeof MapaDoSiteRoute
+  OrcamentoRoute: typeof OrcamentoRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   ProjetosRoute: typeof ProjetosRoute
   SessoesRoute: typeof SessoesRouteWithChildren
@@ -984,6 +997,13 @@ declare module '@tanstack/react-router' {
       path: '/mapa-do-site'
       fullPath: '/mapa-do-site'
       preLoaderRoute: typeof MapaDoSiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamento': {
+      id: '/orcamento'
+      path: '/orcamento'
+      fullPath: '/orcamento'
+      preLoaderRoute: typeof OrcamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perguntas-frequentes': {
@@ -1578,6 +1598,7 @@ const rootRouteChildren: RootRouteChildren = {
   ESicRoute: ESicRoute,
   LgpdRoute: LgpdRoute,
   MapaDoSiteRoute: MapaDoSiteRoute,
+  OrcamentoRoute: OrcamentoRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   ProjetosRoute: ProjetosRoute,
   SessoesRoute: SessoesRouteWithChildren,
