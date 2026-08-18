@@ -144,8 +144,8 @@ function HistoriaPage() {
           </span>
           <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">História</h1>
           <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Da capela de São Sebastião à emancipação em 1987: conheça a trajetória de Cachoeira de Goiás, a
-            Capital do Feijão, e os números que retratam o município hoje.
+            Das primeiras fazendas às margens dos cursos d’água à emancipação em 1958: conheça a
+            trajetória de Cachoeira de Goiás e o panorama do município hoje.
           </p>
 
           <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
