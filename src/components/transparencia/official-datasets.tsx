@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   BookOpen,
@@ -6,9 +7,11 @@ import {
   MessagesSquare,
   Receipt,
   Scale,
+  Search,
   Target,
   TrendingDown,
   Users,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { getTransparencyUrl } from "@/lib/transparency-url";
@@ -268,6 +271,27 @@ export const OFFICIAL_DATASETS: Dataset[] = [
 
 export function OfficialDatasets({ baseUrl }: { baseUrl?: string }) {
   const base = baseUrl?.trim() || MEGASOFT_BASE_URL;
+  const [q, setQ] = useState("");
+
+  const filtered = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return OFFICIAL_DATASETS;
+    return OFFICIAL_DATASETS.map((d) => {
+      const matchesCategory =
+        d.title.toLowerCase().includes(s) ||
+        d.subtitle.toLowerCase().includes(s);
+      const items = d.items.filter((item) =>
+        item.label.toLowerCase().includes(s),
+      );
+      if (!matchesCategory && items.length === 0) return null;
+      return { ...d, items };
+    }).filter(Boolean) as Dataset[];
+  }, [q]);
+
+  const totalLinks = useMemo(
+    () => filtered.reduce((acc, d) => acc + d.items.length, 0),
+    [filtered],
+  );
 
   return (
     <section className="border-b border-border bg-card">
@@ -281,9 +305,9 @@ export function OfficialDatasets({ baseUrl }: { baseUrl?: string }) {
               </h2>
             </div>
             <p className="max-w-2xl text-sm text-muted-foreground">
-              Consultas diretas de receitas, despesas, contratos e licitações no Portal da
-              Transparência oficial da Câmara (Megasoft). Os dados são atualizados diariamente na
-              fonte.
+              Consultas diretas de receitas, despesas, contratos, licitações, folha, legislação e
+              ouvidoria no Portal da Transparência oficial da Câmara (Megasoft). Os dados são
+              atualizados diariamente na fonte.
             </p>
           </div>
           <a
@@ -296,8 +320,49 @@ export function OfficialDatasets({ baseUrl }: { baseUrl?: string }) {
           </a>
         </div>
 
+        {/* FILTER BAR */}
+        <div className="mb-8">
+          <div className="mx-auto flex max-w-3xl overflow-hidden rounded-full border border-border bg-white shadow-sm">
+            <div className="hidden bg-primary-deep px-6 py-3 text-sm font-semibold text-primary-foreground sm:block">
+              Filtrar
+            </div>
+            <div className="relative flex-1">
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Buscar em receitas, despesas, contratos, licitações..."
+                className="h-full w-full bg-transparent px-5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+              />
+              <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            </div>
+            {q.trim() && (
+              <button
+                onClick={() => setQ("")}
+                className="flex items-center gap-1.5 border-l border-border px-4 text-xs font-semibold text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+                aria-label="Limpar filtro"
+              >
+                <X className="h-3.5 w-3.5" /> Limpar
+              </button>
+            )}
+          </div>
+          {q.trim() && (
+            <p className="mt-3 text-center text-sm text-muted-foreground">
+              {filtered.length === 0 ? (
+                "Nenhum resultado encontrado."
+              ) : (
+                <>
+                  <span className="font-semibold text-foreground">{filtered.length}</span>{" "}
+                  {filtered.length === 1 ? "categoria" : "categorias"} e{" "}
+                  <span className="font-semibold text-foreground">{totalLinks}</span>{" "}
+                  {totalLinks === 1 ? "link" : "links"} encontrados
+                </>
+              )}
+            </p>
+          )}
+        </div>
+
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {OFFICIAL_DATASETS.map((d) => {
+          {filtered.map((d) => {
             const Icon = d.icon;
             return (
               <article
@@ -336,6 +401,19 @@ export function OfficialDatasets({ baseUrl }: { baseUrl?: string }) {
             );
           })}
         </div>
+
+        {q.trim() && filtered.length === 0 && (
+          <div className="mt-8 rounded-xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
+            <Search className="mx-auto mb-3 h-8 w-8" />
+            <p>Nenhum resultado encontrado para “{q.trim()}”.</p>
+            <button
+              onClick={() => setQ("")}
+              className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Limpar busca
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
