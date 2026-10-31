@@ -1,0 +1,15 @@
+{
+  "portal": "https://camaracachoeiradegoias.megasofttransparencia.com.br",
+  "cidade": "Cachoeira de Goiás",
+  "uf": "GO",
+  "logo": "",
+  "tribunal": "TCM-GO",
+  "orgaoPrincipal": 1,
+  "orgaos": {
+    "1": "CAMARA MUNICIPAL DE CACHOEIRA DE GOIAS",
+    "2": "PODER EXECUTIVO"
+  },
+  "telefone": "(64) 99233-6171",
+  "email": "contato@camaracachoeiradegoias.go.gov.br",
+  "horario": "Segunda a Sexta 08h às 11h e 13h às 17h"
+}

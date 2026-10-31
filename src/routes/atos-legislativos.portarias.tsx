@@ -1,3 +1,5 @@
+import { ContinueNavegando, FaixaDestaques } from "@/components/pagina-ui";
+import { Landmark as IconeLei, BookOpen as IconeLivro, Gavel as IconeProjeto } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FileSignature, ShieldCheck, Users2 } from "lucide-react";
 import {
@@ -57,25 +59,10 @@ function PortariasPage() {
         description="As portarias são os atos administrativos da Presidência da Câmara. Todos os arquivos abaixo estão hospedados neste portal e podem ser visualizados ou baixados livremente."
       />
 
-      <section className="container-page py-12 md:py-16">
-        <div className="grid gap-5 md:grid-cols-3">
-          {TOPICS.map(({ icon: Icon, title, text }) => (
-            <div
-              key={title}
-              className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div className="grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h2 className="mt-4 font-display text-lg font-bold">{title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
-            </div>
-          ))}
-        </div>
+      <FaixaDestaques itens={TOPICS.map(({ icon, title, text }) => ({ icone: icon, titulo: title, texto: text }))} />
 
-        <h2 className="mt-14 font-display text-2xl font-bold md:text-3xl">
-          Portarias publicadas
-        </h2>
+      <section className="container-page pb-4 pt-12 md:pt-16">
+        <h2 className="font-display text-2xl font-bold md:text-3xl">Portarias publicadas</h2>
         <p className="mt-2 text-muted-foreground">
           {documents.length} documento(s) disponível(is) para visualização e download.
         </p>
@@ -86,6 +73,12 @@ function PortariasPage() {
           />
         </div>
       </section>
+
+      <ContinueNavegando itens={[
+        { to: "/atos-legislativos/lei-organica-municipal", titulo: "Lei Orgânica", texto: "A norma máxima do município", icone: IconeLei },
+        { to: "/atos-legislativos/regimento-interno", titulo: "Regimento Interno", texto: "Como a Câmara funciona", icone: IconeLivro },
+        { to: "/projetos", titulo: "Projetos de Lei", texto: "Matérias em tramitação", icone: IconeProjeto },
+      ].filter((i) => i.to !== "/atos-legislativos/portarias")} />
     </>
   );
 }

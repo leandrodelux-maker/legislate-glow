@@ -1,3 +1,7 @@
+import { ListOrdered, Crown } from "lucide-react";
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { PaginaHero } from "@/components/pagina-hero";
+import { Gavel as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Gavel, Scale, Coins, GraduationCap, ArrowRight, Users } from "lucide-react";
@@ -140,22 +144,14 @@ function ComissoesPage() {
   }, [vereadores]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <div>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_18%_20%,white,transparent_45%),radial-gradient(circle_at_82%_0%,white,transparent_40%)]"
-        />
-        <div className="container-page relative py-8 md:py-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
-            <Gavel className="h-3 w-3" /> A Câmara
-          </span>
-          <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">Comissões</h1>
-          <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            As comissões permanentes analisam e emitem parecer sobre as proposições antes da votação
-            em plenário, garantindo o exame técnico e o debate qualificado das matérias.
-          </p>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="A Câmara"
+        title="Comissões"
+        description={<>As comissões permanentes analisam e emitem parecer sobre as proposições antes da votação em plenário, garantindo o exame técnico e o debate qualificado das matérias.</>}
+      >
           <div className="mt-5 flex flex-wrap gap-2">
             {comissoes.map((c) => (
               <a
@@ -167,108 +163,59 @@ function ComissoesPage() {
               </a>
             ))}
           </div>
-        </div>
-      </section>
+      </PaginaHero>
 
-      <section className="container-page space-y-10 py-10 md:py-14">
+      <section className="container-page space-y-5 py-12 md:py-16">
         {comissoes.map((c) => (
-          <article
-            key={c.sigla}
-            id={c.sigla.toLowerCase()}
-            className="scroll-mt-28 overflow-hidden rounded-3xl border border-border bg-card shadow-sm"
-          >
-            <header className="border-b border-border bg-secondary/40 p-6">
-              <div className="flex items-start gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-                  <c.icon className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-                    Comissão permanente · {c.sigla}
-                  </p>
-                  <h2 className="mt-1 font-display text-xl font-bold leading-snug text-foreground md:text-2xl">
-                    {c.nome}
-                  </h2>
-                  <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
-                    {c.competencia}
-                  </p>
-                </div>
-              </div>
+          <article key={c.sigla} id={c.sigla.toLowerCase()} className="grid scroll-mt-24 overflow-hidden rounded-3xl border border-border bg-card shadow-sm lg:grid-cols-[340px_1fr]">
+            <header className="acesso-destaque relative overflow-hidden p-6 text-white md:p-7">
+              <c.icon className="absolute -bottom-6 -right-5 h-32 w-32 opacity-10" aria-hidden />
+              <p className="relative font-display text-4xl font-bold text-gold">{c.sigla}</p>
+              <h2 className="relative mt-2 font-display text-xl font-bold leading-snug">{c.nome}</h2>
+              <p className="relative mt-3 text-sm leading-relaxed text-white/90">{c.competencia}</p>
             </header>
 
-            <div className="p-6">
-              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                <Users className="h-3.5 w-3.5" /> Composição da comissão
+            <div className="p-5 md:p-6">
+              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+                <Users className="h-3.5 w-3.5" aria-hidden /> Composição
               </p>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {c.membros.map((m) => {
                   const v = byName.get(normalize(m.nome));
+                  const conteudo = (
+                    <>
+                      <FotoEstudio nome={m.nome} foto={v?.foto_url} partido={v?.partido} className="h-20 w-16 shrink-0 rounded-xl" />
+                      <span className="min-w-0">
+                        <span className="block text-xs font-bold text-[oklch(0.5_0.11_70)]">{m.funcao}</span>
+                        <span className="mt-0.5 block font-display text-sm font-semibold leading-snug text-foreground group-hover:text-primary">{m.nome}</span>
+                        {v?.partido && <span className="block text-xs text-muted-foreground">{v.partido}</span>}
+                      </span>
+                    </>
+                  );
+                  const classe = "group flex h-full items-center gap-3 rounded-2xl border border-border/70 bg-background p-2.5 pr-3 transition hover:border-primary/40 hover:shadow-sm";
                   return (
-                    <div
-                      key={`${c.sigla}-${m.nome}-${m.funcao}`}
-                      className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 transition-colors hover:border-primary/40"
-                    >
-                      <VereadorAvatar
-                        nome={m.nome}
-                        foto={v?.foto_url}
-                        partido={v?.partido}
-                        size={72}
-                        rounded="xl"
-                        fit="contain"
-                        className="bg-white"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-primary">
-                          {m.funcao}
-                        </p>
-                        <h3 className="mt-0.5 font-display text-sm font-bold leading-snug text-foreground">
-                          {m.nome}
-                        </h3>
-                        {v?.partido && (
-                          <p className="text-xs text-muted-foreground">{v.partido}</p>
-                        )}
-                        {v && (
-                          <Link
-                            to="/vereadores/$slug"
-                            params={{ slug: v.slug || v.id }}
-                            className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-                          >
-                            Ver perfil <ArrowRight className="h-3 w-3" />
-                          </Link>
-                        )}
-                      </div>
-                    </div>
+                    <li key={`${c.sigla}-${m.nome}-${m.funcao}`}>
+                      {v ? <Link to="/vereadores/$slug" params={{ slug: v.slug || v.id }} className={classe}>{conteudo}</Link> : <div className={classe}>{conteudo}</div>}
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             </div>
           </article>
         ))}
       </section>
 
-      <section className="border-y border-border bg-secondary/40">
-        <div className="container-page py-10 md:py-14">
-          <SectionHeading
-            eyebrow="Saiba mais"
-            title="Como as comissões atuam"
-            description="Toda proposição apresentada é distribuída às comissões competentes, que emitem parecer técnico antes da deliberação em plenário."
-          />
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to={ROUTES.roteiroSessoes}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
-            >
-              Roteiro das sessões <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to={ROUTES.projetos}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
-            >
-              Projetos de lei <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="border-y border-border/60 bg-secondary/40 py-12">
+        <div className="container-page">
+          <TituloSecao eyebrow="Saiba mais" titulo="Como as comissões atuam" descricao="Toda proposição apresentada é distribuída às comissões competentes, que emitem parecer técnico antes da deliberação em plenário." />
         </div>
       </section>
-    </main>
+
+      <ContinueNavegando itens={[
+        { to: ROUTES.roteiroSessoes, titulo: "Roteiro das Sessões", texto: "Como uma sessão acontece", icone: ListOrdered },
+        { to: ROUTES.projetos, titulo: "Projetos de Lei", texto: "Matérias em tramitação", icone: Gavel },
+        { to: ROUTES.mesaDiretora, titulo: "Mesa Diretora", texto: "Quem dirige a Câmara", icone: Crown },
+      ]} />
+    </div>
   );
 }

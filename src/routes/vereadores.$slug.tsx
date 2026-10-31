@@ -1,3 +1,6 @@
+import { FotoEstudio } from "@/components/pagina-ui";
+import { TrilhaNavegacao } from "@/components/pagina-hero";
+import { FiosCachoeira } from "@/components/fios-cachoeira";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Mail,
@@ -49,7 +52,7 @@ function statusVariant(s?: string | null) {
   if (v.includes("aprov")) return "bg-emerald-100 text-emerald-700 border-emerald-200";
   if (v.includes("rejei") || v.includes("arqu")) return "bg-rose-100 text-rose-700 border-rose-200";
   if (v.includes("tramit") || v.includes("anális") || v.includes("analise")) return "bg-amber-100 text-amber-700 border-amber-200";
-  return "bg-slate-100 text-slate-700 border-slate-200";
+  return "bg-slate-100 text-foreground border-border";
 }
 
 function VotoBadge({ voto }: { voto: string }) {
@@ -181,128 +184,74 @@ const contato = useContactInfo();
       : "Legislatura atual");
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="min-h-screen pb-8">
       {/* HERO */}
-      <section className="bg-gradient-to-br from-primary-deep to-primary text-primary-foreground pt-12 pb-32">
-        <div className="container-page">
-          <Button variant="ghost" asChild className="text-white hover:text-gold hover:bg-white/10 mb-8">
-            <Link to="/vereadores">
-              <ChevronLeft className="w-4 h-4 mr-2" /> Voltar para a lista
-            </Link>
-          </Button>
+      <section className="pagina-hero relative isolate overflow-hidden text-white">
+        <div className="textura-pontos absolute inset-0 -z-10" aria-hidden />
+        <FiosCachoeira />
+        <div className="container-page relative py-8 md:py-10">
+          <TrilhaNavegacao ultimo={vereador.nome} />
 
-          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-            <VereadorAvatar
-              nome={vereador.nome}
-              foto={vereador.foto_url}
-              partido={vereador.partido}
-              size={240}
-              rounded="2xl"
-              fit="contain"
-              className="border-4 border-white/20 shadow-2xl bg-white"
-            />
+          <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center">
+            <FotoEstudio nome={vereador.nome} foto={vereador.foto_url} partido={vereador.partido} className="h-52 w-40 shrink-0 rounded-2xl shadow-2xl ring-2 ring-white/25" />
 
-            <div className="text-center md:text-left flex-1">
-              <Badge className="bg-gold text-primary-deep mb-4 px-4 py-1">
-                Mandato {mandatoLabel}
-              </Badge>
-              <h1 className="text-4xl md:text-5xl font-display font-bold mb-2">{vereador.nome}</h1>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-white/80">
-                <Badge variant="secondary" className="bg-white/10 text-white border-white/20">{vereador.partido}</Badge>
-                <span className="w-1 h-1 bg-white/30 rounded-full hidden md:block" />
-                <span className="font-medium text-gold uppercase tracking-widest text-sm">
-                  {vereador.cargo || "Vereador"}
-                </span>
-              </div>
-
-              <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold">{vereador.cargo || "Vereador"}</p>
+              <h1 className="mt-1 text-balance font-display text-3xl font-bold leading-tight md:text-4xl">{vereador.nome}</h1>
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold">
+                {vereador.partido && <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-primary-deep">{vereador.partido}</span>}
+                <span className="rounded-full border border-white/30 px-3 py-1 text-xs">Mandato {mandatoLabel}</span>
                 {redes.instagram && (
-                  <a href={`https://instagram.com/${String(redes.instagram).replace("@", "")}`} target="_blank" rel="noopener noreferrer">
-                    <Button size="icon" variant="outline" className="rounded-full bg-white/5 border-white/20 text-white hover:bg-gold hover:text-primary-deep">
-                      <InstagramIcon className="w-5 h-5" />
-                    </Button>
+                  <a href={`https://instagram.com/${String(redes.instagram).replace("@", "")}`} target="_blank" rel="noopener noreferrer" aria-label="Instagram (abre em nova aba)" className="grid h-9 w-9 place-items-center rounded-full border border-white/30 transition hover:bg-gold hover:text-gold-foreground">
+                    <InstagramIcon className="h-4 w-4" aria-hidden />
                   </a>
                 )}
                 {redes.facebook && (
-                  <a href={redes.facebook} target="_blank" rel="noopener noreferrer">
-                    <Button size="icon" variant="outline" className="rounded-full bg-white/5 border-white/20 text-white hover:bg-gold hover:text-primary-deep">
-                      <FacebookIcon className="w-5 h-5" />
-                    </Button>
+                  <a href={redes.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook (abre em nova aba)" className="grid h-9 w-9 place-items-center rounded-full border border-white/30 transition hover:bg-gold hover:text-gold-foreground">
+                    <FacebookIcon className="h-4 w-4" aria-hidden />
                   </a>
                 )}
                 {redes.twitter && (
-                  <a href={redes.twitter} target="_blank" rel="noopener noreferrer">
-                    <Button size="icon" variant="outline" className="rounded-full bg-white/5 border-white/20 text-white hover:bg-gold hover:text-primary-deep">
-                      <TwitterIcon className="w-5 h-5" />
-                    </Button>
+                  <a href={redes.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter (abre em nova aba)" className="grid h-9 w-9 place-items-center rounded-full border border-white/30 transition hover:bg-gold hover:text-gold-foreground">
+                    <TwitterIcon className="h-4 w-4" aria-hidden />
                   </a>
                 )}
               </div>
             </div>
+
+            <dl className="grid shrink-0 grid-cols-2 gap-2 sm:w-64 lg:w-[360px] lg:grid-cols-4">
+              {[
+                { r: "Presença", v: computed.totalSessoes ? `${computed.taxaPresenca}%` : "—", i: CheckCircle2 },
+                { r: "Projetos", v: projetos.length, i: FileText },
+                { r: "Aprovados", v: computed.aprovados, i: Award },
+                { r: "Votações", v: votacoes.length, i: Vote },
+              ].map((x) => (
+                <div key={x.r} className="rounded-2xl border border-white/15 bg-white/10 p-3">
+                  <x.i className="h-4 w-4 text-gold" aria-hidden />
+                  <dd className="mt-1.5 font-display text-2xl font-bold leading-none">{x.v}</dd>
+                  <dt className="mt-1 text-xs text-white/85">{x.r}</dt>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
 
       {/* GRID */}
-      <section className="container-page -mt-20 relative z-20">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* COLUNA ESQUERDA */}
-          <div className="space-y-6">
-            {/* Desempenho */}
-            <Card className="border-none shadow-xl">
-              <CardContent className="p-6">
-                <h3 className="font-display font-bold text-xl mb-6 flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-gold" /> Desempenho
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Taxa de presença</p>
-                      <span className="text-sm font-bold text-primary">{computed.taxaPresenca}%</span>
-                    </div>
-                    <Progress value={computed.taxaPresenca} className="h-2" />
-                    <p className="mt-2 text-xs text-slate-500">
-                      {computed.totalPresentes} presenças em {computed.totalSessoes} sessões
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                      <FileText className="w-5 h-5 text-primary/40 mb-2" />
-                      <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Projetos</p>
-                      <p className="text-2xl font-display font-bold text-primary">{projetos.length}</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                      <Award className="w-5 h-5 text-primary/40 mb-2" />
-                      <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Aprovados</p>
-                      <p className="text-2xl font-display font-bold text-primary">{computed.aprovados}</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                      <CheckCircle2 className="w-5 h-5 text-primary/40 mb-2" />
-                      <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Presenças</p>
-                      <p className="text-2xl font-display font-bold text-primary">{computed.totalPresentes}</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                      <Vote className="w-5 h-5 text-primary/40 mb-2" />
-                      <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Votações</p>
-                      <p className="text-2xl font-display font-bold text-primary">{votacoes.length}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
+      <section className="container-page py-10 md:py-12">
+        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3 [&>*]:min-w-0">
+          {/* CONTATO E MANDATOS */}
+          <div className="order-2 space-y-5 lg:order-2 lg:sticky lg:top-20">
             {/* Contato institucional */}
-            <Card className="border-none shadow-xl">
+            <Card className="rounded-3xl border border-border shadow-none">
               <CardContent className="p-6 space-y-4">
-                <h3 className="font-display font-bold text-xl mb-2">Contato</h3>
+                <h3 className="font-display font-bold text-lg mb-2">Contato</h3>
                 <div className="space-y-4">
-                  <ContactRow icon={<Mail className="w-5 h-5 text-primary" />} label="E-mail" value={vereador.email || contato.email} />
+                  <ContactRow icon={<Mail className="w-5 h-5 text-primary" />} label="E-mail" value={vereador.email || contato.email} href={`mailto:${vereador.email || contato.email}`} />
                   <ContactRow icon={<Phone className="w-5 h-5 text-primary" />} label="Telefone" value={vereador.telefone || contato.telefone} />
                   <ContactRow icon={<MapPin className="w-5 h-5 text-primary" />} label="Gabinete" value={vereador.gabinete || "Câmara Municipal"} />
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-muted-foreground">
                   O atendimento a vereadores é feito pelos canais oficiais da Câmara.
                 </p>
               </CardContent>
@@ -311,25 +260,25 @@ const contato = useContactInfo();
 
             {/* Mandatos / cargos */}
             {mandatos.length > 0 && (
-              <Card className="border-none shadow-xl">
+              <Card className="rounded-3xl border border-border shadow-none">
                 <CardContent className="p-6">
                   <h3 className="font-display font-bold text-xl mb-4 flex items-center gap-2">
                     <Award className="w-5 h-5 text-gold" /> Mandatos e Cargos
                   </h3>
                   <ul className="space-y-3">
                     {mandatos.map((m) => (
-                      <li key={m.id} className="p-3 rounded-lg bg-slate-50 border border-slate-100">
+                      <li key={m.id} className="p-3 rounded-lg bg-secondary/60 border border-border/70">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <p className="font-semibold text-slate-800">{m.mandato || "Mandato"}</p>
+                          <p className="font-semibold text-foreground">{m.mandato || "Mandato"}</p>
                           {m.partido && <Badge variant="outline">{m.partido}</Badge>}
                         </div>
-                        {m.cargo_mesa && <p className="text-sm text-gold font-semibold mt-1">{m.cargo_mesa}</p>}
-                        <p className="text-xs text-slate-500 mt-1">
+                        {m.cargo_mesa && <p className="text-sm text-primary font-semibold mt-1">{m.cargo_mesa}</p>}
+                        <p className="text-xs text-muted-foreground mt-1">
                           {m.data_inicio ? new Date(m.data_inicio).toLocaleDateString("pt-BR") : "—"}
                           {" "}até{" "}
                           {m.data_fim ? new Date(m.data_fim).toLocaleDateString("pt-BR") : "atual"}
                         </p>
-                        {m.observacoes && <p className="text-sm text-slate-600 mt-2">{m.observacoes}</p>}
+                        {m.observacoes && <p className="text-sm text-muted-foreground mt-2">{m.observacoes}</p>}
                       </li>
                     ))}
                   </ul>
@@ -338,15 +287,14 @@ const contato = useContactInfo();
             )}
           </div>
 
-          {/* COLUNA DIREITA */}
-          <div className="lg:col-span-2">
-            <Card className="border-none shadow-xl min-h-[500px]">
+          {/* CONTEÚDO */}
+          <div className="order-1 lg:order-1 lg:col-span-2">
+            <Card className="rounded-3xl border border-border shadow-none">
               <Tabs defaultValue="biografia" className="w-full">
-                <div className="px-2 md:px-6 border-b border-slate-100 overflow-x-auto">
-                  <TabsList className="bg-transparent h-16 gap-2 md:gap-6">
+                <div className="p-3 md:p-4">
+                  <TabsList className="h-auto max-w-full flex-wrap justify-start gap-1 rounded-2xl bg-secondary/60 p-1.5">
                     {[
-                      { v: "biografia", l: "Biografia" },
-                      { v: "info", l: "Informações" },
+                      { v: "biografia", l: "Sobre" },
                       { v: "projetos", l: `Projetos (${projetos.length})` },
                       { v: "presencas", l: `Sessões (${computed.totalSessoes})` },
                       { v: "votacoes", l: `Votações (${votacoes.length})` },
@@ -355,7 +303,7 @@ const contato = useContactInfo();
                       <TabsTrigger
                         key={t.v}
                         value={t.v}
-                        className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gold data-[state=active]:text-primary rounded-none h-16 font-bold text-slate-500 whitespace-nowrap"
+                        className="min-h-11 whitespace-nowrap rounded-xl px-4 font-semibold data-[state=active]:bg-primary-deep data-[state=active]:text-white"
                       >
                         {t.l}
                       </TabsTrigger>
@@ -363,28 +311,18 @@ const contato = useContactInfo();
                   </TabsList>
                 </div>
 
-                <CardContent className="p-6 md:p-8">
-                  {/* BIOGRAFIA */}
+                <CardContent className="px-5 pb-6 pt-2 md:px-7 md:pb-8">
+                  {/* SOBRE */}
                   <TabsContent value="biografia" className="mt-0">
-                    <div className="prose prose-slate max-w-none">
-                      <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap">
-                        {vereador.biografia || "Nenhuma biografia disponível."}
-                      </p>
-                    </div>
-                  </TabsContent>
-
-                  {/* INFORMAÇÕES PESSOAIS */}
-                  <TabsContent value="info" className="mt-0">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <InfoRow icon={<MapPin className="w-6 h-6 text-gold" />} label="Naturalidade" value={vereador.naturalidade} />
-                      <InfoRow icon={<GraduationCap className="w-6 h-6 text-gold" />} label="Escolaridade" value={vereador.escolaridade} />
-                      <InfoRow icon={<Briefcase className="w-6 h-6 text-gold" />} label="Profissão" value={vereador.profissao} />
-                      <InfoRow icon={<Calendar className="w-6 h-6 text-gold" />} label="Data de posse"
-                        value={vereador.data_posse ? new Date(vereador.data_posse).toLocaleDateString("pt-BR") : null} />
-                      <InfoRow icon={<Award className="w-6 h-6 text-gold" />} label="Cargo" value={vereador.cargo || "Vereador"} />
-                      <InfoRow icon={<Award className="w-6 h-6 text-gold" />} label="Legislatura" value={vereador.legislatura || vereador.mandato_atual} />
-                      <InfoRow icon={<Trophy className="w-6 h-6 text-gold" />} label="Comissões" value={vereador.comissoes} />
-                    </div>
+                    <p className="whitespace-pre-wrap text-base leading-8 text-foreground">{vereador.biografia || "Nenhuma biografia disponível."}</p>
+                    <dl className="mt-6 grid gap-3 border-t border-border/70 pt-6 md:grid-cols-2">
+                      <InfoRow icon={<MapPin className="h-5 w-5" />} label="Naturalidade" value={vereador.naturalidade} />
+                      <InfoRow icon={<GraduationCap className="h-5 w-5" />} label="Escolaridade" value={vereador.escolaridade} />
+                      <InfoRow icon={<Briefcase className="h-5 w-5" />} label="Profissão" value={vereador.profissao} />
+                      <InfoRow icon={<Calendar className="h-5 w-5" />} label="Data de posse" value={vereador.data_posse ? new Date(vereador.data_posse).toLocaleDateString("pt-BR") : null} />
+                      <InfoRow icon={<Award className="h-5 w-5" />} label="Legislatura" value={vereador.legislatura || vereador.mandato_atual} />
+                      <InfoRow icon={<Trophy className="h-5 w-5" />} label="Comissões" value={vereador.comissoes} />
+                    </dl>
                   </TabsContent>
 
                   {/* PROJETOS */}
@@ -404,7 +342,7 @@ const contato = useContactInfo();
                                     "px-3 py-1.5 rounded-full text-xs font-bold border transition " +
                                     (tipoFiltro === t
                                       ? "bg-primary text-primary-foreground border-primary"
-                                      : "bg-white text-slate-600 border-slate-200 hover:border-primary/50")
+                                      : "bg-card text-muted-foreground border-border hover:border-primary/50")
                                   }
                                 >
                                   {t}
@@ -415,7 +353,7 @@ const contato = useContactInfo();
                           {filtrados.length === 0 ? (
                             <EmptyState icon={<Gavel className="w-10 h-10 text-slate-300" />} text="Nenhum ato legislativo registrado." />
                           ) : (
-                            <ul className="divide-y divide-slate-100">
+                            <ul className="divide-y divide-border/70">
                               {filtrados.map((p) => (
                           <li key={p.id} className="py-4 first:pt-0 last:pb-0">
                             <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -428,8 +366,8 @@ const contato = useContactInfo();
                                     {p.status || "Em análise"}
                                   </Badge>
                                 </div>
-                                <p className="text-slate-700 leading-snug">{p.ementa || "Sem ementa."}</p>
-                                <p className="text-xs text-slate-400 mt-1">
+                                <p className="text-foreground leading-snug">{p.ementa || "Sem ementa."}</p>
+                                <p className="text-xs text-muted-foreground mt-1">
                                   {p.data_apresentacao ? new Date(p.data_apresentacao).toLocaleDateString("pt-BR") : "Data não informada"}
                                 </p>
                               </div>
@@ -481,9 +419,9 @@ const contato = useContactInfo();
                                 { l: "Presenças", v: computed.totalPresentes, c: "text-emerald-600" },
                                 { l: "Faltas", v: computed.totalAusencias, c: "text-rose-600" },
                               ].map((s) => (
-                                <div key={s.l} className="rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
+                                <div key={s.l} className="rounded-xl border border-border/70 bg-secondary/60 p-4 text-center">
                                   <p className={`font-display text-2xl font-bold ${s.c}`}>{s.v}</p>
-                                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{s.l}</p>
+                                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{s.l}</p>
                                 </div>
                               ))}
                             </div>
@@ -502,7 +440,7 @@ const contato = useContactInfo();
                                       "rounded-full border px-3 py-1.5 text-xs font-bold transition " +
                                       (presencaFiltro === f.v
                                         ? "border-primary bg-primary text-primary-foreground"
-                                        : "border-slate-200 bg-white text-slate-600 hover:border-primary/50")
+                                        : "border-border bg-card text-muted-foreground hover:border-primary/50")
                                     }
                                   >
                                     {f.l}
@@ -515,11 +453,11 @@ const contato = useContactInfo();
                                 onChange={(e) => { setPresencaBusca(e.target.value); setPresencaPagina(1); }}
                                 placeholder="Pesquisar sessão ou data..."
                                 aria-label="Pesquisar sessão"
-                                className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40 sm:w-64"
+                                className="h-10 w-full rounded-md border border-border px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40 sm:w-64"
                               />
                             </div>
 
-                            <div className="overflow-hidden rounded-xl border border-slate-100">
+                            <div className="overflow-hidden rounded-xl border border-border/70">
                               <div className="hidden grid-cols-[110px_1fr_120px_90px] gap-3 bg-primary px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-primary-foreground md:grid">
                                 <span>Data</span>
                                 <span>Pauta</span>
@@ -527,17 +465,17 @@ const contato = useContactInfo();
                                 <span className="text-center">Ata</span>
                               </div>
                               {visiveis.length === 0 ? (
-                                <p className="px-4 py-8 text-center text-sm text-slate-500">
+                                <p className="px-4 py-8 text-center text-sm text-muted-foreground">
                                   Nenhuma sessão encontrada para este filtro.
                                 </p>
                               ) : (
-                                <ul className="divide-y divide-slate-100">
+                                <ul className="divide-y divide-border/70">
                                   {visiveis.map((p) => (
                                     <li
                                       key={p.id}
-                                      className="flex flex-wrap items-center gap-3 px-4 py-3 odd:bg-slate-50/60 md:grid md:grid-cols-[110px_1fr_120px_90px]"
+                                      className="flex flex-wrap items-center gap-3 px-4 py-3 odd:bg-secondary/60 md:grid md:grid-cols-[110px_1fr_120px_90px]"
                                     >
-                                      <span className="text-sm text-slate-500">
+                                      <span className="text-sm text-muted-foreground">
                                         {p.sessao?.data_sessao
                                           ? new Date(p.sessao.data_sessao).toLocaleDateString("pt-BR")
                                           : "—"}
@@ -545,7 +483,7 @@ const contato = useContactInfo();
                                       <span className="min-w-0 flex-1 text-sm font-bold text-primary">
                                         {p.sessao?.titulo || "Sessão"}
                                         {p.sessao?.tipo && (
-                                          <span className="ml-2 text-[11px] font-medium uppercase text-slate-400">
+                                          <span className="ml-2 text-[11px] font-medium uppercase text-muted-foreground">
                                             {p.sessao.tipo}
                                           </span>
                                         )}
@@ -569,7 +507,7 @@ const contato = useContactInfo();
                                             </Button>
                                           </a>
                                         ) : (
-                                          <span className="text-xs text-slate-400">—</span>
+                                          <span className="text-xs text-muted-foreground">—</span>
                                         )}
                                       </span>
                                     </li>
@@ -580,7 +518,7 @@ const contato = useContactInfo();
 
                             {totalPaginas > 1 && (
                               <div className="flex flex-wrap items-center justify-between gap-3">
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-muted-foreground">
                                   Mostrando {inicio + 1}–{Math.min(inicio + PRESENCAS_POR_PAGINA, filtradas.length)} de{" "}
                                   {filtradas.length} sessões
                                 </p>
@@ -603,7 +541,7 @@ const contato = useContactInfo();
                                         "h-8 w-8 rounded-md border text-xs font-bold transition " +
                                         (n === pagina
                                           ? "border-primary bg-primary text-primary-foreground"
-                                          : "border-slate-200 bg-white text-slate-600 hover:border-primary/50")
+                                          : "border-border bg-card text-muted-foreground hover:border-primary/50")
                                       }
                                     >
                                       {n}
@@ -633,12 +571,12 @@ const contato = useContactInfo();
                     {votacoes.length === 0 ? (
                       <EmptyState icon={<MinusCircle className="w-10 h-10 text-slate-300" />} text="Nenhuma votação registrada." />
                     ) : (
-                      <ul className="divide-y divide-slate-100">
+                      <ul className="divide-y divide-border/70">
                         {votacoes.map((v) => (
                           <li key={v.id} className="py-3 flex items-center justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="font-semibold text-slate-700 truncate">{v.sessao?.titulo || "Sessão"}</p>
-                              <p className="text-xs text-slate-400">
+                              <p className="font-semibold text-foreground truncate">{v.sessao?.titulo || "Sessão"}</p>
+                              <p className="text-xs text-muted-foreground">
                                 {v.sessao?.data_sessao ? new Date(v.sessao.data_sessao).toLocaleDateString("pt-BR") : new Date(v.created_at).toLocaleDateString("pt-BR")}
                               </p>
                             </div>
@@ -678,25 +616,27 @@ const contato = useContactInfo();
   );
 }
 
-function ContactRow({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string | null }) {
+function ContactRow({ icon, label, value, href }: { icon: React.ReactNode; label: string; value?: string | null; href?: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0">{icon}</div>
+      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10">{icon}</div>
       <div className="min-w-0">
-        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{label}</p>
-        <p className="text-sm font-medium truncate">{value || "Não informado"}</p>
+        <p className="text-xs text-muted-foreground">{label}</p>
+        {href ? <a href={href} className="text-sm font-semibold [overflow-wrap:anywhere] hover:text-primary">{value}</a> : <p className="text-sm font-semibold [overflow-wrap:anywhere]">{value || "Não informado"}</p>}
       </div>
     </div>
   );
 }
 
+/** Só aparece quando o dado está preenchido, para não encher a tela de "Não informado". */
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string | null }) {
+  if (!value) return null;
   return (
-    <div className="flex items-start gap-4">
-      <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">{icon}</div>
-      <div>
-        <p className="text-xs uppercase font-bold text-slate-400 tracking-wider">{label}</p>
-        <p className="font-bold text-slate-700">{value || "Não informado"}</p>
+    <div className="flex items-center gap-3 rounded-2xl bg-secondary/60 p-3">
+      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary-deep text-gold" aria-hidden>{icon}</div>
+      <div className="min-w-0">
+        <dt className="text-xs text-muted-foreground">{label}</dt>
+        <dd className="font-semibold text-foreground">{value}</dd>
       </div>
     </div>
   );
@@ -704,7 +644,7 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
 
 function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="py-16 flex flex-col items-center text-center gap-3 text-slate-500">
+    <div className="py-16 flex flex-col items-center text-center gap-3 text-muted-foreground">
       {icon}
       <p>{text}</p>
     </div>

@@ -35,7 +35,7 @@ export const ROUTES = {
   leiOrganica: "/atos-legislativos/lei-organica-municipal",
   regimentoInterno: "/atos-legislativos/regimento-interno",
   portarias: "/atos-legislativos/portarias",
-  transparencia: "/transparencia-portal",
+  transparencia: "/transparencia",
   contato: "/contato",
   esic: "/e-sic",
   faq: "/perguntas-frequentes",
@@ -185,14 +185,15 @@ export const ROUTE_LABELS: Record<string, string> = Object.fromEntries(
 
 /** Rótulos extra para segmentos que não são páginas próprias. */
 const SEGMENT_LABELS: Record<string, string> = {
+  "a-camara": "A Câmara",
+  "atos-legislativos": "Atos Legislativos",
   vereadores: "Vereadores",
   sessoes: "Sessões",
   noticias: "Notícias",
   projetos: "Projetos de Lei",
   ranking: "Ranking",
   "ao-vivo": "Ao Vivo",
-  transparencia: "Transparência",
-  "transparencia-portal": "Portal da Transparência",
+  transparencia: "Portal da Transparência",
   "transparencia-dados": "Dados da Transparência",
 };
 

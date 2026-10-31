@@ -9,7 +9,7 @@ const PRIORITY: Record<string, string> = {
   "/noticias": "0.9",
   "/vereadores": "0.9",
   "/sessoes": "0.9",
-  "/transparencia-portal": "0.9",
+  "/transparencia": "0.9",
 };
 
 const CHANGEFREQ: Record<string, "daily" | "weekly" | "monthly"> = {
@@ -17,7 +17,7 @@ const CHANGEFREQ: Record<string, "daily" | "weekly" | "monthly"> = {
   "/noticias": "daily",
   "/sessoes": "weekly",
   "/sessoes/ao-vivo": "daily",
-  "/transparencia-portal": "weekly",
+  "/transparencia": "weekly",
 };
 
 function buildSitemapXml() {

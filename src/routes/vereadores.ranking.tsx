@@ -1,3 +1,7 @@
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { EstadoVazio } from "@/components/pagina-hero";
+import { PaginaHero } from "@/components/pagina-hero";
+import { Trophy as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,97 +82,88 @@ function RankingPage() {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
-      <section className="bg-gradient-to-br from-primary-deep to-primary text-primary-foreground">
-        <div className="container-page py-11">
-          <div className="text-xs uppercase tracking-[0.2em] text-gold flex items-center gap-3">
-            <Trophy className="w-4 h-4" /> Ranking parlamentar
-          </div>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl font-bold">
-            Desempenho dos <span className="text-gold">Vereadores</span>
-          </h1>
-          <p className="mt-3 text-primary-foreground/80 max-w-2xl">
-            Métricas calculadas automaticamente a partir dos projetos legislativos
-            apresentados e da presença em sessões plenárias.
-          </p>
-        </div>
-      </section>
+    <div className="min-h-screen pb-8">
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="Ranking parlamentar"
+        title="Desempenho dos"
+        destaque="Vereadores"
+        description={<>Métricas calculadas automaticamente a partir dos projetos legislativos apresentados e da presença em sessões plenárias.</>}
+      />
 
-      <section className="container-page -mt-10">
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
-          <Tabs defaultValue="pontuacao_total">
-            <TabsList className="w-full justify-start rounded-none border-b bg-slate-50 p-2 gap-1 overflow-x-auto">
-              {KEYS.map((k) => (
-                <TabsTrigger key={String(k.key)} value={String(k.key)} className="gap-2">
-                  <k.icon className="w-4 h-4" /> {k.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {KEYS.map((k) => {
-              const sorted = [...rows].sort(
-                (a, b) => Number(b[k.key]) - Number(a[k.key]),
-              );
-              return (
-                <TabsContent key={String(k.key)} value={String(k.key)} className="m-0">
-                  <ul className="divide-y divide-slate-100">
-                    {sorted.map((v, i) => (
-                      <li
-                        key={v.id}
-                        className="flex items-center gap-4 p-4 hover:bg-slate-50 transition"
-                      >
-                        <span
-                          className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                            i === 0
-                              ? "bg-gold text-primary-deep"
-                              : i < 3
-                                ? "bg-primary/10 text-primary"
-                                : "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {i + 1}
-                        </span>
-                        <VereadorAvatar nome={v.nome} foto={v.foto_url} partido={v.partido} size={48} />
-                        <div className="flex-1 min-w-0">
-                          <Link
-                            to="/vereadores/$slug"
-                            params={{ slug: v.slug || v.id }}
-                            className="font-semibold text-slate-900 hover:text-primary block truncate"
-                          >
-                            {v.nome}
-                          </Link>
-                          <div className="flex gap-2 mt-1">
-                            {v.partido && (
-                              <Badge variant="secondary" className="text-[10px]">
-                                {v.partido}
-                              </Badge>
-                            )}
-                            {v.cargo && (
-                              <span className="text-xs text-slate-500">{v.cargo}</span>
-                            )}
+      <section className="container-page py-10 md:py-14">
+        <Tabs defaultValue="pontuacao_total" className="space-y-6">
+          <TabsList className="h-auto max-w-full flex-wrap justify-start gap-1 rounded-2xl border border-border bg-secondary/60 p-1.5">
+            {KEYS.map((k) => (
+              <TabsTrigger key={String(k.key)} value={String(k.key)} className="min-h-11 gap-2 rounded-xl px-4 data-[state=active]:bg-primary-deep data-[state=active]:text-white">
+                <k.icon className="h-4 w-4" aria-hidden /> {k.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {KEYS.map((k) => {
+            const sorted = [...rows].sort((a, b) => Number(b[k.key]) - Number(a[k.key]));
+            const maior = Math.max(0, ...sorted.map((v) => Number(v[k.key])));
+            // Sem atividade registrada não há classificação: o pódio com zeros sugeriria um resultado que não existe.
+            const temDados = maior > 0;
+            const podio = temDados ? sorted.slice(0, 3) : [];
+            const resto = temDados ? sorted.slice(3) : sorted;
+            return (
+              <TabsContent key={String(k.key)} value={String(k.key)} className="m-0 animate-[fade-up_0.4s_ease-out]">
+                {!temDados && rows.length > 0 && (
+                  <p className="mb-4 flex items-start gap-2.5 rounded-2xl border border-gold/30 bg-gold/10 p-4 text-sm">
+                    <Trophy className="mt-0.5 h-4 w-4 shrink-0 text-[oklch(0.5_0.11_70)]" aria-hidden />
+                    Ainda não há atividades registradas nesta categoria. A classificação aparece quando os dados forem publicados.
+                  </p>
+                )}
+
+                {podio.length > 0 && (
+                  <ol className="mb-4 grid gap-3 md:grid-cols-3 md:items-end">
+                    {podio.map((v, i) => (
+                      <li key={v.id} className={i === 0 ? "md:order-2" : i === 1 ? "md:order-1" : "md:order-3"}>
+                        <Link to="/vereadores/$slug" params={{ slug: v.slug || v.id }} className="group block overflow-hidden rounded-3xl border border-border bg-card transition hover:-translate-y-1 hover:shadow-xl">
+                          <div className="relative">
+                            <FotoEstudio ouro={i === 0} nome={v.nome} foto={v.foto_url} partido={v.partido} className={i === 0 ? "h-72" : "h-56"} />
+                            <span className={`absolute left-3 top-3 grid h-10 w-10 place-items-center rounded-full font-display font-bold shadow-md ${i === 0 ? "bg-gold text-gold-foreground" : "bg-primary-deep text-white"}`}>{i + 1}º</span>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-display text-2xl font-bold text-primary-deep">
-                            {Number(v[k.key])}
-                            {k.suffix || ""}
+                          <div className={`p-4 ${i === 0 ? "acesso-destaque text-white" : ""}`}>
+                            <p className={`font-display font-semibold leading-snug ${i === 0 ? "text-lg" : ""}`}>{v.nome}</p>
+                            <p className={`mt-0.5 font-display text-2xl font-bold ${i === 0 ? "text-gold" : "text-primary"}`}>{Number(v[k.key])}{k.suffix || ""}</p>
                           </div>
-                          <div className="text-[10px] uppercase tracking-widest text-slate-400">
-                            {k.label}
-                          </div>
-                        </div>
+                        </Link>
                       </li>
                     ))}
-                    {sorted.length === 0 && (
-                      <li className="p-12 text-center text-slate-500">
-                        Sem dados ainda.
+                  </ol>
+                )}
+
+                {resto.length > 0 && (
+                  <ol className="overflow-hidden rounded-3xl border border-border bg-card" start={podio.length + 1}>
+                    {resto.map((v, i) => (
+                      <li key={v.id} className="border-b border-border/70 last:border-0">
+                        <Link to="/vereadores/$slug" params={{ slug: v.slug || v.id }} className="group flex items-center gap-3 p-3 transition-colors hover:bg-secondary/60 md:gap-4 md:p-4">
+                          {temDados && <span className="w-7 shrink-0 text-center font-display font-bold text-muted-foreground">{i + podio.length + 1}º</span>}
+                          <FotoEstudio nome={v.nome} foto={v.foto_url} partido={v.partido} className="h-14 w-12 shrink-0 rounded-xl" />
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate font-semibold group-hover:text-primary">{v.nome}</span>
+                            <span className="block truncate text-xs text-muted-foreground">{[v.cargo, v.partido].filter(Boolean).join(" · ")}</span>
+                            {temDados && (
+                              <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-secondary" aria-hidden>
+                                <span className="block h-full rounded-full bg-primary" style={{ width: `${(Number(v[k.key]) / maior) * 100}%` }} />
+                              </span>
+                            )}
+                          </span>
+                          <span className="shrink-0 font-display text-xl font-bold text-primary-deep">{Number(v[k.key])}{k.suffix || ""}</span>
+                        </Link>
                       </li>
-                    )}
-                  </ul>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
-        </div>
+                    ))}
+                  </ol>
+                )}
+
+                {rows.length === 0 && <EstadoVazio icone={Trophy} titulo="Sem dados ainda" texto="O ranking aparece quando houver atividades registradas." />}
+              </TabsContent>
+            );
+          })}
+        </Tabs>
       </section>
     </div>
   );

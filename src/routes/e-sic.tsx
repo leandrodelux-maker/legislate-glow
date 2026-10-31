@@ -1,3 +1,7 @@
+import { ArrowRight } from "lucide-react";
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { PaginaHero } from "@/components/pagina-hero";
+import { ShieldCheck as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -74,130 +78,111 @@ function ESicPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <div>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div className="container-page py-10">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
-              <ShieldCheck className="h-3 w-3" /> LAI · Lei nº 12.527/2011
-            </span>
-          </div>
-          <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">
-            e-SIC — Serviço de Informação ao Cidadão
-          </h1>
-          <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Registre um pedido de acesso à informação pública. O órgão possui até 20 dias, prorrogáveis por
-            mais 10, para responder à sua solicitação.
-          </p>
-        </div>
-      </section>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="LAI · Lei nº 12.527/2011"
+        title="e-SIC: Serviço de Informação ao Cidadão"
+        description={<>Registre um pedido de acesso à informação pública. O órgão possui até 20 dias, prorrogáveis por mais 10, para responder à sua solicitação.</>}
+      />
 
-      {/* INFO CARDS */}
-      <section className="container-page py-10 md:py-14 grid gap-5 md:grid-cols-3">
-        {[
-          { icon: FileText, title: "O que é?", text: "Canal oficial para qualquer cidadão solicitar informações públicas ao Poder Legislativo Municipal." },
-          { icon: Clock, title: "Prazos", text: "Resposta em até 20 dias corridos, com possibilidade de prorrogação por mais 10 dias mediante justificativa." },
-          { icon: Scale, title: "Base Legal", text: "Lei de Acesso à Informação — Lei nº 12.527/2011 e Decreto nº 7.724/2012." },
-        ].map((it) => (
-          <div key={it.title} className="rounded-xl border border-border bg-card p-6">
-            <div className="grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary">
-              <it.icon className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 font-display text-lg font-semibold">{it.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground leading-6">{it.text}</p>
-          </div>
-        ))}
+      <FaixaDestaques itens={[
+        { icone: FileText, titulo: "O que é?", texto: "Canal oficial para qualquer cidadão solicitar informações públicas ao Poder Legislativo." },
+        { icone: Clock, titulo: "Prazos", texto: "Resposta em até 20 dias, prorrogáveis por mais 10 dias mediante justificativa." },
+        { icone: Scale, titulo: "Base legal", texto: "Lei de Acesso à Informação: Lei nº 12.527/2011." },
+      ]} />
+
+      {/* COMO FUNCIONA */}
+      <section className="container-page pt-12 md:pt-16">
+        <TituloSecao eyebrow="Como funciona" titulo="Três passos até a sua resposta" />
+        <ol className="grid gap-3 md:grid-cols-3">
+          {[
+            { t: "Faça o pedido", d: "Preencha o formulário. Você não precisa justificar o motivo." },
+            { t: "Guarde o protocolo", d: "Um número é gerado na hora, para identificar o seu pedido." },
+            { t: "Receba a resposta", d: "A Câmara responde dentro do prazo legal." },
+          ].map((p, i) => (
+            <li key={p.t} className="relative flex items-center gap-4 rounded-2xl bg-secondary/60 p-4">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary-deep font-display text-lg font-bold text-gold">{i + 1}</span>
+              <span>
+                <span className="block font-display font-semibold">{p.t}</span>
+                <span className="block text-sm leading-snug text-muted-foreground">{p.d}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* FORM */}
-      <section className="container-page pb-16">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-6 md:p-8 shadow-sm">
-          <div className="flex items-center gap-3">
-            <Send className="h-5 w-5 text-primary" />
-            <h2 className="font-display text-xl font-bold">Novo pedido de informação</h2>
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Preencha os dados abaixo. Um número de protocolo será gerado para acompanhamento.
-          </p>
+      <section className="container-page grid gap-5 py-10 md:py-12 lg:grid-cols-[1.6fr_1fr] lg:items-start [&>*]:min-w-0">
+        <div className="rounded-3xl border border-border bg-card p-6 shadow-lg shadow-primary-deep/5 md:p-8">
+          <h2 className="flex items-center gap-2.5 font-display text-2xl font-bold">
+            <Send className="h-5 w-5 text-primary" aria-hidden /> Novo pedido de informação
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">Os campos com * são obrigatórios.</p>
 
           {status === "ok" ? (
-            <div className="mt-6 rounded-lg border border-emerald-300 bg-emerald-50 p-5 text-emerald-900">
-              <div className="flex items-center gap-2 font-semibold">
-                <CheckCircle2 className="h-5 w-5" /> Pedido registrado com sucesso!
-              </div>
-              <p className="mt-2 text-sm">
-                Protocolo: <span className="font-mono font-bold">{protocolo}</span>. Guarde este número
-                para acompanhamento.
-              </p>
-              <Button className="mt-4" variant="outline" onClick={() => setStatus("idle")}>
-                Fazer novo pedido
-              </Button>
+            <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
+              <CheckCircle2 className="mx-auto h-10 w-10 text-primary" aria-hidden />
+              <p className="mt-3 font-display text-xl font-bold">Pedido registrado com sucesso!</p>
+              <p className="mt-3 text-sm text-muted-foreground">Guarde o número do seu protocolo:</p>
+              <p className="mt-1 font-mono text-2xl font-bold text-primary-deep">{protocolo}</p>
+              <Button className="mt-5" variant="outline" onClick={() => setStatus("idle")}>Fazer novo pedido</Button>
             </div>
           ) : (
             <form className="mt-6 grid gap-4 md:grid-cols-2" onSubmit={onSubmit}>
-              <div className="md:col-span-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="nome">Nome completo *</Label>
-                <Input id="nome" name="nome" required />
+                <Input id="nome" name="nome" required autoComplete="name" className="h-11" />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="cpf">CPF</Label>
-                <Input id="cpf" name="cpf" placeholder="000.000.000-00" />
+                <Input id="cpf" name="cpf" placeholder="000.000.000-00" className="h-11" />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="email">E-mail *</Label>
-                <Input id="email" name="email" type="email" required />
+                <Input id="email" name="email" type="email" required autoComplete="email" className="h-11" />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="telefone">Telefone</Label>
-                <Input id="telefone" name="telefone" placeholder="(00) 00000-0000" />
+                <Input id="telefone" name="telefone" type="tel" autoComplete="tel" placeholder="(00) 00000-0000" className="h-11" />
               </div>
-              <div className="md:col-span-2">
+              <div className="space-y-1.5 md:col-span-2">
                 <Label htmlFor="pedido">Descreva sua solicitação *</Label>
                 <Textarea id="pedido" name="pedido" required rows={6} placeholder="Descreva de forma clara e objetiva a informação que deseja obter." />
               </div>
-              <div className="md:col-span-2 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-muted-foreground inline-flex items-center gap-1.5">
-                  <Info className="h-3.5 w-3.5" /> Ao enviar, você concorda com o tratamento dos dados conforme a LGPD.
-                </p>
-                <Button type="submit" disabled={status === "sending"}>
-                  {status === "sending" ? "Enviando..." : "Enviar pedido"} <Send className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
               {status === "err" && (
-                <div className="md:col-span-2 flex items-center gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                  <AlertCircle className="h-4 w-4" /> Não foi possível registrar o pedido. Tente novamente.
+                <div role="alert" className="flex items-center gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-sm text-destructive md:col-span-2">
+                  <AlertCircle className="h-4 w-4 shrink-0" aria-hidden /> Não foi possível registrar o pedido. Tente novamente.
                 </div>
               )}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:col-span-2">
+                <p className="inline-flex items-start gap-1.5 text-xs text-muted-foreground">
+                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden /> Ao enviar, você concorda com o tratamento dos dados conforme a LGPD.
+                </p>
+                <Button type="submit" size="lg" className="shrink-0" disabled={status === "sending"}>
+                  {status === "sending" ? "Enviando..." : "Enviar pedido"} <Send className="ml-2 h-4 w-4" aria-hidden />
+                </Button>
+              </div>
             </form>
           )}
         </div>
 
-        {/* CONTATOS ALTERNATIVOS */}
-        <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 text-primary"><Mail className="h-4 w-4" /> <span className="font-semibold">E-mail</span></div>
-            <a href={`mailto:${contact.email}`} className="mt-1 block break-all text-sm text-muted-foreground hover:text-primary">{contact.email}</a>
+        <aside className="acesso-destaque rounded-3xl p-6 text-white md:p-7 lg:sticky lg:top-20">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-gold">Outros canais</p>
+          <h2 className="mt-1 font-display text-xl font-bold">Prefere outro canal?</h2>
+          <ul className="mt-5 space-y-4 text-sm">
+            <li className="flex gap-3"><Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden /><a href={`mailto:${contact.email}`} className="font-semibold [overflow-wrap:anywhere] hover:text-gold">{contact.email}</a></li>
+            <li className="flex gap-3"><Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden /><a href={contact.telefoneHref} className="font-semibold hover:text-gold">{contact.telefone}</a></li>
+            <li className="flex gap-3"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden /><span>{contact.endereco}</span></li>
+            <li className="flex gap-3"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden /><span>{contact.horario}</span></li>
+          </ul>
+          <div className="mt-6 space-y-2 border-t border-white/15 pt-5 text-sm">
+            <Link to="/transparencia" className="flex items-center justify-between gap-2 font-semibold hover:text-gold">A informação pode já estar no Portal <ArrowRight className="h-4 w-4 shrink-0" aria-hidden /></Link>
+            <Link to="/perguntas-frequentes" className="flex items-center justify-between gap-2 font-semibold hover:text-gold">Perguntas frequentes <ArrowRight className="h-4 w-4 shrink-0" aria-hidden /></Link>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 text-primary"><Phone className="h-4 w-4" /> <span className="font-semibold">Telefone</span></div>
-            <a href={contact.telefoneHref} className="mt-1 block text-sm text-muted-foreground hover:text-primary">{contact.telefone}</a>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 text-primary"><MapPin className="h-4 w-4" /> <span className="font-semibold">Endereço</span></div>
-            <p className="mt-1 text-sm text-muted-foreground">{contact.endereco}</p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 text-primary"><Clock className="h-4 w-4" /> <span className="font-semibold">Horário</span></div>
-            <p className="mt-1 text-sm text-muted-foreground">{contact.horario}</p>
-          </div>
-        </div>
-
-
-        <div className="mx-auto mt-6 max-w-3xl text-center text-sm text-muted-foreground">
-          Veja também as <Link to="/perguntas-frequentes" className="text-primary hover:underline">Perguntas Frequentes</Link> ou consulte o <Link to="/transparencia-portal" className="text-primary hover:underline">Portal da Transparência</Link>.
-        </div>
+        </aside>
       </section>
-    </main>
+    </div>
   );
 }

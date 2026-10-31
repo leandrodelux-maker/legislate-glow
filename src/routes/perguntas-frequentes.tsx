@@ -1,3 +1,8 @@
+import { ArrowRight, SearchX } from "lucide-react";
+import { ChipsFiltro } from "@/components/pagina-ui";
+import { EstadoVazio } from "@/components/pagina-hero";
+import { PaginaHero } from "@/components/pagina-hero";
+import { HelpCircle as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { HelpCircle, Search, Loader2 } from "lucide-react";
@@ -57,94 +62,75 @@ function FaqPage() {
   }, [faqs, q, cat]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <div>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div className="container-page py-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
-            <HelpCircle className="h-3 w-3" /> FAQ
-          </span>
-          <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">
-            Perguntas Frequentes
-          </h1>
-          <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Respostas rápidas para as principais dúvidas sobre a Câmara Municipal, seus serviços e a
-            transparência das informações públicas.
-          </p>
-        </div>
-      </section>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="Atendimento"
+        title="Perguntas Frequentes"
+        description={<>Respostas rápidas para as principais dúvidas sobre a Câmara Municipal, seus serviços e a transparência das informações públicas.</>}
+      />
 
-      {/* SEARCH + CATS */}
-      <section className="border-b border-border bg-secondary/40">
-        <div className="container-page py-6 flex flex-col gap-4">
-          <div className="relative w-full">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar nas perguntas..."
-              className="h-11 w-full rounded-full border border-border bg-white pl-11 pr-5 text-sm shadow-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            {cats.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCat(c)}
-                className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                  cat === c
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-white text-foreground hover:border-primary hover:text-primary"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+      {/* BUSCA */}
+      <section className="container-page relative z-10 -mt-7">
+        <div className="relative mx-auto max-w-3xl">
+          <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" aria-hidden />
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Digite sua dúvida. Ex.: sessões, e-SIC, vereadores"
+            aria-label="Buscar nas perguntas"
+            className="h-14 w-full rounded-2xl border border-border bg-card pl-13 pr-5 text-base shadow-xl shadow-primary-deep/15 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
         </div>
       </section>
 
       {/* LISTA */}
-      <section className="container-page py-10 md:py-14">
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <section className="container-page grid gap-8 py-10 md:py-14 lg:grid-cols-[260px_1fr] lg:items-start">
+        <aside className="lg:sticky lg:top-20">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-primary">Assuntos</p>
+          <ChipsFiltro opcoes={cats} ativa={cat} aoEscolher={setCat} rotulo="Filtrar por assunto" />
+          <div className="acesso-destaque mt-6 hidden rounded-2xl p-5 text-white lg:block">
+            <p className="font-display text-lg font-semibold leading-snug">Não encontrou o que procurava?</p>
+            <p className="mt-1 text-sm text-white/85">Peça a informação diretamente à Câmara.</p>
+            <Link to="/e-sic" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-gold">
+              Fazer um pedido no e-SIC <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
-            Nenhuma pergunta encontrada.
-          </div>
-        ) : (
-          <Accordion type="single" collapsible className="space-y-3">
-            {filtered.map((f, i) => (
-              <AccordionItem
-                key={f.id}
-                value={f.id}
-                className="rounded-xl border border-border bg-card px-4"
-              >
-                <AccordionTrigger className="text-left text-base font-semibold">
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-                      {f.categoria}
-                    </span>
-                    <span>{f.pergunta}</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground leading-7 whitespace-pre-wrap">
-                  {f.resposta}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        )}
+        </aside>
 
-        <div className="mt-10 text-center text-sm text-muted-foreground">
-          Não encontrou o que procurava?{" "}
-          <Link to="/e-sic" className="text-primary hover:underline">Faça um pedido pelo e-SIC</Link>{" "}
-          ou{" "}
-          <Link to="/contato" className="text-primary hover:underline">fale com a Ouvidoria</Link>.
+        <div>
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" aria-label="Carregando" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <EstadoVazio icone={SearchX} titulo="Nenhuma pergunta encontrada" texto="Tente outra palavra ou escolha outro assunto." />
+          ) : (
+            <>
+              <p className="mb-3 text-sm text-muted-foreground" aria-live="polite">{filtered.length} {filtered.length === 1 ? "pergunta" : "perguntas"}</p>
+              <Accordion type="single" collapsible className="space-y-3">
+                {filtered.map((f) => (
+                  <AccordionItem key={f.id} value={f.id} className="rounded-2xl border border-border bg-card px-5 transition data-[state=open]:border-primary/40 data-[state=open]:shadow-elegant">
+                    <AccordionTrigger className="gap-3 py-4 text-left hover:no-underline">
+                      <span>
+                        <span className="block text-xs font-bold text-primary">{f.categoria}</span>
+                        <span className="mt-0.5 block font-display text-base font-semibold leading-snug text-foreground">{f.pergunta}</span>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{f.resposta}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </>
+          )}
+
+          <p className="mt-6 text-sm text-muted-foreground lg:hidden">
+            Não encontrou o que procurava? <Link to="/e-sic" className="font-semibold text-primary underline">Faça um pedido no e-SIC</Link>.
+          </p>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

@@ -1,3 +1,7 @@
+import { ChevronRight } from "lucide-react";
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { PaginaHero } from "@/components/pagina-hero";
+import { PieChart as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
@@ -199,21 +203,14 @@ function OrcamentoPage() {
   const href = (path?: string) => getTransparencyUrl(baseUrl, path);
 
   return (
-    <main className="min-h-screen bg-background">
+    <div>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div className="absolute inset-0 opacity-10 [background-image:radial-gradient(circle_at_20%_20%,white,transparent_40%),radial-gradient(circle_at_80%_60%,white,transparent_40%)]" />
-        <div className="container-page relative py-10 md:py-14">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-gold">
-            <Landmark className="h-3 w-3" /> Transparência orçamentária
-          </span>
-          <h1 className="mt-3 max-w-3xl font-display text-3xl font-extrabold leading-tight md:text-4xl">
-            Orçamento da Câmara Municipal
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm text-primary-foreground/85 md:text-base">
-            Plano anual (PPA, LDO e LOA) e orçamento vigente do exercício {CURRENT_YEAR}, com acesso
-            direto às consultas oficiais do Portal da Transparência.
-          </p>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="Transparência orçamentária"
+        title="Orçamento da Câmara Municipal"
+        description={<>Plano anual (PPA, LDO e LOA) e orçamento vigente do exercício {CURRENT_YEAR}, com acesso direto às consultas oficiais do Portal da Transparência.</>}
+      >
           <div className="mt-6 flex flex-wrap gap-3">
             <a
               href={href("receitas-e-despesas/movimentacao-orcamentaria-financeira")}
@@ -232,123 +229,78 @@ function OrcamentoPage() {
               <FileText className="h-4 w-4" /> Plano anual (PPA/LDO/LOA)
             </a>
             <Link
-              to="/transparencia-portal"
+              to="/transparencia"
               className="inline-flex items-center gap-2 rounded-full border border-white/40 px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-white/10"
             >
               <ArrowUpRight className="h-4 w-4" /> Portal da Transparência
             </Link>
           </div>
-        </div>
-      </section>
+      </PaginaHero>
 
       {/* CICLO ORÇAMENTÁRIO */}
-      <section className="border-b border-border bg-card">
-        <div className="container-page py-10">
-          <h2 className="font-display text-xl font-bold text-foreground">
-            Como funciona o ciclo orçamentário
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Da elaboração do plano à execução da despesa, cada etapa é pública.
-          </p>
-          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {CICLO.map((c) => (
-              <li
-                key={c.step}
-                className="rounded-xl border border-border bg-background p-4 shadow-sm"
-              >
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {c.step}
-                </span>
-                <h3 className="mt-3 text-sm font-semibold text-foreground">{c.title}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{c.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+      <section className="container-page py-12 md:py-16">
+        <TituloSecao eyebrow="Do plano à execução" titulo="Como funciona o ciclo orçamentário" descricao="Cada etapa é pública e pode ser acompanhada." />
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {CICLO.map((c, i) => (
+            <li key={c.step} className="relative rounded-2xl border border-border bg-card p-5">
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-primary-deep font-display font-bold text-gold">{c.step}</span>
+              {i < CICLO.length - 1 && <ChevronRight className="absolute -right-3.5 top-8 z-10 hidden h-6 w-6 rounded-full bg-gold p-1 text-gold-foreground lg:block" aria-hidden />}
+              <h3 className="mt-3 font-display font-semibold leading-snug text-foreground">{c.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{c.text}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* BLOCOS DE CONSULTA */}
-      <section className="container-page py-12">
-        <div className="space-y-10">
+      <section className="border-y border-border/60 bg-secondary/40 py-12 md:py-16">
+        <div className="container-page space-y-4">
           {BLOCKS.map((block) => {
             const Icon = block.icon;
             return (
-              <div key={block.key} id={block.key}>
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-white shadow-md ${block.accent}`}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <h2 className="font-display text-lg font-bold text-foreground md:text-xl">
-                      {block.title}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">{block.subtitle}</p>
-                  </div>
-                </div>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <article key={block.key} id={block.key} className="grid overflow-hidden rounded-3xl border border-border bg-card lg:grid-cols-[300px_1fr]">
+                <header className="acesso-destaque relative overflow-hidden p-6 text-white">
+                  <Icon className="absolute -bottom-6 -right-5 h-28 w-28 opacity-10" aria-hidden />
+                  <Icon className="relative h-7 w-7 text-gold" aria-hidden />
+                  <h2 className="relative mt-3 font-display text-xl font-bold leading-snug">{block.title}</h2>
+                  <p className="relative mt-2 text-sm leading-relaxed text-white/90">{block.subtitle}</p>
+                </header>
+                <ul className="grid gap-px bg-border/70 sm:grid-cols-2">
                   {block.items.map((item) => (
-                    <a
-                      key={item.path}
-                      href={href(item.path)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-start justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-                    >
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-foreground group-hover:text-primary">
-                          {item.label}
+                    <li key={item.path} className="bg-card">
+                      <a href={href(item.path)} target="_blank" rel="noopener noreferrer" className="group flex h-full items-start gap-3 p-5 transition-colors hover:bg-secondary/60">
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-semibold leading-snug text-foreground group-hover:text-primary">{item.label}</span>
+                          <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{item.description}</span>
                         </span>
-                        <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
-                          {item.description}
-                        </span>
-                      </span>
-                      <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-                    </a>
+                        <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" aria-hidden />
+                      </a>
+                    </li>
                   ))}
-                </div>
-              </div>
+                </ul>
+              </article>
             );
           })}
         </div>
       </section>
 
-      {/* RODAPÉ DA PÁGINA */}
-      <section className="border-t border-border bg-secondary/30">
-        <div className="container-page flex flex-wrap items-center justify-between gap-4 py-8">
-          <div className="flex items-start gap-3">
-            <ClipboardList className="mt-0.5 h-5 w-5 text-primary" />
-            <p className="max-w-xl text-sm text-muted-foreground">
-              Não encontrou a informação orçamentária que procurava? Solicite pelo e-SIC ou consulte
-              todas as bases disponíveis no Portal da Transparência.
-            </p>
+      {/* AJUDA */}
+      <section className="container-page pt-12 md:pt-16">
+        <div className="acesso-destaque flex flex-col gap-5 rounded-3xl p-6 text-white md:flex-row md:items-center md:justify-between md:p-8">
+          <div>
+            <h2 className="font-display text-2xl font-bold">Não encontrou o que procurava?</h2>
+            <p className="mt-1 text-white/90">Peça a informação pelo e-SIC ou consulte todas as bases no portal oficial.</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              to="/e-sic"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              <HandCoins className="h-4 w-4" /> Pedir informação (e-SIC)
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <Link to="/e-sic" className="inline-flex h-11 items-center gap-2 rounded-xl bg-gold px-4 text-sm font-semibold text-gold-foreground transition hover:bg-gold/90">
+              <HandCoins className="h-4 w-4" aria-hidden /> Pedir informação
             </Link>
-            <a
-              href={href()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-            >
-              <ExternalLink className="h-4 w-4" /> Abrir portal oficial
+            <a href={href()} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/30 px-4 text-sm font-semibold transition hover:bg-white/10">
+              <ExternalLink className="h-4 w-4" aria-hidden /> Portal oficial
             </a>
           </div>
         </div>
-        <div className="container-page pb-8">
-          <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CalendarDays className="h-3.5 w-3.5 text-primary" /> Dados atualizados diariamente pelo
-            sistema contábil oficial · exercício {CURRENT_YEAR}
-            <TrendingDown className="h-3.5 w-3.5 opacity-0" />
-          </p>
-        </div>
       </section>
-    </main>
+    </div>
   );
 }

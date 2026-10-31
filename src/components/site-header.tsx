@@ -1,37 +1,16 @@
 import logoAsset from "@/assets/logo-camara.png.asset.json";
 import { Link } from "@tanstack/react-router";
-import { CONTACT_FALLBACK } from "@/hooks/use-contact-info";
-
-import {
-  Mail,
-  Phone,
-  Clock,
-
-  Map,
-  Menu,
-  X,
-  ChevronDown,
-  Shield,
-  Info,
-  MessageSquare,
-  Search,
-  Globe,
-  Landmark,
-  
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContactInfo } from "@/hooks/use-contact-info";
+import { useSiteSettings } from "@/hooks/use-site-settings";
+import { Mail, Phone, Clock, Map, Menu, X, ChevronDown, Info, MessageSquare, ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
+import { BuscaSite } from "@/components/busca-site";
 import radarLogo from "@/assets/radar-transparencia.png.asset.json";
 import { ROUTES, INFO_ACCESS_LINKS, CAMARA_LINKS, ATOS_LEGISLATIVOS_LINKS } from "@/lib/site-links";
 
-type SiteSettings = {
-  contact_phone: string | null;
-  contact_email: string | null;
-  contact_hours: string | null;
-  header_logo_url: string | null;
-  header_logo_height: number;
-};
+/** Maior altura do logotipo no cabeçalho: um valor maior no painel não pode esticar a barra. */
+const LOGO_ALTURA_MAX = 76;
 
 const mainNav = [
   { to: ROUTES.home, label: "INÍCIO" },
@@ -45,21 +24,32 @@ const mainNav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const { settings } = useSiteSettings();
+  const contato = useContactInfo();
+  const phone = contato.telefone;
+  const email = contato.email;
+  const hours = contato.horario;
+  const logoAltura = Math.min(Number(settings?.header_logo_height) || LOGO_ALTURA_MAX, LOGO_ALTURA_MAX);
 
+  // Fio dourado na barra de navegação: mostra quanto da página já foi lido.
+  const fio = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    supabase
-      .from("site_settings")
-      .select("contact_phone, contact_email, contact_hours, header_logo_url, header_logo_height")
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => setSettings(data as SiteSettings | null));
+    let quadro = 0;
+    const atualizar = () => {
+      quadro = 0;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (fio.current) fio.current.style.transform = `scaleX(${total > 0 ? window.scrollY / total : 0})`;
+    };
+    const aoRolar = () => { if (!quadro) quadro = requestAnimationFrame(atualizar); };
+    atualizar();
+    window.addEventListener("scroll", aoRolar, { passive: true });
+    window.addEventListener("resize", aoRolar);
+    return () => {
+      cancelAnimationFrame(quadro);
+      window.removeEventListener("scroll", aoRolar);
+      window.removeEventListener("resize", aoRolar);
+    };
   }, []);
-
-  const phone = settings?.contact_phone ?? CONTACT_FALLBACK.telefone;
-  const email = settings?.contact_email ?? CONTACT_FALLBACK.email;
-  const hours = settings?.contact_hours ?? CONTACT_FALLBACK.horario;
-
 
   return (
     <>
@@ -72,96 +62,66 @@ export function SiteHeader() {
 
       {/* TOP STRIP — institutional blue */}
       <div className="bg-primary-deep text-white text-xs">
-        <div className="container-page flex h-10 items-center justify-between gap-4">
+        <div className="container-page flex h-9 items-center gap-5">
           <div className="hidden md:flex items-center gap-5">
             <Link to={ROUTES.mapaDoSite} className="inline-flex items-center gap-1.5 hover:text-gold transition-colors">
-              <Map className="h-3.5 w-3.5" /> Mapa do Site
+              <Map className="h-3.5 w-3.5 text-gold" aria-hidden /> Mapa do Site
             </Link>
-            <span className="opacity-30">|</span>
-            <a href={`tel:${phone}`} className="inline-flex items-center gap-1.5 hover:text-gold transition-colors">
-              <Phone className="h-3.5 w-3.5" /> {phone}
+            <a href={contato.telefoneHref} className="inline-flex items-center gap-1.5 hover:text-gold transition-colors">
+              <Phone className="h-3.5 w-3.5 text-gold" aria-hidden /> {phone}
             </a>
-            <span className="opacity-30">|</span>
             <a href={`mailto:${email}`} className="inline-flex items-center gap-1.5 hover:text-gold transition-colors">
-              <Mail className="h-3.5 w-3.5" /> {email}
+              <Mail className="h-3.5 w-3.5 text-gold" aria-hidden /> {email}
             </a>
-            <span className="opacity-30">|</span>
-            <span className="inline-flex items-center gap-1.5 opacity-90">
-              <Clock className="h-3.5 w-3.5" /> {hours}
+            <span className="hidden lg:inline-flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-gold" aria-hidden /> {hours}
             </span>
           </div>
-          <div className="md:hidden inline-flex items-center gap-2">
-            <Phone className="h-3.5 w-3.5" /> {phone}
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="#" aria-label="Redes sociais" className="hover:text-gold transition-colors">
-              <Globe className="h-4 w-4" />
-            </a>
-          </div>
+          <a href={contato.telefoneHref} className="md:hidden inline-flex items-center gap-2">
+            <Phone className="h-3.5 w-3.5 text-gold" aria-hidden /> {phone}
+          </a>
         </div>
       </div>
 
       {/* WHITE HEADER — logo + search + CTAs */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="container-page py-3.5 flex items-center justify-between gap-3">
-          <Link to="/" className="flex items-center gap-3 shrink-0">
-            {settings?.header_logo_url || logoAsset.url ? (
-              <img
-                src={settings?.header_logo_url || logoAsset.url}
-                alt="Logo Câmara Municipal"
-                decoding="async"
-                style={{ height: `${(settings?.header_logo_height || 80) * 1.5}px` }}
-                className="w-auto max-w-[200px] object-contain"
-              />
-            ) : (
-              <>
-                <div className="grid h-16 w-16 place-items-center rounded-lg bg-gradient-to-br from-primary-deep to-primary text-white shadow-md ring-1 ring-gold/30">
-                  <Landmark className="h-8 w-8" />
-                </div>
-                <div className="leading-tight">
-                  <div className="font-display font-extrabold text-xl md:text-2xl text-primary-deep tracking-tight uppercase">
-                    Câmara Municipal
-                  </div>
-                  <div className="text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-slate-500 font-semibold">
-                    Governo · Poder Legislativo
-                  </div>
-                </div>
-              </>
-            )}
+      <div className="cabecalho-marca border-b border-slate-100">
+        <div className="container-page py-3 md:py-[22px] flex flex-wrap lg:flex-nowrap items-center justify-between gap-x-4 gap-y-3">
+          <Link to="/" aria-label={`${contato.nome}: página inicial`} className="shrink-0 transition-transform duration-300 hover:scale-[1.02]">
+            <img
+              src={settings?.header_logo_url || logoAsset.url}
+              alt=""
+              decoding="async"
+              style={{ "--logo-altura": `${logoAltura}px` } as React.CSSProperties}
+              className="h-[min(var(--logo-altura),60px)] md:h-[var(--logo-altura)] w-auto max-w-full object-contain"
+            />
           </Link>
 
-          <div className="hidden lg:flex ml-auto w-full max-w-[260px]">
-            <div className="relative w-full flex items-stretch h-[48px] rounded-xl bg-slate-100 overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-all">
-              <input
-                placeholder="Buscar serviços, notícia"
-                className="flex-1 min-w-0 h-full pl-4 pr-3 bg-transparent text-sm placeholder:text-slate-400 focus:outline-none"
-              />
-              <button
-                type="button"
-                aria-label="Buscar"
-                className="h-full w-10 shrink-0 grid place-items-center bg-primary hover:bg-primary-deep text-white transition-colors"
-              >
-                <Search className="h-5 w-5" />
-              </button>
-            </div>
+          <div className="order-last w-full lg:order-none lg:ml-auto lg:w-auto lg:flex-1 lg:max-w-[340px]">
+            <BuscaSite />
           </div>
 
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2 ml-auto lg:ml-0 shrink-0">
             <a
               href="https://radardatransparencia.atricon.org.br/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 h-[48px] px-3 rounded-xl bg-white hover:bg-slate-50 text-primary-deep font-semibold text-sm shadow-sm ring-1 ring-slate-200 transition-colors whitespace-nowrap"
-              aria-label="Radar da Transparência Pública"
+              className="group inline-flex items-center gap-2.5 h-12 pl-2 pr-3 rounded-2xl bg-white text-primary-deep font-semibold text-sm ring-1 ring-slate-200 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:ring-primary/30 whitespace-nowrap"
+              aria-label="Radar da Transparência Pública (abre em nova aba)"
             >
-              <img src={radarLogo.url} alt="" className="h-7 w-auto" />
+              <span className="cabecalho-radar relative grid h-9 w-12 place-items-center">
+                <img src={radarLogo.url} alt="" className="relative h-9 w-auto object-contain" />
+              </span>
               <span className="hidden xl:inline">Radar da Transparência</span>
+              <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" aria-hidden />
             </a>
             <Link
               to={ROUTES.transparencia}
-              className="inline-flex items-center gap-2 h-[48px] px-4 rounded-xl bg-primary hover:bg-primary-deep text-white font-semibold text-sm shadow-sm transition-colors whitespace-nowrap"
+              className="cabecalho-cta relative inline-flex items-center gap-2.5 h-12 pl-2 pr-4 rounded-2xl overflow-hidden text-white font-semibold text-sm shadow-md transition hover:-translate-y-0.5 hover:shadow-lg whitespace-nowrap"
             >
-              <Info className="h-4 w-4" /> Acesso a Transparência
+              <span className="grid h-8 w-8 place-items-center rounded-xl bg-gold text-gold-foreground">
+                <Info className="h-4 w-4" aria-hidden />
+              </span>
+              Acesso à Transparência
             </Link>
           </div>
 
@@ -178,6 +138,7 @@ export function SiteHeader() {
 
       {/* BLUE NAV BAR */}
       <nav id="menu-principal" aria-label="Principal" className="hidden lg:block bg-primary-deep border-t border-white/10 sticky top-0 z-40" tabIndex={-1}>
+        <span ref={fio} className="absolute inset-x-0 bottom-0 z-10 h-0.5 origin-left scale-x-0 bg-gold pointer-events-none" aria-hidden />
         <div className="container-page flex items-center justify-between gap-2">
           {/* MAIN MENU — left side */}
           <ul className="flex items-stretch -ml-2.5">
@@ -186,14 +147,14 @@ export function SiteHeader() {
                 <li key={item.to} className="relative group">
                   <Link
                     to={item.to}
-                    className="relative inline-flex items-center gap-1 px-2.5 py-4 text-[14px] font-semibold tracking-wide text-white/90 hover:text-white hover:bg-white/5 transition-colors uppercase whitespace-nowrap"
+                    className="relative inline-flex items-center gap-1 px-1.5 xl:px-2.5 py-4 text-[12px] xl:text-[14px] font-semibold tracking-wide text-white/90 hover:text-white hover:bg-white/5 transition-colors uppercase whitespace-nowrap"
                     activeProps={{
-                      className: "text-white after:absolute after:left-2.5 after:right-2.5 after:bottom-0 after:h-[3px] after:bg-white",
+                      className: "text-white after:absolute after:left-1.5 after:right-1.5 xl:after:left-2.5 xl:after:right-2.5 after:bottom-0 after:h-[3px] after:rounded-t after:bg-gold",
                     }}
                   >
                     {item.label} <ChevronDown className="h-3.5 w-3.5 opacity-70" />
                   </Link>
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all absolute left-0 top-full min-w-[260px] bg-white text-slate-700 shadow-xl rounded-b-md border border-slate-100 py-2 z-50">
+                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-all absolute left-0 top-full min-w-[260px] bg-white text-slate-700 shadow-xl rounded-b-md border border-slate-100 py-2 z-50">
                     {item.children.map((c) => (
                       <Link
                         key={c.to}
@@ -212,10 +173,10 @@ export function SiteHeader() {
                     to={item.to}
                     activeOptions={{ exact: item.to === "/" }}
                     className={cn(
-                      "relative inline-flex items-center gap-1 px-2.5 py-4 text-[14px] font-semibold tracking-wide text-white/90 hover:text-white hover:bg-white/5 transition-colors uppercase whitespace-nowrap"
+                      "relative inline-flex items-center gap-1 px-1.5 xl:px-2.5 py-4 text-[12px] xl:text-[14px] font-semibold tracking-wide text-white/90 hover:text-white hover:bg-white/5 transition-colors uppercase whitespace-nowrap"
                     )}
                     activeProps={{
-                      className: "text-white after:absolute after:left-2.5 after:right-2.5 after:bottom-0 after:h-[3px] after:bg-white",
+                      className: "text-white after:absolute after:left-1.5 after:right-1.5 xl:after:left-2.5 xl:after:right-2.5 after:bottom-0 after:h-[3px] after:rounded-t after:bg-gold",
                     }}
                   >
                     {item.label}
@@ -226,12 +187,12 @@ export function SiteHeader() {
           </ul>
 
           {/* RIGHT GROUP — Transparency + Info Access, separated by a divider */}
-          <div className="flex items-stretch gap-1 text-white/90 shrink-0 border-l border-white/20 pl-3">
+          <div className="flex items-stretch gap-1 text-white/90 shrink-0 border-l border-white/20 pl-1 xl:pl-3">
             <Link
               to={ROUTES.transparencia}
-              className="relative inline-flex items-center gap-1 px-2.5 py-4 text-[14px] font-semibold tracking-wide hover:bg-white/5 hover:text-white transition-colors uppercase whitespace-nowrap"
+              className="relative inline-flex items-center gap-1 px-1.5 xl:px-2.5 py-4 text-[12px] xl:text-[14px] font-semibold tracking-wide hover:bg-white/5 hover:text-white transition-colors uppercase whitespace-nowrap"
               activeProps={{
-                className: "text-white after:absolute after:left-2.5 after:right-2.5 after:bottom-0 after:h-[3px] after:bg-white",
+                className: "text-white after:absolute after:left-1.5 after:right-1.5 xl:after:left-2.5 xl:after:right-2.5 after:bottom-0 after:h-[3px] after:rounded-t after:bg-gold",
               }}
             >
               <Info className="h-3.5 w-3.5" /> Transparência
@@ -239,11 +200,11 @@ export function SiteHeader() {
             <div className="relative group">
               <button
                 type="button"
-                className="relative inline-flex items-center gap-1 px-2.5 py-4 text-[14px] font-semibold tracking-wide hover:bg-white/5 hover:text-white transition-colors uppercase whitespace-nowrap"
+                className="relative inline-flex items-center gap-1 px-1.5 xl:px-2.5 py-4 text-[12px] xl:text-[14px] font-semibold tracking-wide hover:bg-white/5 hover:text-white transition-colors uppercase whitespace-nowrap"
               >
                 <MessageSquare className="h-3.5 w-3.5" /> Acesso à Informação <ChevronDown className="h-3.5 w-3.5 opacity-70" />
               </button>
-              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all absolute right-0 top-full min-w-[220px] bg-white text-slate-700 shadow-xl rounded-md border border-slate-100 py-2 z-50">
+              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-all absolute right-0 top-full min-w-[220px] bg-white text-slate-700 shadow-xl rounded-md border border-slate-100 py-2 z-50">
                 {INFO_ACCESS_LINKS.map((l) => (
                   <Link key={l.to} to={l.to} className="block px-4 py-2 text-sm hover:bg-slate-50 hover:text-primary">
                     {l.label}
@@ -292,9 +253,9 @@ export function SiteHeader() {
               <Link
                 to={ROUTES.transparencia}
                 onClick={() => setOpen(false)}
-                className="flex-1 inline-flex items-center justify-center gap-2 h-[52px] px-4 rounded-xl bg-emerald-600 text-white font-semibold text-sm"
+                className="flex-1 inline-flex items-center justify-center gap-2 h-[52px] px-4 rounded-xl bg-gold text-gold-foreground font-semibold text-sm text-center leading-tight"
               >
-                <Info className="h-4 w-4" /> Acesso a Transparência
+                <Info className="h-4 w-4 shrink-0" aria-hidden /> Acesso à Transparência
               </Link>
               <a
                 href="https://radardatransparencia.atricon.org.br/"

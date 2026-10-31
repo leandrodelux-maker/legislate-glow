@@ -1,4 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { CalendarClock, Clapperboard } from "lucide-react";
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { EstadoVazio } from "@/components/pagina-hero";
+import { CalendarX } from "lucide-react";
+import { PaginaHero } from "@/components/pagina-hero";
+import { CalendarDays as IconeHero } from "lucide-react";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { 
   Calendar, 
   Clock, 
@@ -39,7 +45,7 @@ export const Route = createFileRoute("/sessoes")({
       },
     ],
   }),
-  component: SessoesPage,
+  component: SessoesRota,
 });
 
 type DbSessao = {
@@ -60,63 +66,27 @@ type DbSessao = {
   resumo_votos_url: string | null;
 };
 
-const projetos = [
-  { id: "pl-124-2026", num: "124", ano: "2026", tipo: "Projeto de Lei", titulo: "Institui o programa municipal de incentivo à leitura", autor: "Ver. Mariana Souza", status: "Comissão", fase: 2 },
-  { id: "pl-118-2026", num: "118", ano: "2026", tipo: "Projeto de Lei", titulo: "Cria a semana de prevenção à violência doméstica", autor: "Ver. Patrícia Ribeiro", status: "Plenário", fase: 3 },
-  { id: "ind-045-2026", num: "045", ano: "2026", tipo: "Indicação", titulo: "Manutenção asfáltica na Rua das Palmeiras", autor: "Ver. Roberto Mendes", status: "Protocolado", fase: 1 },
-  { id: "pl-097-2026", num: "097", ano: "2026", tipo: "Projeto de Lei", titulo: "Regulamenta horta comunitária em áreas municipais", autor: "Ver. Juliana Martins", status: "Sancionado", fase: 5 },
-];
+const codigoYoutube = (url?: string | null) => url?.match(/(?:youtu\.be\/|[?&]v=|\/live\/|\/embed\/)([\w-]{6,})/)?.[1] ?? null;
 
-const fases = [
-  { label: "Protocolado", icon: FileText },
-  { label: "Comissão", icon: Users2 },
-  { label: "Plenário", icon: Gavel },
-  { label: "Aprovado", icon: CheckCircle2 },
-  { label: "Sancionado", icon: Stamp },
-];
-
-function LegislativeTimeline({ currentFase }: { currentFase: number }) {
+function BlocoData({ data }: { data: Date }) {
   return (
-    <div className="flex items-center justify-between w-full max-w-3xl mx-auto py-8">
-      {fases.map((fase, index) => {
-        const step = index + 1;
-        const isActive = step <= currentFase;
-        const isCurrent = step === currentFase;
-        const Icon = fase.icon;
-
-        return (
-          <div key={fase.label} className="flex flex-col items-center relative flex-1">
-            {index !== 0 && (
-              <div 
-                className={`absolute right-1/2 top-5 w-full h-0.5 -translate-y-1/2 -z-10 ${
-                  isActive ? "bg-primary" : "bg-muted"
-                }`} 
-              />
-            )}
-            <div 
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${
-                isActive 
-                  ? "bg-primary text-primary-foreground ring-4 ring-primary/20" 
-                  : "bg-muted text-muted-foreground"
-              } ${isCurrent ? "scale-110 shadow-lg shadow-primary/20" : ""}`}
-            >
-              <Icon className="w-5 h-5" />
-            </div>
-            <span className={`mt-3 text-[10px] font-bold uppercase tracking-tighter text-center max-w-[80px] ${
-              isActive ? "text-primary" : "text-muted-foreground"
-            }`}>
-              {fase.label}
-            </span>
-          </div>
-        );
-      })}
+    <div className="grid h-[72px] w-16 shrink-0 place-items-center rounded-2xl bg-primary-deep text-center text-white">
+      <div>
+        <div className="font-display text-2xl font-bold leading-none">{data.toLocaleDateString("pt-BR", { day: "2-digit" })}</div>
+        <div className="mt-1 text-xs font-bold uppercase text-gold">{data.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}</div>
+      </div>
     </div>
   );
 }
 
+/** /sessoes é rota pai: a transmissão ao vivo abre no lugar da lista. */
+function SessoesRota() {
+  const { pathname } = useLocation();
+  return pathname.startsWith("/sessoes/ao-vivo") ? <Outlet /> : <SessoesPage />;
+}
+
 function SessoesPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [mes, setMes] = useState<Date>(new Date());
   const [proximasSessoes, setProximasSessoes] = useState<DbSessao[]>([]);
   const [historicoSessoes, setHistoricoSessoes] = useState<DbSessao[]>([]);
   const [liveUrl, setLiveUrl] = useState<string | null>(null);
@@ -125,23 +95,18 @@ function SessoesPage() {
   const PER_PAGE = 10;
   const totalPages = Math.max(1, Math.ceil(historicoSessoes.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
-  const historicoPagina = historicoSessoes.slice(
-    (currentPage - 1) * PER_PAGE,
-    currentPage * PER_PAGE,
-  );
-
+  const historicoPagina = historicoSessoes.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
   useEffect(() => {
     async function loadData() {
       const now = new Date().toISOString();
-      
+
       const { data: proximas } = await supabase
         .from("sessoes")
         .select("*")
         .gte("data_sessao", now)
         .eq("status", "agendada")
         .order("data_sessao", { ascending: true });
-      
       setProximasSessoes(proximas || []);
 
       const { data: historico } = await supabase
@@ -149,7 +114,6 @@ function SessoesPage() {
         .select("*")
         .lt("data_sessao", now)
         .order("data_sessao", { ascending: false });
-      
       setHistoricoSessoes(historico || []);
 
       const { data: settings } = await supabase
@@ -157,323 +121,203 @@ function SessoesPage() {
         .select("live_broadcast_url")
         .limit(1)
         .maybeSingle();
-      
       setLiveUrl(settings?.live_broadcast_url || null);
       setLoading(false);
     }
     loadData();
   }, []);
 
+  const todas = [...proximasSessoes, ...historicoSessoes];
+  const doMes = todas
+    .filter((s) => {
+      const d = new Date(s.data_sessao);
+      return d.getMonth() === mes.getMonth() && d.getFullYear() === mes.getFullYear();
+    })
+    .sort((a, b) => a.data_sessao.localeCompare(b.data_sessao));
+  const classeAba = "min-h-11 gap-2 rounded-xl px-4 data-[state=active]:bg-primary-deep data-[state=active]:text-white";
+
   return (
     <>
-      <section className="bg-gradient-to-br from-primary-deep to-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-gold/5 skew-x-12 translate-x-1/2" />
-        <div className="container-page py-11 md:py-16 relative z-10">
-          <div className="text-xs uppercase tracking-[0.2em] text-gold flex items-center gap-3">
-            <span className="gold-divider" /> Atividade Parlamentar
-          </div>
-          <h1 className="mt-4 font-display text-4xl md:text-6xl font-bold leading-tight">
-            Sessões e <span className="text-gold">Processo</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-primary-foreground/85 text-lg">
-            Acompanhe as sessões ao vivo, consulte pautas, atas e toda a tramitação legislativa de forma transparente.
-          </p>
-        </div>
-      </section>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="Atividade Parlamentar"
+        title="Sessões e"
+        destaque="Processo Legislativo"
+        description={<>Acompanhe as sessões, consulte pautas e atas e veja as gravações dos trabalhos do plenário.</>}
+      >
+        {liveUrl && (
+          <Link to="/sessoes/ao-vivo" className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-gold px-4 text-sm font-semibold text-gold-foreground transition hover:bg-gold/90">
+            <YoutubeIcon className="h-4 w-4" aria-hidden /> Assistir à transmissão
+          </Link>
+        )}
+      </PaginaHero>
 
-      <section className="container-page py-16 md:py-24">
-        <Tabs defaultValue="proximas" className="space-y-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-6">
-            <TabsList className="bg-secondary/50 p-1 rounded-xl">
-              <TabsTrigger value="proximas" className="px-6 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                Próximas Sessões
-              </TabsTrigger>
-              <TabsTrigger value="historico" className="px-6 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                Histórico e Vídeos
-              </TabsTrigger>
-              <TabsTrigger value="calendario" className="px-6 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                Calendário Completo
-              </TabsTrigger>
-            </TabsList>
-            
-            {liveUrl && (
-              <Button asChild className="bg-red-600 hover:bg-red-700 text-white animate-pulse">
-                <a href={liveUrl} target="_blank" rel="noopener noreferrer">
-                  <YoutubeIcon className="mr-2 h-4 w-4" /> Assista Ao Vivo
-                </a>
-              </Button>
-            )}
-          </div>
+      <section className="container-page py-10 md:py-14">
+        <Tabs defaultValue="proximas" className="space-y-8">
+          <TabsList className="h-auto max-w-full flex-wrap justify-start gap-1 rounded-2xl border border-border bg-secondary/60 p-1.5">
+            <TabsTrigger value="proximas" className={classeAba}><CalendarClock className="h-4 w-4" aria-hidden /> Próximas</TabsTrigger>
+            <TabsTrigger value="historico" className={classeAba}><Clapperboard className="h-4 w-4" aria-hidden /> Histórico e vídeos</TabsTrigger>
+            <TabsTrigger value="calendario" className={classeAba}><Calendar className="h-4 w-4" aria-hidden /> Calendário</TabsTrigger>
+          </TabsList>
 
-          <TabsContent value="proximas" className="animate-[fade-up_0.5s_ease-out]">
+          <TabsContent value="proximas" className="animate-[fade-up_0.4s_ease-out]">
             {loading ? (
-              <div className="flex justify-center py-20">
-                <Loader2 className="w-10 h-10 animate-spin text-gold" />
-              </div>
+              <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" aria-label="Carregando" /></div>
             ) : proximasSessoes.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {proximasSessoes.map((s, i) => {
-                  const dateObj = new Date(s.data_sessao);
-                  const dateStr = dateObj.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
-                  const hourStr = dateObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }).replace(":", "h");
-                  
+              <ul className="grid gap-3 md:grid-cols-2">
+                {proximasSessoes.map((s) => {
+                  const d = new Date(s.data_sessao);
                   return (
-                    <article
-                      key={s.id}
-                      className="card-premium card-premium-hover p-6 flex flex-col group"
-                      style={{ animationDelay: `${i * 100}ms` }}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider">
-                          {s.tipo || "Sessão"}
-                        </Badge>
-                        {s.video_url && (
-                          <Badge className="bg-red-100 text-red-600 border-red-200">
-                            <Play className="h-3 w-3 mr-1 fill-current" /> LIVE
-                          </Badge>
+                    <li key={s.id} className="flex gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary/40 hover:shadow-elegant">
+                      <BlocoData data={d} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-primary">{s.tipo || "Sessão"}</p>
+                        <h3 className="mt-0.5 font-display text-lg font-semibold leading-snug">{s.titulo}</h3>
+                        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                          <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-primary" aria-hidden /> {d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+                          <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" aria-hidden /> {s.local || "Plenário"}</span>
+                        </div>
+                        {s.pauta ? (
+                          <details className="mt-3 rounded-xl bg-secondary/60 p-3 text-sm">
+                            <summary className="cursor-pointer font-semibold text-primary">Ver pauta</summary>
+                            <p className="mt-2 whitespace-pre-wrap leading-relaxed text-muted-foreground">{s.pauta}</p>
+                          </details>
+                        ) : (
+                          <p className="mt-3 text-sm text-muted-foreground">Pauta ainda não publicada.</p>
                         )}
                       </div>
-                      <h3 className="font-display text-xl font-bold mb-4">{dateStr}</h3>
-                      <div className="space-y-2 mb-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-gold" /> {hourStr}</div>
-                        <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> {s.local || "Plenário"}</div>
-                        <div className="flex items-center gap-2"><FileText className="h-4 w-4 text-gold" /> Pauta disponível</div>
-                      </div>
-                      <div className="mt-auto pt-4 border-t border-border/50 space-y-2">
-                        <Button variant="outline" size="sm" className="w-full justify-between group-hover:border-primary">
-                          Ver Pauta <ChevronRight className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
-                          Baixar Editais
-                        </Button>
-                      </div>
-                    </article>
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             ) : (
-              <div className="text-center py-20 bg-secondary/20 rounded-2xl border border-dashed border-border text-muted-foreground font-medium">
-                Nenhuma sessão agendada para os próximos dias.
-              </div>
+              <EstadoVazio icone={CalendarX} titulo="Nenhuma sessão agendada" texto="As próximas sessões aparecem aqui assim que forem publicadas pela Câmara." />
             )}
           </TabsContent>
 
-          <TabsContent value="historico" className="animate-[fade-up_0.5s_ease-out]">
-            <div className="space-y-6">
-              {historicoPagina.map((s, i) => {
-                const dateObj = new Date(s.data_sessao);
-                const dateStr = dateObj.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
-                const videoId = s.video_url?.includes("v=") ? s.video_url.split("v=")[1].split("&")[0] : null;
-
+          <TabsContent value="historico" className="animate-[fade-up_0.4s_ease-out]">
+            <div className="space-y-3">
+              {historicoPagina.map((s) => {
+                const d = new Date(s.data_sessao);
+                const video = codigoYoutube(s.video_url);
+                const documentos = [
+                  { url: s.ata_url, rotulo: "Ata", icone: FileText },
+                  { url: s.lista_presenca_url, rotulo: "Lista de presença", icone: ClipboardList },
+                  { url: s.resumo_votos_url, rotulo: "Resumo dos votos", icone: Vote },
+                ].filter((x) => x.url);
                 return (
-                  <div key={s.id} className="card-premium p-6 flex flex-col lg:flex-row gap-8 items-start lg:items-center">
-                    <div className="relative w-full lg:w-64 aspect-video rounded-lg overflow-hidden bg-black group cursor-pointer">
-                      {videoId ? (
-                        <>
-                          <img 
-                            src={`https://img.youtube.com/vi/${videoId}/0.jpg`} 
-                            alt="Thumbnail"
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-transform">
-                              <Play className="h-6 w-6 text-white fill-current" />
-                            </div>
+                  <article key={s.id} className="grid gap-5 overflow-hidden rounded-2xl border border-border bg-card p-4 md:grid-cols-[240px_1fr] md:p-5">
+                    {s.video_url ? (
+                      <a href={s.video_url} target="_blank" rel="noopener noreferrer" aria-label={`Assistir à gravação: ${s.titulo}`} className="group relative aspect-video overflow-hidden rounded-xl bg-primary-deep">
+                        {video && <img src={`https://img.youtube.com/vi/${video}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover opacity-80 transition group-hover:opacity-100" />}
+                        <span className="absolute inset-0 grid place-items-center">
+                          <span className="grid h-12 w-12 place-items-center rounded-full bg-gold text-gold-foreground transition-transform group-hover:scale-110"><Play className="h-5 w-5 fill-current" aria-hidden /></span>
+                        </span>
+                      </a>
+                    ) : (
+                      <div className="grid aspect-video place-items-center rounded-xl bg-secondary/70 text-center text-sm text-muted-foreground">
+                        <span><YoutubeIcon className="mx-auto mb-1 h-7 w-7 opacity-50" aria-hidden /> Sem gravação</span>
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-primary">{s.tipo || "Sessão"} · {d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
+                      <h3 className="mt-1 font-display text-xl font-semibold leading-snug">{s.titulo || "Resumo dos trabalhos"}</h3>
+                      <dl className="mt-3 flex flex-wrap gap-2 text-sm">
+                        {[
+                          { r: "Pautas", v: s.qtd_pautas ?? 0 },
+                          { r: "Presenças", v: s.qtd_presencas ?? 0 },
+                          { r: "Votações", v: s.qtd_votacoes ?? 0 },
+                        ].map((x) => (
+                          <div key={x.r} className="flex items-baseline gap-1.5 rounded-lg bg-secondary/70 px-3 py-1.5">
+                            <dd className="font-display font-bold text-primary-deep">{x.v}</dd>
+                            <dt className="text-xs text-muted-foreground">{x.r}</dt>
                           </div>
-                        </>
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-slate-800">
-                          <YoutubeIcon className="h-12 w-12 text-slate-600" />
+                        ))}
+                        <div className="rounded-lg bg-secondary/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                          <dt className="sr-only">Ata</dt>
+                          <dd className="inline-flex items-center gap-1">{s.ata_publicada && <CheckCircle2 className="h-3.5 w-3.5 text-primary" aria-hidden />} Ata {s.ata_publicada ? "publicada" : "pendente"}</dd>
+                        </div>
+                      </dl>
+                      {documentos.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {documentos.map((x) => (
+                            <Button key={x.rotulo} variant="outline" size="sm" className="h-10" asChild>
+                              <a href={x.url!} target="_blank" rel="noopener noreferrer"><x.icone className="mr-1.5 h-4 w-4" aria-hidden /> {x.rotulo}</a>
+                            </Button>
+                          ))}
                         </div>
                       )}
                     </div>
-
-                    <div className="flex-1 space-y-4">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Badge variant="secondary" className="bg-primary/5 text-primary">
-                          {s.tipo}
-                        </Badge>
-                        <span className="text-sm font-bold text-muted-foreground">{dateStr}</span>
-                      </div>
-                      <h4 className="font-display text-2xl font-bold">{s.titulo || "Resumo dos Trabalhos"}</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 text-center">
-                          <div className="text-lg font-bold text-primary">{s.qtd_pautas}</div>
-                          <div className="text-[10px] uppercase font-bold text-muted-foreground">Pautas</div>
-                        </div>
-                        <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 text-center">
-                          <div className="text-lg font-bold text-primary">{s.qtd_presencas}</div>
-                          <div className="text-[10px] uppercase font-bold text-muted-foreground">Presenças</div>
-                        </div>
-                        <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 text-center">
-                          <div className="text-lg font-bold text-primary">{s.qtd_votacoes}</div>
-                          <div className="text-[10px] uppercase font-bold text-muted-foreground">Votações</div>
-                        </div>
-                        <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 text-center">
-                          <div className={`text-lg font-bold ${s.ata_publicada ? "text-emerald-600" : "text-amber-500"}`}>
-                            ATA
-                          </div>
-                          <div className="text-[10px] uppercase font-bold text-muted-foreground">
-                            {s.ata_publicada ? "Publicada" : "Pendente"}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="w-full lg:w-auto flex flex-col gap-2">
-                      <Button variant="outline" className="w-full lg:w-40 justify-between" disabled={!s.ata_url} asChild={!!s.ata_url}>
-                        {s.ata_url ? (
-                          <a href={s.ata_url} target="_blank" rel="noopener noreferrer">
-                            <FileText className="h-4 w-4" /> Ata em PDF
-                          </a>
-                        ) : (
-                          <span>
-                            <FileText className="h-4 w-4" /> Ata em PDF
-                          </span>
-                        )}
-                      </Button>
-                      <Button variant="outline" className="w-full lg:w-40 justify-between" disabled={!s.lista_presenca_url} asChild={!!s.lista_presenca_url}>
-                        {s.lista_presenca_url ? (
-                          <a href={s.lista_presenca_url} target="_blank" rel="noopener noreferrer">
-                            <ClipboardList className="h-4 w-4" /> Lista Presença
-                          </a>
-                        ) : (
-                          <span>
-                            <ClipboardList className="h-4 w-4" /> Lista Presença
-                          </span>
-                        )}
-                      </Button>
-                      <Button variant="outline" className="w-full lg:w-40 justify-between" disabled={!s.resumo_votos_url} asChild={!!s.resumo_votos_url}>
-                        {s.resumo_votos_url ? (
-                          <a href={s.resumo_votos_url} target="_blank" rel="noopener noreferrer">
-                            <Vote className="h-4 w-4" /> Resumo Votos
-                          </a>
-                        ) : (
-                          <span>
-                            <Vote className="h-4 w-4" /> Resumo Votos
-                          </span>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
+                  </article>
                 );
               })}
               {historicoSessoes.length === 0 && !loading && (
-                <div className="text-center py-20 bg-secondary/20 rounded-2xl border border-dashed border-border text-muted-foreground font-medium">
-                  Nenhuma sessão anterior registrada.
-                </div>
+                <EstadoVazio icone={CalendarX} titulo="Nenhuma sessão registrada" texto="O histórico de sessões e vídeos aparece aqui depois de publicado." />
               )}
 
               {historicoSessoes.length > PER_PAGE && (
-                <nav
-                  aria-label="Paginação do histórico de sessões"
-                  className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border"
-                >
+                <nav aria-label="Paginação do histórico de sessões" className="flex flex-col items-center justify-between gap-4 pt-4 sm:flex-row">
                   <p className="text-sm text-muted-foreground">
-                    Mostrando{" "}
-                    <strong className="text-foreground">
-                      {(currentPage - 1) * PER_PAGE + 1}–
-                      {Math.min(currentPage * PER_PAGE, historicoSessoes.length)}
-                    </strong>{" "}
-                    de {historicoSessoes.length} sessões
+                    <strong className="text-foreground">{(currentPage - 1) * PER_PAGE + 1}–{Math.min(currentPage * PER_PAGE, historicoSessoes.length)}</strong> de {historicoSessoes.length} sessões
                   </p>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === 1}
-                      onClick={() => setPage(currentPage - 1)}
-                    >
-                      <ChevronLeft className="h-4 w-4" /> Anterior
-                    </Button>
-                    {Array.from({ length: totalPages }, (_, idx) => idx + 1)
-                      .filter(
-                        (p) =>
-                          p === 1 ||
-                          p === totalPages ||
-                          Math.abs(p - currentPage) <= 1,
-                      )
-                      .map((p, idx, arr) => (
-                        <span key={p} className="flex items-center gap-1">
-                          {idx > 0 && p - arr[idx - 1] > 1 && (
-                            <span className="px-1 text-muted-foreground">…</span>
-                          )}
-                          <Button
-                            variant={p === currentPage ? "default" : "outline"}
-                            size="sm"
-                            className="w-9"
-                            aria-current={p === currentPage ? "page" : undefined}
-                            onClick={() => setPage(p)}
-                          >
-                            {p}
-                          </Button>
-                        </span>
-                      ))}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === totalPages}
-                      onClick={() => setPage(currentPage + 1)}
-                    >
-                      Próxima <ChevronRight className="h-4 w-4" />
-                    </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}><ChevronLeft className="h-4 w-4" aria-hidden /> Anterior</Button>
+                    <span className="px-2 text-sm font-semibold">{currentPage} / {totalPages}</span>
+                    <Button variant="outline" disabled={currentPage === totalPages} onClick={() => setPage(currentPage + 1)}>Próxima <ChevronRight className="h-4 w-4" aria-hidden /></Button>
                   </div>
                 </nav>
               )}
-
             </div>
           </TabsContent>
 
-          <TabsContent value="calendario" className="animate-[fade-up_0.5s_ease-out]">
-            <div className="grid lg:grid-cols-3 gap-10">
-              <div className="lg:col-span-1">
-                <div className="card-premium p-6 inline-block w-full">
-                  <CalendarComponent
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="rounded-md"
-                  />
-                </div>
+          <TabsContent value="calendario" className="animate-[fade-up_0.4s_ease-out]">
+            <div className="grid gap-5 lg:grid-cols-[auto_1fr] lg:items-start">
+              <div className="flex justify-center rounded-3xl border border-border bg-card p-4">
+                <CalendarComponent
+                  mode="single"
+                  month={mes}
+                  onMonthChange={setMes}
+                  modifiers={{ sessao: todas.map((s) => new Date(s.data_sessao)) }}
+                  modifiersClassNames={{ sessao: "rounded-md bg-gold font-bold text-gold-foreground" }}
+                />
               </div>
-              <div className="lg:col-span-2 space-y-6">
-                <h3 className="font-display text-2xl font-bold flex items-center gap-3">
-                  <Calendar className="text-gold" /> 
-                  Eventos em {date?.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-bold first-letter:uppercase">
+                  {mes.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
                 </h3>
-                <div className="space-y-4">
-                  {[
-                    { day: "16", title: "Sessão Ordinária", hour: "14h", type: "Legislativo" },
-                    { day: "18", title: "Audiência Pública: Orçamento 2027", hour: "19h", type: "Participativo" },
-                    { day: "23", title: "Sessão Extraordinária", hour: "10h", type: "Urgência" },
-                  ].map((event, idx) => (
-                    <div key={idx} className="flex gap-6 p-5 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
-                      <div className="flex flex-col items-center justify-center w-16 h-16 rounded-lg bg-primary text-primary-foreground shrink-0">
-                        <span className="text-2xl font-bold leading-none">{event.day}</span>
-                        <span className="text-[10px] uppercase font-bold">JUN</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{event.type}</span>
-                        </div>
-                        <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{event.title}</h4>
-                        <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                          <Clock className="h-3.5 w-3.5" /> {event.hour} no Plenário Principal
-                        </p>
-                      </div>
-                      <Button variant="ghost" size="icon" className="self-center">
-                        <ChevronRight />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                <p className="mb-4 text-sm text-muted-foreground">Os dias com sessão aparecem em dourado no calendário.</p>
+                {doMes.length === 0 ? (
+                  <EstadoVazio icone={CalendarX} titulo="Nenhuma sessão neste mês" texto="Use as setas do calendário para ver outros meses." />
+                ) : (
+                  <ul className="grid gap-3">
+                    {doMes.map((s) => {
+                      const d = new Date(s.data_sessao);
+                      return (
+                        <li key={s.id} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
+                          <BlocoData data={d} />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-primary">{s.tipo || "Sessão"}</p>
+                            <p className="font-display font-semibold leading-snug">{s.titulo}</p>
+                            <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+                              <Clock className="h-3.5 w-3.5" aria-hidden /> {d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} · {s.local || "Plenário"}
+                            </p>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
             </div>
           </TabsContent>
         </Tabs>
       </section>
+
+      <ContinueNavegando itens={[
+        { to: "/a-camara/roteiro-das-sessoes", titulo: "Roteiro das Sessões", texto: "Como uma sessão acontece", icone: ClipboardList },
+        { to: "/projetos", titulo: "Projetos de Lei", texto: "Matérias em tramitação", icone: FileText },
+        { to: "/vereadores", titulo: "Vereadores", texto: "Conheça os parlamentares", icone: Users2 },
+      ]} />
     </>
   );
 }

@@ -1,3 +1,6 @@
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { PaginaHero } from "@/components/pagina-hero";
+import { Landmark as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Landmark,
@@ -39,6 +42,14 @@ export const Route = createFileRoute("/a-camara/historia")({
   }),
   component: HistoriaPage,
 });
+
+// Artes dos pilares. Cada uma tem título gravado, por isso aparece inteira, sem corte.
+const ARTES_PILARES: Record<string, { src: string; largura: number; altura: number; alt: string }> = {
+  "Consolidação religiosa": { src: "/historia/fe-e-tradicao.webp", largura: 431, altura: 183, alt: "Igreja branca entre palmeiras, com o título Fé e Tradição" },
+  "Desenvolvimento econômico": { src: "/historia/economia-e-trabalho.webp", largura: 437, altura: 171, alt: "Espigas de milho diante de uma lavoura, com o título Economia e Trabalho" },
+  "Cultura, tradições e identidade": { src: "/historia/cultura-e-identidade.webp", largura: 436, altura: 170, alt: "Duas araras ao pôr do sol sobre a paisagem do Cerrado, com o título Cultura e Identidade" },
+  "A cidade da Água Santa": { src: "/historia/belezas-naturais.webp", largura: 420, altura: 170, alt: "Cachoeira entre pedras e vegetação, com o título Belezas Naturais" },
+};
 
 const FACTS = [
   { icon: CalendarDays, label: "Fundação", value: "1945" },
@@ -165,163 +176,118 @@ const PILLARS = [
 
 function HistoriaPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <div>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white,transparent_45%),radial-gradient(circle_at_80%_0%,white,transparent_40%)]"
-        />
-        <div className="container-page relative py-8 md:py-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
-            <Landmark className="h-3 w-3" /> A Câmara
-          </span>
-          <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">História</h1>
-          <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Do povoado formado em 1945 às margens do córrego à emancipação em 14 de novembro de 1958:
-            conheça a trajetória de Cachoeira de Goiás, a cidade da Água Santa.
-          </p>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="A Câmara"
+        title="História"
+        description={<>Do povoado formado em 1945 às margens do córrego à emancipação em 14 de novembro de 1958: conheça a trajetória de Cachoeira de Goiás, a cidade da Água Santa.</>}
+      />
 
-          <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {FACTS.map((f) => (
-              <div
-                key={f.label}
-                className="rounded-xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm"
-              >
-                <f.icon className="h-4 w-4 text-gold" />
-                <dt className="mt-2 text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/70">
-                  {f.label}
-                </dt>
-                <dd className="font-display text-lg font-bold leading-tight">{f.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+      {/* ARTE PRINCIPAL E FATOS */}
+      <section className="container-page relative z-10 -mt-6 md:-mt-8">
+        <img src="/historia/nossa-historia.webp" width={1334} height={347} alt="Brasão da Câmara Municipal de Cachoeira de Goiás entre a fonte da praça, a igreja, a vista da cidade e a estátua do Cristo, com o título Nossa História" fetchPriority="high" decoding="async" className="h-auto w-full rounded-3xl shadow-2xl shadow-primary-deep/20" />
+        <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {FACTS.map((f) => (
+            <div key={f.label} className="rounded-2xl border border-border bg-card p-4">
+              <f.icon className="h-4 w-4 text-primary" aria-hidden />
+              <dt className="mt-2 text-xs text-muted-foreground">{f.label}</dt>
+              <dd className="font-display font-bold leading-tight text-foreground">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       {/* NOSSA HISTÓRIA */}
-      <section className="container-page py-10 md:py-14">
-        <div className="grid gap-10 lg:grid-cols-[1.35fr_1fr]">
-          <div>
-            <SectionHeading eyebrow="Nossa história" title="A cidade e sua origem" />
-            <div className="mt-6 space-y-4 text-[15px] leading-8 text-muted-foreground">
-              <p>
-                O município de Cachoeira de Goiás surgiu em 1945, com a chegada de trabalhadores que
-                vinham em busca de terras férteis. Eles construíram suas moradias nas margens do
-                córrego que corta a cidade, em território pertencente ao município de Goiás.
+      <section className="container-page py-12 md:py-16">
+        <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-start">
+          <article>
+            <TituloSecao eyebrow="Nossa história" titulo="A cidade e sua origem" />
+            <img src="/historia/origens-e-formacao.webp" width={437} height={183} alt="Rua de terra com casas antigas e árvores, em imagem envelhecida, com o título Origens e Formação" loading="lazy" decoding="async" className="mb-6 h-auto w-full rounded-2xl" />
+            <div className="space-y-4 text-base leading-8 text-muted-foreground">
+              <p className="text-lg leading-8 text-foreground first-letter:float-left first-letter:mr-3 first-letter:font-display first-letter:text-6xl first-letter:font-bold first-letter:leading-[0.85] first-letter:text-primary">
+                O município de Cachoeira de Goiás surgiu em 1945, com a chegada de trabalhadores que vinham em busca de terras férteis. Eles construíram suas moradias nas margens do córrego que corta a cidade, em território pertencente ao município de Goiás.
               </p>
               <p>
-                A fertilidade do solo e as características climáticas da região favoreceram o
-                surgimento de grandes fazendas agropecuárias, causando a expansão do povoado — motivo
-                que levou a Câmara Municipal de Goiás a elevar a colônia a distrito. O lugar recebeu o
-                nome de Cachoeira da Fumaça, mudado tempos depois para Cachoeira de Goiás, conhecida
-                também como a cidade da Água Santa.
+                A fertilidade do solo e as características climáticas da região favoreceram o surgimento de grandes fazendas agropecuárias, causando a expansão do povoado — motivo que levou a Câmara Municipal de Goiás a elevar a colônia a distrito. O lugar recebeu o nome de Cachoeira da Fumaça, mudado tempos depois para Cachoeira de Goiás, conhecida também como a cidade da Água Santa.
+              </p>
+              <blockquote className="my-6 border-l-4 border-gold py-1 pl-5 font-display text-xl font-semibold leading-snug text-primary-deep md:text-2xl">
+                De Cachoeira da Fumaça a Cachoeira de Goiás, conhecida como a cidade da Água Santa.
+              </blockquote>
+              <p>
+                Em 1953 foi elevada a distrito pela Lei Municipal nº 138 e, em 14 de novembro de 1958, à categoria de município por lei estadual. As primeiras eleições municipais ocorreram em 3 de outubro de 1960 e, em 2 de maio de 1965, o município foi elevado à categoria de comarca, tornando-se autônomo política e administrativamente.
               </p>
               <p>
-                Em 1953 foi elevada a distrito pela Lei Municipal nº 138 e, em 14 de novembro de 1958,
-                à categoria de município por lei estadual. As primeiras eleições municipais ocorreram
-                em 3 de outubro de 1960 e, em 2 de maio de 1965, o município foi elevado à categoria
-                de comarca, tornando-se autônomo política e administrativamente.
-              </p>
-              <p>
-                Hoje o município tem 1.419 habitantes (Censo IBGE 2022) e 415,7304 km² de área, faz
-                limite com Ivolândia, Aurilândia, Moiporá e Paraúna e celebra seu aniversário em 10 de
-                novembro. O gentílico é cachoeirense.
+                Hoje o município tem 1.419 habitantes (Censo IBGE 2022) e 415,7304 km² de área, faz limite com Ivolândia, Aurilândia, Moiporá e Paraúna e celebra seu aniversário em 10 de novembro. O gentílico é cachoeirense.
               </p>
             </div>
-          </div>
+          </article>
 
-          <ol className="relative space-y-6 border-l border-border pl-6">
-            {TIMELINE.map((t) => (
-              <li key={t.year} className="relative">
-                <span className="absolute -left-[31px] top-1.5 grid h-3 w-3 place-items-center rounded-full bg-primary ring-4 ring-primary/15" />
-                <p className="text-xs font-bold uppercase tracking-widest text-primary">{t.year}</p>
-                <p className="mt-1.5 text-sm leading-7 text-muted-foreground">{t.text}</p>
-              </li>
-            ))}
-          </ol>
+          <aside className="acesso-destaque rounded-3xl p-6 text-white shadow-xl md:p-8 lg:sticky lg:top-20">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-gold">Linha do tempo</p>
+            <h2 className="mt-1 font-display text-2xl font-bold">Marcos da cidade</h2>
+            <ol className="relative mt-6 space-y-5 border-l-2 border-white/20 pl-6">
+              {TIMELINE.map((t) => (
+                <li key={t.year} className="relative">
+                  <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-gold ring-4 ring-gold/25" aria-hidden />
+                  <p className="font-display text-sm font-bold text-gold">{t.year}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/90">{t.text}</p>
+                </li>
+              ))}
+            </ol>
+          </aside>
         </div>
       </section>
 
       {/* PILARES */}
-      <section className="container-page pb-10 md:pb-14">
-        <SectionHeading
-          eyebrow="Formação do município"
-          title="Fé, trabalho e identidade cachoeirense"
-          description="Os eixos que moldaram a vida comunitária de Cachoeira de Goiás ao longo das décadas."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
-          {PILLARS.map((p) => (
-            <article
-              key={p.title}
-              className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
-                <p.icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 font-display text-lg font-bold text-foreground">{p.title}</h3>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">{p.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* INDICADORES */}
-      <section className="border-y border-border bg-secondary/40">
-        <div className="container-page py-10 md:py-14">
-          <SectionHeading
-            eyebrow="Cachoeira de Goiás em números"
-            title="Dados e marcos oficiais do município"
-            description="Informações de território, marcos legais, economia e serviços públicos de Cachoeira de Goiás."
-          />
-          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {INDICATORS.map((block) => (
-              <article
-                key={block.title}
-                className="rounded-2xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/10 text-primary">
-                    <block.icon className="h-4.5 w-4.5" />
-                  </span>
-                  <h3 className="font-display text-base font-bold text-foreground">{block.title}</h3>
+      <section className="border-y border-border/60 bg-secondary/40 py-12 md:py-16">
+        <div className="container-page">
+          <TituloSecao eyebrow="Formação do município" titulo="Fé, trabalho e identidade cachoeirense" descricao="Os eixos que moldaram a vida comunitária de Cachoeira de Goiás ao longo das décadas." />
+          <div className="grid gap-4 md:grid-cols-2">
+            {PILLARS.map((p) => (
+              <article key={p.title} className="group overflow-hidden rounded-3xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-elegant">
+                {ARTES_PILARES[p.title] && (
+                  <img src={ARTES_PILARES[p.title].src} width={ARTES_PILARES[p.title].largura} height={ARTES_PILARES[p.title].altura} alt={ARTES_PILARES[p.title].alt} loading="lazy" decoding="async" className="h-auto w-full" />
+                )}
+                <div className="p-6">
+                  <h3 className="font-display text-xl font-bold text-foreground">{p.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">{p.text}</p>
                 </div>
-                <dl className="mt-4 divide-y divide-border/70 text-sm">
-                  {block.rows.map(([k, v]) => (
-                    <div key={k} className="flex items-start justify-between gap-4 py-2">
-                      <dt className="text-muted-foreground">{k}</dt>
-                      <dd className="text-right font-semibold text-foreground">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="container-page py-10 md:py-14">
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            { to: ROUTES.mesaDiretora, label: "Mesa Diretora", desc: "Composição do biênio em exercício." },
-            { to: ROUTES.comissoes, label: "Comissões", desc: "Comissões permanentes e seus membros." },
-            { to: ROUTES.vereadores, label: "Vereadores", desc: "Parlamentares da legislatura atual." },
-          ].map((c) => (
-            <Link
-              key={c.to}
-              to={c.to}
-              className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-            >
-              <h3 className="font-display text-lg font-bold text-foreground">{c.label}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{c.desc}</p>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                Acessar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </Link>
+      {/* INDICADORES */}
+      <section className="container-page py-12 md:py-16">
+        <TituloSecao eyebrow="Cachoeira de Goiás em números" titulo="Dados e marcos oficiais do município" descricao="Informações de território, marcos legais, economia e serviços públicos." />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {INDICATORS.map((block) => (
+            <article key={block.title} className="overflow-hidden rounded-2xl border border-border bg-card">
+              <div className="flex items-center gap-2.5 bg-primary-deep px-5 py-3.5 text-white">
+                <block.icon className="h-5 w-5 text-gold" aria-hidden />
+                <h3 className="font-display font-semibold">{block.title}</h3>
+              </div>
+              <dl className="divide-y divide-border/70 px-5 text-sm">
+                {block.rows.map(([k, v]) => (
+                  <div key={k} className="flex items-start justify-between gap-4 py-2.5">
+                    <dt className="text-muted-foreground">{k}</dt>
+                    <dd className="text-right font-semibold text-foreground">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
           ))}
         </div>
       </section>
-    </main>
+
+      <ContinueNavegando itens={[
+        { to: ROUTES.mesaDiretora, titulo: "Mesa Diretora", texto: "Quem dirige a Câmara", icone: Landmark },
+        { to: ROUTES.comissoes, titulo: "Comissões", texto: "Comissões permanentes", icone: Users },
+        { to: ROUTES.vereadores, titulo: "Vereadores", texto: "Legislatura atual", icone: Users },
+      ]} />
+    </div>
   );
 }

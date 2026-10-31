@@ -1,3 +1,8 @@
+import { Search, SearchX } from "lucide-react";
+import { useState } from "react";
+import { EstadoVazio } from "@/components/pagina-hero";
+import { PaginaHero } from "@/components/pagina-hero";
+import { Map as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Map as MapIcon, ArrowUpRight } from "lucide-react";
 import { SITE_SECTIONS, ALL_SITE_LINKS } from "@/lib/site-links";
@@ -19,72 +24,65 @@ export const Route = createFileRoute("/mapa-do-site")({
 });
 
 function MapaDoSitePage() {
+  const [busca, setBusca] = useState("");
+  const termo = busca.trim().toLowerCase();
+  const secoes = SITE_SECTIONS.map((s) => ({
+    ...s,
+    links: s.links.filter((l) => !termo || `${l.label} ${l.description ?? ""}`.toLowerCase().includes(termo)),
+  })).filter((s) => s.links.length > 0);
+
   return (
-    <main className="min-h-screen bg-background">
-      {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div className="container-page py-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
-            <MapIcon className="h-3 w-3" /> Índice
-          </span>
-          <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">Mapa do Site</h1>
-          <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            Todas as {ALL_SITE_LINKS.length} páginas e serviços do portal, organizadas por categoria.
-            Novos links são adicionados automaticamente aqui.
-          </p>
+    <div>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="Índice"
+        title="Mapa do Site"
+        description={<>Todas as páginas e serviços do portal, organizadas por assunto.</>}
+      />
+
+      <section className="container-page relative z-10 -mt-7">
+        <div className="relative mx-auto max-w-3xl">
+          <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" aria-hidden />
+          <input
+            type="search"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Filtrar páginas"
+            aria-label="Filtrar páginas do site"
+            className="h-14 w-full rounded-2xl border border-border bg-card pl-13 pr-5 text-base shadow-xl shadow-primary-deep/15 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
         </div>
       </section>
 
-      {/* SEÇÕES */}
-      <section className="container-page py-10 md:py-14 space-y-10">
-        {SITE_SECTIONS.map((section) => (
-          <div key={section.title}>
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-7 w-1.5 rounded-full bg-primary" />
-              <h2 className="font-display text-xl font-bold md:text-2xl">{section.title}</h2>
-              <span className="text-xs text-muted-foreground">
-                {section.links.length} {section.links.length === 1 ? "página" : "páginas"}
-              </span>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {section.links.map((link) => {
-                const content = (
-                  <>
-                    <div className="min-w-0 flex-1">
-                      <div className="font-display text-base font-semibold text-foreground group-hover:text-primary">
-                        {link.label}
-                      </div>
-                      {link.description && (
-                        <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                          {link.description}
-                        </div>
-                      )}
-                    </div>
-                    <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-                  </>
-                );
-                const cls =
-                  "group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm";
-                return link.external ? (
-                  <a
-                    key={link.to}
-                    href={link.to}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cls}
-                  >
-                    {content}
-                  </a>
-                ) : (
-                  <Link key={link.to} to={link.to} className={cls}>
-                    {content}
-                  </Link>
-                );
-              })}
-            </div>
+      <section className="container-page py-10 md:py-14">
+        {secoes.length === 0 ? (
+          <EstadoVazio icone={SearchX} titulo="Nenhuma página encontrada" texto="Tente outra palavra." />
+        ) : (
+          <div className="gap-4 md:columns-2 lg:columns-3">
+            {secoes.map((section) => (
+              <div key={section.title} className="mb-4 break-inside-avoid overflow-hidden rounded-3xl border border-border bg-card">
+                <div className="flex items-center justify-between gap-3 bg-primary-deep px-5 py-3.5 text-white">
+                  <h2 className="font-display font-semibold">{section.title}</h2>
+                  <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold">{section.links.length}</span>
+                </div>
+                <ul className="divide-y divide-border/70">
+                  {section.links.map((link) => (
+                    <li key={link.to}>
+                      <Link to={link.to as never} className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-secondary/60">
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm font-semibold text-foreground group-hover:text-primary">{link.label}</span>
+                          {link.description && <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{link.description}</span>}
+                        </span>
+                        <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </section>
-    </main>
+    </div>
   );
 }

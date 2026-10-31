@@ -6,10 +6,18 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+process.env.LOVABLE_PREVIEW_HOST ||=
+  "id-preview--8da0d32e-a732-4c3e-b5ca-62aa780d21f8.lovable.app";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ["@imgly/background-removal", "onnxruntime-web"],
+    },
   },
 });

@@ -100,7 +100,6 @@ export function VereadorAvatar({
       )}
       style={fill ? undefined : { width: size, height: size }}
       aria-label={nome}
-      title={nome}
     >
       {(state === "loading" || state === "ok") && publicUrl && (
         <img

@@ -1,3 +1,9 @@
+import { SearchX } from "lucide-react";
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { EstadoVazio } from "@/components/pagina-hero";
+import cidadeAsset from "@/assets/hero-cachoeira.jpg.asset.json";
+import { PaginaHero } from "@/components/pagina-hero";
+import { Users as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { 
   Mail, 
@@ -85,240 +91,120 @@ function VereadoresPage() {
     (v.partido?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
   );
 
-  // Ordenar vereadores para o ranking baseado em projetos (se disponível)
-  const rankings = {
-    projetos: [...vereadores]
-      .sort((a, b) => ((b.stats as any)?.projetos || 0) - ((a.stats as any)?.projetos || 0))
-      .slice(0, 3),
-    presenca: [...vereadores]
-      .sort((a, b) => ((b.stats as any)?.presencas || 0) - ((a.stats as any)?.presencas || 0))
-      .slice(0, 3),
-    participacao: [...vereadores]
-      .sort((a, b) => ((b.stats as any)?.participacoes || 0) - ((a.stats as any)?.participacoes || 0))
-      .slice(0, 3),
-  };
-
   return (
     <>
-      <section className="bg-gradient-to-br from-primary-deep to-primary text-primary-foreground relative overflow-hidden">
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="Legislatura 2025–2028"
+        title="Nossos"
+        destaque="Vereadores"
+        description={<>Conheça os representantes do povo na Câmara Municipal e acompanhe o trabalho de cada um.</>}
+      />
 
-        <div className="absolute top-0 right-0 w-1/4 h-full bg-gold/5 -skew-x-12 translate-x-1/2" />
-        <div className="container-page py-11 md:py-16 relative z-10">
-          <div className="text-xs uppercase tracking-[0.2em] text-gold flex items-center gap-3">
-            <span className="gold-divider" /> Legislatura 2025–2028
+      {/* BUSCA */}
+      <section className="container-page relative z-10 -mt-7">
+        <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2 shadow-xl shadow-primary-deep/15">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" aria-hidden />
+            <Input
+              type="search"
+              placeholder="Buscar por nome ou partido"
+              aria-label="Buscar vereadores por nome ou partido"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="h-11 border-0 pl-11 text-base shadow-none focus-visible:ring-0"
+            />
           </div>
-          <h1 className="mt-4 font-display text-4xl md:text-6xl font-bold leading-tight">
-            Nossos <span className="text-gold">Vereadores</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-primary-foreground/85 text-lg">
-            Conheça os representantes do povo na Câmara Municipal, acompanhe seu trabalho e desempenho.
-          </p>
-        </div>
-      </section>
-
-      <section className="container-page py-16">
-        <div className="grid gap-10 lg:grid-cols-4">
-          {/* Sidebar / Filters */}
-          <div className="lg:col-span-1 space-y-8">
-            <div className="space-y-4">
-              <h3 className="font-display font-bold text-xl flex items-center gap-2">
-                <Search className="w-5 h-5 text-gold" /> Buscar
-              </h3>
-              <Input 
-                placeholder="Nome ou Partido..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-display font-bold text-xl flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-gold" /> Rankings
-              </h3>
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-secondary/30 border border-border">
-                  <p className="text-[10px] uppercase font-bold tracking-widest text-primary mb-3">Mais Atuantes</p>
-                  <div className="space-y-3">
-                    {rankings.projetos.map((v, i) => (
-                      <div key={v.id} className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2 truncate">
-                          <span className="text-gold font-bold">{i+1}º</span> {v.nome}
-                        </span>
-                        <Badge variant="secondary" className="text-[10px]">{v.partido}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Grid */}
-          <div className="lg:col-span-3">
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-border/60">
-              <div className="text-sm text-muted-foreground">
-                Exibindo <span className="font-bold text-foreground">{filteredVereadores.length}</span> vereadores
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  variant={viewMode === "grid" ? "default" : "outline"} 
-                  size="icon" 
-                  onClick={() => setViewMode("grid")}
-                  className="h-9 w-9"
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant={viewMode === "list" ? "default" : "outline"} 
-                  size="icon" 
-                  onClick={() => setViewMode("list")}
-                  className="h-9 w-9"
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className={viewMode === "grid" 
-              ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3" 
-              : "space-y-4"
-            }>
-              {loading ? (
-                <div className="col-span-full flex flex-col items-center justify-center py-20 gap-4">
-                  <Loader2 className="w-10 h-10 text-gold animate-spin" />
-                  <p className="text-muted-foreground font-medium">Carregando vereadores...</p>
-                </div>
-              ) : (
-                filteredVereadores.map((v, i) => (
-                  <article
-                    key={v.id}
-                    className={`card-premium card-premium-hover group overflow-hidden animate-[fade-up_0.5s_ease-out_both] ${
-                      viewMode === "list" ? "flex flex-col md:flex-row p-0" : "p-0"
-                    }`}
-                    style={{ animationDelay: `${i * 50}ms` }}
-                  >
-                    <div className={`relative bg-white flex items-center justify-center overflow-hidden ${
-                      viewMode === "list" ? "w-full md:w-48 aspect-[3/4] md:aspect-auto" : "aspect-[3/4]"
-                    }`}>
-                      <VereadorAvatar
-                        nome={v.nome}
-                        foto={v.foto_url}
-                        partido={v.partido}
-                        size={viewMode === "list" ? 192 : 320}
-                        rounded="lg"
-                        showLabelOnError
-                        fit="contain"
-                        className="!rounded-none w-full h-full bg-white"
-                      />
-                      {v.partido && (
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-white/90 backdrop-blur-sm text-primary border-none shadow-sm">
-                            {v.partido}
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-6 flex-1 flex flex-col">
-                      <div className="mb-4">
-                        {v.cargo && (
-                          <span className="text-[10px] uppercase font-bold tracking-widest text-gold mb-1 block">
-                            {v.cargo}
-                          </span>
-                        )}
-                        <h3 className="font-display text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                          {v.nome}
-                        </h3>
-                        {v.biografia && (
-                          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                            {v.biografia}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 py-4 border-y border-border/50 my-4">
-                        <div className="text-center border-r border-border/50">
-                          <div className="text-xs font-bold text-primary">{v.gabinete || "-"}</div>
-                          <div className="text-[8px] uppercase tracking-tighter text-muted-foreground font-bold">Gabinete</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-xs font-bold text-primary">{v.partido || "-"}</div>
-                          <div className="text-[8px] uppercase tracking-tighter text-muted-foreground font-bold">Partido</div>
-                        </div>
-                      </div>
-
-                      <div className="mt-auto flex items-center justify-end">
-                        <Button variant="link" asChild className="p-0 h-auto font-bold text-sm group-hover:text-primary">
-                          <Link to="/vereadores/$slug" params={{ slug: (v as any).slug || v.id }}>
-                            Perfil Completo <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </article>
-                ))
-              )}
-            </div>
-
-            {!loading && filteredVereadores.length === 0 && (
-              <div className="text-center py-20 bg-secondary/20 rounded-2xl border border-dashed border-border">
-                <User className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
-                <h3 className="text-lg font-bold">Nenhum vereador encontrado</h3>
-                <p className="text-muted-foreground">Tente uma busca diferente ou remova os filtros.</p>
-              </div>
-            )}
+          <span className="hidden shrink-0 px-2 text-sm text-muted-foreground sm:block" aria-live="polite">
+            <strong className="text-foreground">{filteredVereadores.length}</strong> {filteredVereadores.length === 1 ? "parlamentar" : "parlamentares"}
+          </span>
+          <div className="flex shrink-0 gap-1" role="group" aria-label="Forma de exibição">
+            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="icon" aria-label="Exibir em grade" aria-pressed={viewMode === "grid"} onClick={() => setViewMode("grid")} className="h-11 w-11">
+              <LayoutGrid className="h-4 w-4" aria-hidden />
+            </Button>
+            <Button variant={viewMode === "list" ? "default" : "ghost"} size="icon" aria-label="Exibir em lista" aria-pressed={viewMode === "list"} onClick={() => setViewMode("list")} className="h-11 w-11">
+              <List className="h-4 w-4" aria-hidden />
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Institutional Info Section */}
-      <section className="bg-primary-deep text-primary-foreground py-20">
-        <div className="container-page">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <SectionHeading 
-                eyebrow="O Poder Legislativo" 
-                title="Transparência e Representatividade" 
-                className="text-left mb-6"
-                light
-              />
-              <p className="text-primary-foreground/80 mb-8 leading-relaxed">
-                A Câmara Municipal é composta por 21 vereadores eleitos para mandatos de 4 anos. 
-                Sua função principal é legislar sobre assuntos de interesse local e fiscalizar o Poder Executivo.
-              </p>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {[
-                  { icon: Zap, label: "Ações Rápidas", desc: "Acesse indicações e requerimentos." },
-                  { icon: CalendarCheck, label: "Frequência", desc: "Confira a presença nas sessões." }
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gold/20 flex items-center justify-center shrink-0">
-                      <item.icon className="w-5 h-5 text-gold" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-sm">{item.label}</h4>
-                      <p className="text-xs text-primary-foreground/60">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+      {/* LISTA */}
+      <section className="container-page py-10 md:py-14">
+        {loading ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-muted" />)}
+          </div>
+        ) : filteredVereadores.length === 0 ? (
+          <EstadoVazio icone={SearchX} titulo="Nenhum vereador encontrado" texto="Tente buscar por outro nome ou partido." />
+        ) : viewMode === "grid" ? (
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {filteredVereadores.map((v, i) => (
+              <Link
+                key={v.id}
+                to="/vereadores/$slug"
+                params={{ slug: v.slug || v.id }}
+                style={{ animationDelay: `${i * 40}ms` }}
+                className="group flex w-[calc(50%-0.375rem)] flex-col overflow-hidden rounded-3xl border border-border bg-card transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl animate-[fade-up_0.5s_ease-out_both] md:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-0.8rem)]"
+              >
+                <div className="relative">
+                  <FotoEstudio nome={v.nome} foto={v.foto_url} partido={v.partido} className="aspect-[4/5]" />
+                  {v.partido && <span className="absolute bottom-2.5 left-2.5 max-w-[calc(100%-1.25rem)] truncate rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-primary-deep shadow-sm">{v.partido}</span>}
+                </div>
+                <span className="h-0.5 origin-left scale-x-0 bg-gold transition-transform duration-300 group-hover:scale-x-100" aria-hidden />
+                <div className="flex flex-1 flex-col p-4">
+                  <p className={`text-xs font-bold ${/^vereador/i.test(v.cargo ?? "Vereador") ? "text-muted-foreground" : "text-[oklch(0.5_0.11_70)]"}`}>{v.cargo || "Vereador(a)"}</p>
+                  <h2 className="mt-1 font-display text-[0.95rem] font-semibold leading-snug group-hover:text-primary">{v.nome}</h2>
+                  <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-primary">
+                    Ver perfil <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <ul className="grid gap-3">
+            {filteredVereadores.map((v) => (
+              <li key={v.id}>
+                <Link to="/vereadores/$slug" params={{ slug: v.slug || v.id }} className="group flex items-stretch overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40 hover:shadow-elegant">
+                  <FotoEstudio nome={v.nome} foto={v.foto_url} partido={v.partido} className="min-h-28 w-24 shrink-0" />
+                  <span className="flex min-w-0 flex-1 flex-col justify-center p-4">
+                    <span className="text-xs font-bold text-primary">{v.cargo || "Vereador(a)"}{v.partido ? ` · ${v.partido}` : ""}</span>
+                    <span className="mt-0.5 font-display text-lg font-semibold leading-snug group-hover:text-primary">{v.nome}</span>
+                    {v.biografia && <span className="mt-1 line-clamp-1 text-sm text-muted-foreground">{v.biografia}</span>}
+                  </span>
+                  <ChevronRight className="mr-4 h-5 w-5 shrink-0 self-center text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" aria-hidden />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* O PODER LEGISLATIVO */}
+      <section className="relative overflow-hidden bg-primary-deep py-12 text-white md:py-16">
+        <div className="textura-pontos absolute inset-0" aria-hidden />
+        <div className="container-page relative grid items-center gap-8 lg:grid-cols-2">
+          <div>
+            <TituloSecao claro eyebrow="O Poder Legislativo" titulo="Transparência e representatividade" />
+            <p className="-mt-3 leading-relaxed text-white/90">
+              A Câmara Municipal é composta por {vereadores.length || 9} vereadores eleitos para mandatos de 4 anos. Sua função principal é legislar sobre assuntos de interesse local e fiscalizar o Poder Executivo.
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {[
+                { to: "/vereadores/ranking", icon: Trophy, t: "Desempenho", d: "Projetos e presença de cada vereador" },
+                { to: "/projetos", icon: Zap, t: "Projetos de Lei", d: "Indicações, requerimentos e leis" },
+              ].map((c) => (
+                <Link key={c.to} to={c.to as never} className="group rounded-2xl border border-white/15 bg-white/[0.07] p-4 transition hover:bg-white/[0.14]">
+                  <c.icon className="h-5 w-5 text-gold" aria-hidden />
+                  <span className="mt-2 block font-display font-semibold">{c.t}</span>
+                  <span className="block text-sm text-white/85">{c.d}</span>
+                </Link>
+              ))}
             </div>
-            <div className="relative">
-              <div className="aspect-video rounded-2xl overflow-hidden glass-strong border border-white/10 p-2">
-                {plenarioImage ? (
-                  <img src={plenarioImage} alt="Plenário" className="w-full h-full object-cover rounded-xl" />
-                ) : (
-                  <div className="w-full h-full bg-primary/20 flex items-center justify-center rounded-xl">
-                    <span className="text-xs uppercase tracking-[0.3em] font-bold text-white/40">Imagem do Plenário</span>
-                  </div>
-                )}
-              </div>
-              <div className="absolute -bottom-6 -right-6 p-6 bg-gold rounded-2xl text-primary-deep shadow-xl animate-bounce">
-                <div className="text-4xl font-display font-bold">100%</div>
-                <div className="text-[10px] uppercase font-bold tracking-widest">Digitalizado</div>
-              </div>
-            </div>
+          </div>
+          <div className="aspect-video overflow-hidden rounded-3xl border border-white/15 shadow-2xl">
+            <img src={plenarioImage || cidadeAsset.url} alt={plenarioImage ? "Plenário da Câmara Municipal" : "Vista de Cachoeira de Goiás"} loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>

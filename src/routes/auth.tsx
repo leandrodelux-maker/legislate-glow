@@ -53,7 +53,7 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen grid place-items-center bg-gradient-to-br from-slate-50 to-slate-200 p-6">
+    <div className="pagina-hero relative isolate min-h-[80vh] grid place-items-center overflow-hidden p-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-12 h-12 rounded-xl bg-primary-deep grid place-items-center">

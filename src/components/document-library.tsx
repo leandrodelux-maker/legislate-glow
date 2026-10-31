@@ -1,5 +1,7 @@
+import { PaginaHero } from "@/components/pagina-hero";
+import { ScrollText } from "lucide-react";
 import { useState } from "react";
-import { Download, Eye, FileText, X, ExternalLink } from "lucide-react";
+import { Download, Eye, FileText, X, ExternalLink, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,6 +32,7 @@ export function DocumentLibrary({
   emptyLabel?: string;
 }) {
   const [active, setActive] = useState<LegalDocument | null>(null);
+  const [busca, setBusca] = useState("");
 
   if (documents.length === 0) {
     return (
@@ -39,60 +42,56 @@ export function DocumentLibrary({
     );
   }
 
+  const termo = busca.trim().toLowerCase();
+  const visiveis = documents.filter((d) => !termo || `${d.title} ${d.description ?? ""} ${d.date ?? ""}`.toLowerCase().includes(termo));
+
   return (
     <>
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        <div className="hidden grid-cols-[1fr_auto_auto] gap-4 border-b border-border bg-muted/40 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground md:grid">
-          <span>Documento</span>
-          <span className="w-28">Data</span>
-          <span className="w-56 text-right">Ações</span>
+      {documents.length > 5 && (
+        <div className="relative mb-4 max-w-md">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" aria-hidden />
+          <input
+            type="search"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar nestes documentos"
+            aria-label="Buscar nestes documentos"
+            className="h-12 w-full rounded-2xl border border-border bg-card pl-11 pr-4 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
         </div>
+      )}
 
-        <ul className="divide-y divide-border">
-          {documents.map((doc) => (
-            <li
-              key={doc.title}
-              className="flex flex-col gap-4 px-6 py-5 transition-colors hover:bg-muted/30 md:grid md:grid-cols-[1fr_auto_auto] md:items-center md:gap-4"
-            >
-              <div className="flex items-start gap-4">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+      {visiveis.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">Nenhum documento encontrado para “{busca}”.</p>
+      ) : (
+        <ul className="grid gap-3">
+          {visiveis.map((doc) => (
+            <li key={doc.title} className="group flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-elegant md:flex-row md:items-center md:p-5">
+              <div className="flex min-w-0 flex-1 items-start gap-4">
+                <span className="relative grid h-14 w-12 shrink-0 place-items-center rounded-lg bg-primary-deep text-white" aria-hidden>
                   <FileText className="h-5 w-5" />
-                </div>
+                  <span className="absolute -bottom-1.5 rounded bg-gold px-1 text-[10px] font-bold leading-4 text-gold-foreground">PDF</span>
+                </span>
                 <div className="min-w-0">
-                  <h3 className="font-display text-base font-bold text-foreground">
-                    {doc.title}
-                  </h3>
-                  {doc.description && (
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {doc.description}
-                    </p>
-                  )}
+                  <h3 className="font-display font-semibold leading-snug text-foreground">{doc.title}</h3>
+                  {doc.description && <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{doc.description}</p>}
+                  {doc.date && <p className="mt-1 text-xs font-semibold text-primary">Publicado em {doc.date}</p>}
                 </div>
               </div>
-
-              <div className="w-28 text-sm text-muted-foreground">
-                {doc.date ?? "—"}
-              </div>
-
-              <div className="flex w-full flex-wrap items-center gap-2 md:w-56 md:justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-10"
-                  onClick={() => setActive(doc)}
-                >
-                  <Eye className="mr-2 h-4 w-4" /> Visualizar
+              <div className="flex shrink-0 gap-2">
+                <Button variant="outline" className="h-11 flex-1 md:flex-none" onClick={() => setActive(doc)}>
+                  <Eye className="mr-2 h-4 w-4" aria-hidden /> Visualizar
                 </Button>
-                <Button size="sm" className="h-10" asChild>
+                <Button className="h-11 flex-1 md:flex-none" asChild>
                   <a href={doc.downloadUrl} target="_blank" rel="noopener noreferrer">
-                    <Download className="mr-2 h-4 w-4" /> Baixar
+                    <Download className="mr-2 h-4 w-4" aria-hidden /> Baixar
                   </a>
                 </Button>
               </div>
             </li>
           ))}
         </ul>
-      </div>
+      )}
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-5xl gap-0 p-0 [&>button]:hidden">
@@ -157,20 +156,5 @@ export function DocumentPageHero({
   title: string;
   description: string;
 }) {
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary-deep to-primary text-primary-foreground">
-      <div className="absolute right-0 top-0 h-full w-1/3 translate-x-1/2 skew-x-12 bg-gold/5" />
-      <div className="container-page relative z-10 py-8 md:py-11">
-        <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-gold">
-          <span className="gold-divider" /> {eyebrow}
-        </div>
-        <h1 className="mt-3 font-display text-3xl font-bold leading-tight md:text-5xl">
-          {title}
-        </h1>
-        <p className="mt-4 max-w-2xl text-primary-foreground/85 md:text-lg">
-          {description}
-        </p>
-      </div>
-    </section>
-  );
+  return <PaginaHero icone={ScrollText} eyebrow={eyebrow} title={title} description={description} />;
 }

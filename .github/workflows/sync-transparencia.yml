@@ -1,0 +1,38 @@
+name: Sincronizar Portal da Transparência
+
+on:
+  schedule:
+    - cron: "40 6 * * *"   # todos os conjuntos: todo dia às 06:40 UTC (03:40 em Brasília)
+    - cron: "10 * * * *"  # só o resumo (totais da página inicial): de hora em hora
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: "Conjunto (ex.: despesas) ou 'todos'"
+        default: "todos"
+        required: true
+      ano:
+        description: "Ano (vazio = ano atual)"
+        default: ""
+        required: false
+
+concurrency:
+  group: sync-transparencia
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: ${{ vars.SUPABASE_URL != '' }}   # parada até o banco analítico ser configurado no GitHub
+    runs-on: ubuntu-latest
+    timeout-minutes: 150   # "todos" inclui folha mês a mês, dispensas e ordens com detalhe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Sincronizar
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          TRANSPARENCIA_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          TRANSPARENCIA_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.TRANSPARENCIA_SUPABASE_SERVICE_ROLE_KEY }}
+          DATASET: ${{ github.event.schedule == '10 * * * *' && 'resumo' || github.event.inputs.dataset || 'todos' }}
+        run: node scripts/sync-transparencia/sync.mjs "$DATASET" "${{ github.event.inputs.ano }}"

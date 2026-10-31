@@ -101,7 +101,6 @@ const groups: Group[] = [
       { label: "Popups", path: "/admin/cms/popups", icon: Megaphone },
       { label: "Galeria", path: "/admin/cms/galeria", icon: Images },
       { label: "Diário Oficial", path: "/admin/cms/diario-oficial", icon: BookOpen },
-      { label: "Acesso Rápido", path: "/admin/acesso-rapido", icon: Globe },
     ],
   },
   {
@@ -110,6 +109,8 @@ const groups: Group[] = [
       { label: "Transparência Ativa", path: "/admin/transparencia-ativa", icon: Globe },
       { label: "Links da Transparência", path: "/admin/transparencia-links", icon: Globe },
       { label: "Documentos", path: "/admin/transparencia", icon: ShieldCheck },
+      { label: "Publicações", path: "/admin/publicacoes", icon: BookOpen },
+      { label: "Matriz Atricon", path: "/admin/matriz-atricon", icon: ShieldCheck },
       { label: "Licitações", path: "/admin/cms/licitacoes", icon: Gavel },
       { label: "Contratos", path: "/admin/cms/contratos", icon: FileBarChart },
       { label: "Folha de Pagamento", path: "/admin/cms/folha", icon: Wallet },

@@ -1,3 +1,5 @@
+import { ContinueNavegando, FaixaDestaques } from "@/components/pagina-ui";
+import { Landmark as IconeLei, BookOpen as IconeLivro, Gavel as IconeProjeto } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Scale, Landmark, BookOpen } from "lucide-react";
 import {
@@ -68,23 +70,10 @@ function LeiOrganicaPage() {
         description="A Lei Orgânica é a 'Constituição do município': organiza os Poderes, fixa competências e assegura os direitos do cidadão cachoeirense."
       />
 
-      <section className="container-page py-12 md:py-16">
-        <div className="grid gap-5 md:grid-cols-3">
-          {TOPICS.map(({ icon: Icon, title, text }) => (
-            <div
-              key={title}
-              className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div className="grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h2 className="mt-4 font-display text-lg font-bold">{title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
-            </div>
-          ))}
-        </div>
+      <FaixaDestaques itens={TOPICS.map(({ icon, title, text }) => ({ icone: icon, titulo: title, texto: text }))} />
 
-        <h2 className="mt-14 font-display text-2xl font-bold md:text-3xl">Documento oficial</h2>
+      <section className="container-page pb-4 pt-12 md:pt-16">
+        <h2 className="font-display text-2xl font-bold md:text-3xl">Documento oficial</h2>
         <p className="mt-2 text-muted-foreground">
           Visualize o texto integral no portal ou baixe o arquivo em PDF.
         </p>
@@ -92,6 +81,12 @@ function LeiOrganicaPage() {
           <DocumentLibrary documents={documents} />
         </div>
       </section>
+
+      <ContinueNavegando itens={[
+        { to: "/atos-legislativos/lei-organica-municipal", titulo: "Lei Orgânica", texto: "A norma máxima do município", icone: IconeLei },
+        { to: "/atos-legislativos/regimento-interno", titulo: "Regimento Interno", texto: "Como a Câmara funciona", icone: IconeLivro },
+        { to: "/projetos", titulo: "Projetos de Lei", texto: "Matérias em tramitação", icone: IconeProjeto },
+      ].filter((i) => i.to !== "/atos-legislativos/lei-organica-municipal")} />
     </>
   );
 }

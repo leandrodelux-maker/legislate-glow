@@ -1,3 +1,6 @@
+import { EstadoVazio } from "@/components/pagina-hero";
+import { PaginaHero } from "@/components/pagina-hero";
+import { Newspaper } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Building2, Calendar, User } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -58,24 +61,14 @@ function NoticiaDetalhe() {
 
   return (
     <>
-      <section className="bg-gradient-to-br from-primary-deep to-primary text-primary-foreground">
-        <div className="container-page py-8 md:py-10">
-          <Link
-            to="/noticias"
-            className="inline-flex items-center gap-2 text-sm text-primary-foreground/80 hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" /> Voltar para Notícias
-          </Link>
-          {noticia?.categoria && (
-            <div className="mt-4 inline-flex items-center rounded-full bg-gold px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gold-foreground">
-              {noticia.categoria}
-            </div>
-          )}
-          <h1 className="mt-3 font-display text-3xl md:text-4xl font-semibold max-w-4xl">
-            {loading ? "Carregando..." : (noticia?.titulo ?? "Notícia não encontrada")}
-          </h1>
+      <PaginaHero
+        icone={Newspaper}
+        eyebrow={noticia?.categoria || "Notícia"}
+        title={loading ? "Carregando..." : (noticia?.titulo ?? "Notícia não encontrada")}
+        ultimo={noticia?.titulo}
+      >
           {noticia && (
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-primary-foreground/80">
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-white/90">
               {date && (
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
@@ -93,40 +86,38 @@ function NoticiaDetalhe() {
               )}
             </div>
           )}
-        </div>
-      </section>
+      </PaginaHero>
 
-      <article className="container-page py-12 max-w-4xl">
+      <article className="mx-auto max-w-4xl px-5 pb-12 md:px-8">
         {loading ? (
-          <p className="text-muted-foreground">Carregando notícia...</p>
+          <div className="mt-8 space-y-3">
+            <div className="aspect-[16/9] animate-pulse rounded-3xl bg-muted" />
+          </div>
         ) : !noticia ? (
-          <p className="text-muted-foreground">
-            Esta notícia não está disponível.{" "}
-            <Link to="/noticias" className="text-primary underline">
-              Ver todas as notícias
-            </Link>
-            .
-          </p>
+          <div className="mt-10">
+            <EstadoVazio icone={Newspaper} titulo="Esta notícia não está disponível" texto="Ela pode ter sido removida ou o endereço está incorreto.">
+              <Link to="/noticias" className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Ver todas as notícias</Link>
+            </EstadoVazio>
+          </div>
         ) : (
           <>
-            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-gradient-to-br from-primary-deep via-primary to-primary/70">
-              {noticia.imagem_url ? (
-                <img
-                  src={noticia.imagem_url}
-                  alt={noticia.titulo}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              ) : (
-                <Building2 className="absolute right-6 bottom-6 h-20 w-20 text-white/15" />
-              )}
-            </div>
+            {noticia.imagem_url && (
+              <div className="relative z-10 mt-8 aspect-[16/9] overflow-hidden rounded-3xl shadow-2xl shadow-primary-deep/20">
+                <img src={noticia.imagem_url} alt="" className="h-full w-full object-cover" />
+              </div>
+            )}
             {noticia.resumo && (
-              <p className="mt-8 text-lg text-foreground/80 leading-relaxed">{noticia.resumo}</p>
+              <p className="mt-8 border-l-4 border-gold pl-5 font-display text-xl font-medium leading-relaxed text-foreground">{noticia.resumo}</p>
             )}
             <div
-              className="prose prose-slate mt-6 max-w-none prose-headings:font-display prose-a:text-primary"
+              className="prose prose-slate mt-8 max-w-none text-[1.05rem] leading-8 prose-headings:font-display prose-a:text-primary"
               dangerouslySetInnerHTML={{ __html: noticia.conteudo }}
             />
+            <div className="mt-10 border-t border-border pt-6">
+              <Link to="/noticias" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+                <ArrowLeft className="h-4 w-4" aria-hidden /> Todas as notícias
+              </Link>
+            </div>
           </>
         )}
       </article>

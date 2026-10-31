@@ -35,6 +35,11 @@
   --color-ring: var(--ring);
 
   --font-display: "Poppins", system-ui, sans-serif;
+  --font-editorial: Georgia, "Times New Roman", serif;
+  --color-sun: var(--gold);
+  --color-sun-foreground: var(--gold-foreground);
+  --shadow-soft: 0 1px 2px rgba(15,23,42,0.04), 0 4px 16px -4px rgba(15,23,42,0.08);
+  --shadow-elevated: 0 2px 4px rgba(15,23,42,0.04), 0 16px 40px -12px rgba(15,23,42,0.18);
   --font-sans: "Open Sans", system-ui, sans-serif;
 
   --shadow-elegant: 0 10px 40px -12px color-mix(in oklab, var(--primary) 28%, transparent);
@@ -316,4 +321,150 @@ html.a11y-keyboard-nav :focus-visible {
 .a11y-skip-links a:focus, .a11y-skip-links a:focus-visible {
   position: static; width: auto; height: auto; overflow: visible;
   outline: 3px solid #ffeb3b; outline-offset: 2px;
+}
+
+/* Página inicial */
+.acesso-destaque {
+  background:
+    radial-gradient(420px 260px at 100% 0%, color-mix(in oklab, var(--gold) 24%, transparent), transparent 65%),
+    radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.1) 1px, transparent 0) 0 0 / 20px 20px,
+    linear-gradient(135deg, var(--primary-deep), var(--primary));
+}
+/* Fundo de estúdio: a foto, de fundo branco, é multiplicada sobre esta cor. */
+.vereador-estudio {
+  isolation: isolate;
+  background: radial-gradient(120% 80% at 50% 15%, white, color-mix(in oklab, var(--primary) 22%, white));
+}
+.vereador-estudio-ouro {
+  background: radial-gradient(110% 75% at 50% 15%, white, color-mix(in oklab, var(--gold) 38%, white));
+}
+.textura-pontos {
+  background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0);
+  background-size: 24px 24px;
+  opacity: 0.08;
+}
+
+/* Topo das páginas internas: sempre na cor padrão do site. */
+.pagina-hero {
+  background: linear-gradient(120deg, var(--primary) 0%, var(--primary) 45%, var(--primary-deep) 100%);
+}
+
+/* Cabeçalho do site */
+.cabecalho-marca {
+  background-color: white;
+  background-image:
+    radial-gradient(520px 150px at 100% 0%, color-mix(in oklab, var(--gold) 16%, transparent), transparent 70%),
+    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--primary) 16%, transparent) 1px, transparent 0);
+  background-size: auto, 22px 22px;
+}
+.cabecalho-cta { background: linear-gradient(120deg, var(--primary-deep), var(--primary)); }
+.cabecalho-cta::after {
+  content: ""; position: absolute; inset-block: 0; left: -40%; width: 30%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.28), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.6s ease;
+}
+.cabecalho-cta:hover::after { left: 115%; }
+.cabecalho-radar::before, .cabecalho-radar::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 40px; height: 40px;
+  margin: -20px 0 0 -20px; border-radius: 50%;
+  border: 1.5px solid color-mix(in oklab, var(--gold) 75%, transparent);
+  animation: cabecalho-radar 3.2s ease-out infinite;
+  pointer-events: none;
+}
+.cabecalho-radar::after { animation-delay: 1.6s; }
+@keyframes cabecalho-radar {
+  from { transform: scale(0.45); opacity: 0.9; }
+  to { transform: scale(1.25); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cabecalho-radar::before, .cabecalho-radar::after, .cabecalho-cta::after { display: none; }
+}
+
+/* Rodapé do site */
+.rodape-faixa {
+  background:
+    radial-gradient(900px 420px at 88% 0%, color-mix(in oklab, var(--gold) 20%, transparent), transparent 60%),
+    linear-gradient(120deg, var(--primary) 0%, color-mix(in oklab, var(--primary) 72%, var(--primary-deep)) 100%);
+}
+.fios-cachoeira {
+  position: absolute; inset-block: 0; right: 0; width: 42%;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(90deg, transparent, black 45%);
+}
+.fios-cachoeira span {
+  position: absolute; top: -40%; width: 2px; height: 40%; border-radius: 2px;
+  background: linear-gradient(180deg, transparent, rgb(255 255 255 / 0.7), transparent);
+  animation-name: rodape-queda;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes rodape-queda {
+  to { transform: translateY(350%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fios-cachoeira { display: none; }
+  .rodape-acao { transition: none; }
+}
+.rodape-link {
+  background: linear-gradient(var(--gold), var(--gold)) left calc(100% - 4px) / 0 1px no-repeat;
+  transition: background-size 0.25s ease, color 0.2s ease;
+}
+.rodape-link:hover { background-size: 100% 1px; }
+.rodape-assinatura {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 8.6vw, 6.75rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  color: rgb(255 255 255 / 0.06);
+}
+.rodape :focus-visible { outline-color: var(--gold); }
+
+/* Portal da Transparência (páginas vindas do modelo de implantação) */
+.area-transparencia .container { max-width: 1176px; margin-inline: auto; padding-inline: 1.25rem; }
+@utility bg-hero {
+  background: var(--gradient-hero);
+}
+@utility bg-band {
+  background: linear-gradient(90deg, var(--primary-deep) 0%, var(--primary) 100%);
+}
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+@utility eyebrow-on-dark {
+  color: var(--gold);
+}
+@utility section-lead {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+@utility rounded-leaf {
+  border-radius: 1rem;
+}
+@utility rounded-leaf-sm {
+  border-radius: 0.75rem;
+}
+@utility surface-deep {
+  background-color: var(--primary-deep);
+}
+@utility skeleton {
+  border-radius: 0.5rem;
+  background-color: var(--muted);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@utility link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 600;
+  color: var(--primary);
 }

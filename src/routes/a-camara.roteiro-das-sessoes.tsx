@@ -1,3 +1,7 @@
+import { ChipsFiltro, ContinueNavegando, FaixaDestaques, FotoEstudio, TituloSecao } from "@/components/pagina-ui";
+import { EstadoVazio } from "@/components/pagina-hero";
+import { PaginaHero } from "@/components/pagina-hero";
+import { ListOrdered as IconeHero } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
@@ -89,126 +93,60 @@ function RoteiroPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-background">
+    <div>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_25%,white,transparent_45%),radial-gradient(circle_at_80%_0%,white,transparent_40%)]"
-        />
-        <div className="container-page relative py-8 md:py-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
-            <ListOrdered className="h-3 w-3" /> A Câmara
-          </span>
-          <h1 className="mt-3 font-display text-3xl font-extrabold md:text-4xl">
-            Roteiro das Sessões
-          </h1>
-          <p className="mt-2 max-w-3xl text-sm text-primary-foreground/85 md:text-base">
-            As sessões da Câmara são ordinárias, extraordinárias ou solenes, com acesso assegurado ao
-            público em geral. Veja abaixo como se desenvolve, etapa por etapa, uma sessão plenária.
-          </p>
-        </div>
-      </section>
+      <PaginaHero
+        icone={IconeHero}
+        eyebrow="A Câmara"
+        title="Roteiro das Sessões"
+        description={<>As sessões da Câmara são ordinárias, extraordinárias ou solenes, com acesso assegurado ao público em geral. Veja abaixo como se desenvolve, etapa por etapa, uma sessão plenária.</>}
+      />
 
-      {/* TIPOS */}
-      <section className="container-page py-10 md:py-14">
-        <SectionHeading
-          eyebrow="Das sessões em geral"
-          title="Tipos de sessão"
-          description="Toda sessão é pública e pode ser acompanhada presencialmente no plenário ou pelas transmissões oficiais."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {TIPOS.map((t) => (
-            <div
-              key={t.title}
-              className="rounded-2xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/10 text-primary">
-                <CalendarDays className="h-4 w-4" />
-              </span>
-              <h3 className="mt-3 font-display text-base font-bold text-foreground">{t.title}</h3>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">{t.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaixaDestaques itens={TIPOS.map((t) => ({ icone: CalendarDays, titulo: t.title, texto: t.text }))} />
 
       {/* ETAPAS */}
-      <section className="border-y border-border bg-secondary/40">
-        <div className="container-page py-10 md:py-14">
-          <SectionHeading
-            eyebrow="Roteiro da sessão"
-            title="Passo a passo dos trabalhos"
-            description="Sequência prevista no Regimento Interno da Casa Legislativa."
-          />
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <ol className="mt-8 space-y-4">
-              {etapas.map((e) => {
-                const Icon = (e.icone && ICON_MAP[e.icone]) || List;
-                return (
-                  <li
-                    key={e.id}
-                    className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-6"
-                  >
-                    <div className="flex items-start gap-4">
-                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-bold text-primary-foreground">
-                        {e.numero_etapa}
-                      </span>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4 text-primary" />
-                          <h3 className="font-display text-base font-bold text-foreground md:text-lg">
-                            {e.titulo}
-                          </h3>
-                        </div>
-                        <p className="mt-2 text-sm leading-7 text-muted-foreground whitespace-pre-wrap">
-                          {e.descricao}
-                        </p>
-                        {e.nota_quorum && (
-                          <p className="mt-3 flex items-start gap-2 rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs leading-6 text-foreground">
-                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                            <span>
-                              <strong className="font-semibold">Quórum: </strong>
-                              {e.nota_quorum}
-                            </span>
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
-        </div>
+      <section className="container-page py-12 md:py-16">
+        <TituloSecao eyebrow="Roteiro da sessão" titulo="Passo a passo dos trabalhos" descricao="Toda sessão é pública e pode ser acompanhada presencialmente no plenário ou pelas transmissões oficiais." />
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" aria-label="Carregando" />
+          </div>
+        ) : etapas.length === 0 ? (
+          <EstadoVazio icone={ListOrdered} titulo="Roteiro em atualização" texto="As etapas da sessão serão publicadas em breve." />
+        ) : (
+          <ol className="relative mx-auto max-w-4xl">
+            <span className="absolute bottom-6 left-[27px] top-6 w-0.5 bg-border" aria-hidden />
+            {etapas.map((e) => {
+              const Icon = (e.icone && ICON_MAP[e.icone]) || List;
+              return (
+                <li key={e.id} className="relative flex gap-4 pb-4 last:pb-0 md:gap-5">
+                  <span className="relative z-10 grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary-deep font-display text-lg font-bold text-gold shadow-md">
+                    {e.numero_etapa}
+                  </span>
+                  <div className="min-w-0 flex-1 rounded-2xl border border-border bg-card p-5 transition hover:border-primary/40 hover:shadow-elegant">
+                    <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-foreground">
+                      <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden /> {e.titulo}
+                    </h3>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{e.descricao}</p>
+                    {e.nota_quorum && (
+                      <p className="mt-3 flex items-start gap-2 rounded-xl border border-gold/30 bg-gold/10 p-3 text-sm leading-6 text-foreground">
+                        <Info className="mt-1 h-4 w-4 shrink-0 text-[oklch(0.5_0.11_70)]" aria-hidden />
+                        <span><strong className="font-semibold">Quórum: </strong>{e.nota_quorum}</span>
+                      </p>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
       </section>
 
-      {/* CTA */}
-      <section className="container-page py-10 md:py-14">
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            { to: ROUTES.sessoes, label: "Sessões e Pautas", desc: "Calendário, pautas e atas das sessões." },
-            { to: ROUTES.sessoesAoVivo, label: "Sessões ao Vivo", desc: "Assista às transmissões em tempo real." },
-            { to: ROUTES.comissoes, label: "Comissões", desc: "Quem analisa as matérias antes do plenário." },
-          ].map((c) => (
-            <Link
-              key={c.to}
-              to={c.to}
-              className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-            >
-              <h3 className="font-display text-lg font-bold text-foreground">{c.label}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{c.desc}</p>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                Acessar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-    </main>
+      <ContinueNavegando itens={[
+        { to: ROUTES.sessoes, titulo: "Sessões e Pautas", texto: "Agenda, pautas e atas", icone: CalendarDays },
+        { to: ROUTES.sessoesAoVivo, titulo: "Transmissão ao vivo", texto: "Acompanhe em tempo real", icone: Mic },
+        { to: ROUTES.comissoes, titulo: "Comissões", texto: "Quem analisa as matérias", icone: Gavel },
+      ]} />
+    </div>
   );
 }
