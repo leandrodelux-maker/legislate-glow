@@ -36,7 +36,13 @@ export const Route = createFileRoute("/admin/cms/ouvidoria")({
     return (
       <CrudPage<any>
         title="Ouvidoria"
-        description="Protocolos e respostas da ouvidoria."
+        description="Manifestações recebidas e as respostas da Câmara."
+        indicadores={(rows: any[]) => [
+          { rotulo: "Aguardando", valor: rows.filter((r) => ["aberto", "em_andamento"].includes(r.status)).length },
+          { rotulo: "Respondidas", valor: rows.filter((r) => r.status === "respondido").length },
+          { rotulo: "Encerradas", valor: rows.filter((r) => r.status === "encerrado").length },
+          { rotulo: "Total", valor: rows.length },
+        ]}
         table="ouvidoria_protocolos"
         orderBy={{ column: "created_at", ascending: false }}
         defaultValues={{ tipo: "solicitacao", status: "aberto" }}
@@ -44,8 +50,8 @@ export const Route = createFileRoute("/admin/cms/ouvidoria")({
           { key: "protocolo", label: "Protocolo", render: (r: any) => <span className="font-mono text-xs">{r.protocolo}</span> },
           { key: "nome", label: "Cidadão" },
           { key: "assunto", label: "Assunto", render: (r: any) => <span className="line-clamp-1 max-w-xs">{r.assunto}</span> },
-          { key: "tipo", label: "Tipo", render: (r: any) => <Badge variant="outline">{r.tipo}</Badge> },
-          { key: "status", label: "Status", render: (r: any) => <Badge variant={statusColor[r.status] || "default"}>{r.status}</Badge> },
+          { key: "tipo", label: "Tipo", render: (r: any) => <Badge variant="outline" className="capitalize">{r.tipo}</Badge> },
+          { key: "status", label: "Status", render: (r: any) => <Badge variant={statusColor[r.status] || "default"}>{({ aberto: "Aberto", em_andamento: "Em andamento", respondido: "Respondido", encerrado: "Encerrado" } as Record<string, string>)[r.status] ?? r.status}</Badge> },
         ]}
         fields={fields}
       />

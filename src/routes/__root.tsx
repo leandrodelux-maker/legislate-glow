@@ -20,6 +20,7 @@ import { AccessibilityProvider } from "@/components/accessibility/accessibility-
 import { AccessibilityWidget } from "@/components/accessibility/accessibility-widget";
 import { SkipLinks } from "@/components/accessibility/skip-links";
 import { SiteBreadcrumb } from "@/components/site-breadcrumb";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -148,6 +149,7 @@ function RootComponent() {
       <ThemeProvider>
         <AccessibilityProvider>
           <SkipLinks />
+          <Toaster richColors position="top-center" />
           <div className="flex min-h-dvh flex-col bg-background">
             {!isAdminPath && <SiteHeader />}
             <main id="conteudo" tabIndex={-1} className={isAdminPath ? "flex-1" : "flex-1"}>

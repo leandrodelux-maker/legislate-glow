@@ -2,7 +2,7 @@ import logoAsset from "@/assets/logo-camara.png.asset.json";
 import { Link } from "@tanstack/react-router";
 import { useContactInfo } from "@/hooks/use-contact-info";
 import { useSiteSettings } from "@/hooks/use-site-settings";
-import { Mail, Phone, Clock, Map, Menu, X, ChevronDown, Info, MessageSquare, ArrowUpRight } from "lucide-react";
+import { Mail, Phone, Clock, Map, Menu, X, ChevronDown, Info, MessageSquare, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { BuscaSite } from "@/components/busca-site";
@@ -101,19 +101,17 @@ export function SiteHeader() {
           </div>
 
           <div className="hidden md:flex items-center gap-2 ml-auto lg:ml-0 shrink-0">
-            <a
-              href="https://radardatransparencia.atricon.org.br/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={"/transparencia/atricon" as never}
               className="group inline-flex items-center gap-2.5 h-12 pl-2 pr-3 rounded-2xl bg-white text-primary-deep font-semibold text-sm ring-1 ring-slate-200 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:ring-primary/30 whitespace-nowrap"
-              aria-label="Radar da Transparência Pública (abre em nova aba)"
+              aria-label="Radar da Transparência: Matriz Atricon"
             >
               <span className="cabecalho-radar relative grid h-9 w-12 place-items-center">
                 <img src={radarLogo.url} alt="" className="relative h-9 w-auto object-contain" />
               </span>
               <span className="hidden xl:inline">Radar da Transparência</span>
-              <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" aria-hidden />
-            </a>
+              <ArrowRight className="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden />
+            </Link>
             <Link
               to={ROUTES.transparencia}
               className="cabecalho-cta relative inline-flex items-center gap-2.5 h-12 pl-2 pr-4 rounded-2xl overflow-hidden text-white font-semibold text-sm shadow-md transition hover:-translate-y-0.5 hover:shadow-lg whitespace-nowrap"
@@ -137,7 +135,7 @@ export function SiteHeader() {
       </div>
 
       {/* BLUE NAV BAR */}
-      <nav id="menu-principal" aria-label="Principal" className="hidden lg:block bg-primary-deep border-t border-white/10 sticky top-0 z-40" tabIndex={-1}>
+      <nav id="menu-principal" aria-label="Principal" className="hidden lg:block bg-primary-deep border-t border-white/10 sticky top-0 z-[45]" tabIndex={-1}>
         <span ref={fio} className="absolute inset-x-0 bottom-0 z-10 h-0.5 origin-left scale-x-0 bg-gold pointer-events-none" aria-hidden />
         <div className="container-page flex items-center justify-between gap-2">
           {/* MAIN MENU — left side */}
@@ -257,15 +255,13 @@ export function SiteHeader() {
               >
                 <Info className="h-4 w-4 shrink-0" aria-hidden /> Acesso à Transparência
               </Link>
-              <a
-                href="https://radardatransparencia.atricon.org.br/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to={"/transparencia/atricon" as never}
                 onClick={() => setOpen(false)}
                 className="flex-1 inline-flex items-center justify-center gap-2 h-[52px] px-4 rounded-xl bg-white text-primary-deep font-semibold text-sm ring-1 ring-white/20"
               >
                 <img src={radarLogo.url} alt="" className="h-7 w-auto" /> Radar
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

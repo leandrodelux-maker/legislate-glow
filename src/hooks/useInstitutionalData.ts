@@ -91,7 +91,8 @@ export const isTemplateValue = (value?: string | null) =>
 export const officialValue = (value?: string | null) =>
   isTemplateValue(value) ? null : value!.trim();
 
-const CACHE_KEY = "cached_institutional_data";
+// O nome leva o município: sites diferentes no mesmo endereço (localhost) não podem ler o cache um do outro.
+const CACHE_KEY = `cached_institutional_data:${MUNICIPIO.portal}`;
 
 function readCache(): InstitutionalData | null {
   try {
@@ -121,6 +122,9 @@ export function useInstitutionalData() {
           cached = merged;
           try { localStorage.setItem(CACHE_KEY, JSON.stringify(merged)); } catch {}
           setData(merged);
+        } else if (!row) {
+          invalidateInstitutionalCache();
+          setData(defaultInstitutionalData);
         }
         setLoading(false);
       });

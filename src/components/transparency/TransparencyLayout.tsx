@@ -79,7 +79,7 @@ const MenuTemas = () => {
   const temaAberto = TEMAS.find((t) => t.id === aberto);
 
   return (
-    <nav aria-label="Temas da transparência" className="bg-card border-b border-border/60 shadow-sm sticky top-0 z-40">
+    <nav aria-label="Temas da transparência" className="bg-card border-b border-border/60 shadow-sm sticky top-0 lg:top-[51px] xl:top-[54px] z-40">
       {/* Desktop */}
       <div className="hidden lg:block relative" onMouseLeave={sair}>
         <div className="container mx-auto px-4">

@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRight, ExternalLink } from "lucide-react";
-import { moduloDaRota } from "./modulos";
+import { COR_PAINEL, moduloDaRota } from "./modulos";
 
 export type Indicador = { rotulo: string; valor: string | number; detalhe?: string; cor?: string };
 
@@ -19,7 +19,7 @@ export function PaginaModulo({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const modulo = moduloDaRota(pathname);
-  const cor = modulo?.grupo.cor ?? "#14505F";
+  const cor = modulo?.grupo.cor ?? COR_PAINEL;
   const Icone = modulo?.icone;
 
   // Formulários e avisos abrem fora desta árvore: a cor do tema precisa valer na página inteira.
@@ -31,7 +31,7 @@ export function PaginaModulo({
   }, [cor]);
 
   return (
-    <div className="min-h-full" style={{ "--tema": cor } as React.CSSProperties}>
+    <div className="-m-4 min-h-full md:-m-6 lg:-m-8" style={{ "--tema": cor } as React.CSSProperties}>
       <header
         className="relative overflow-hidden text-white"
         style={{ background: `linear-gradient(120deg, ${cor} 0%, ${cor} 45%, color-mix(in srgb, ${cor} 68%, #071a22) 100%)` }}
@@ -52,7 +52,7 @@ export function PaginaModulo({
               </>
             )}
             <ChevronRight className="h-3 w-3 opacity-70" aria-hidden />
-            <span className="font-semibold text-white">{titulo ?? modulo?.label}</span>
+            <span className="font-semibold text-white">{modulo?.label ?? titulo}</span>
           </nav>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
             <div className="min-w-0 max-w-3xl">
@@ -119,5 +119,33 @@ export function Selo({ children, cor }: { children: ReactNode; cor?: string }) {
     >
       {children}
     </span>
+  );
+}
+
+/** Bloco de uma tela de configurações: título, explicação e conteúdo. */
+export function SecaoPainel({ titulo, descricao, icone: Icone, children }: { titulo: string; descricao?: string; icone?: React.ComponentType<{ className?: string }>; children: ReactNode }) {
+  return (
+    <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+      <div className="flex items-start gap-3">
+        {Icone && <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Icone className="h-5 w-5" /></span>}
+        <div className="min-w-0">
+          <h2 className="font-display text-lg font-bold text-foreground">{titulo}</h2>
+          {descricao && <p className="mt-0.5 text-sm text-muted-foreground">{descricao}</p>}
+        </div>
+      </div>
+      <div className="mt-5">{children}</div>
+    </section>
+  );
+}
+
+/** Barra de salvar sempre à vista nas telas de configurações. */
+export function BarraSalvar({ salvando, aviso }: { salvando?: boolean; aviso?: string }) {
+  return (
+    <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-2 border-t border-border bg-card/95 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
+      <p className="text-sm text-muted-foreground">{aviso ?? "As alterações só valem depois de salvar."}</p>
+      <button type="submit" disabled={salvando} className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary-deep px-5 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60">
+        {salvando ? "Salvando..." : "Salvar alterações"}
+      </button>
+    </div>
   );
 }

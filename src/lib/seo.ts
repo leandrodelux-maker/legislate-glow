@@ -1,9 +1,10 @@
+import { MUNICIPIO } from "@/config/municipio";
 // Título e descrição do site, definidos no painel (configuracoes.site_seo). O index.html fica neutro:
 // o que o navegador mostra é escrito aqui, e a cópia local evita o título piscar ao abrir.
 export interface SiteSeo { titulo: string; descricao: string; imagem_url: string }
 
 export const SEO_VAZIO: SiteSeo = { titulo: "", descricao: "", imagem_url: "" };
-export const SEO_CACHE_KEY = "cached_site_seo";
+export const SEO_CACHE_KEY = `cached_site_seo:${MUNICIPIO.portal}`;
 
 export const tituloPadrao = (cidade: string, uf: string) => `Portal da Transparência de ${cidade}${uf ? ` - ${uf}` : ""}`;
 export const descricaoPadrao = (cidade: string) => `Receitas, despesas, licitações, contratos, servidores e demais informações públicas de ${cidade}.`;

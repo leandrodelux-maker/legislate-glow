@@ -1,3 +1,4 @@
+import { PaginaModulo } from "@/components/admin/painel/PaginaModulo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,30 +63,13 @@ function AdminRankingPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl font-bold">Ranking Parlamentar</h1>
-          <p className="text-sm text-muted-foreground">
-            Métricas calculadas automaticamente a partir de projetos e presença em sessões.
-          </p>
-        </div>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/admin/vereadores">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Vereadores
-          </Link>
-        </Button>
-      </div>
-
+    <PaginaModulo titulo="Ranking" descricao="Calculado automaticamente a partir dos projetos e da presença nas sessões. Não há o que preencher aqui.">
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : (
-        <Card>
-          <CardHeader className="border-b bg-muted/30">
-            <CardTitle className="font-display text-lg">Classificação</CardTitle>
-          </CardHeader>
+        <Card className="overflow-hidden rounded-2xl shadow-none">
           <CardContent className="p-0">
             <Tabs defaultValue="pontuacao_total">
               <TabsList className="w-full justify-start rounded-none border-b bg-muted/30 p-2 gap-1 overflow-x-auto">
@@ -162,6 +146,6 @@ function AdminRankingPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </PaginaModulo>
   );
 }

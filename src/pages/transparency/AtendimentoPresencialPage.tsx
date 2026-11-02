@@ -1,21 +1,21 @@
 import { Link } from "@/lib/roteador-transparencia";
-import { ArrowRight, Info, Loader2, MessageSquareText, Send } from "lucide-react";
+import { ArrowRight, MessageSquareText, Send } from "lucide-react";
 import TransparencyLayout from "@/components/transparency/TransparencyLayout";
 import CartaoLocal from "@/components/transparency/atendimento/LocalAtendimento";
-import { localDoSite, temDados, useLocaisAtendimento } from "@/components/transparency/atendimento/locais";
+import type { Local } from "@/components/transparency/atendimento/locais";
 import { findItem } from "@/data/transparenciaCatalogo";
-import { useInstitutionalData } from "@/hooks/useInstitutionalData";
+import { useContactInfo } from "@/hooks/use-contact-info";
 
 // Onde ser atendido pessoalmente: o SIC físico (pedidos de informação) ou a Ouvidoria (manifestações).
-// O local preenchido no painel tem prioridade; sem ele, valem os copiados do Portal da Transparência.
+// Os dados vêm do painel, em Configurações → Geral: são os mesmos do cabeçalho, do rodapé e da página de contato.
 const TEXTOS = {
   sic: {
-    slug: "sic-fisico", conjunto: "sic-fisico" as const, titulo: "Serviço de Informação ao Cidadão (SIC)",
+    slug: "sic-fisico", titulo: "Serviço de Informação ao Cidadão (SIC)",
     oQue: "O SIC atende e orienta quem quer uma informação pública: lá você registra o pedido pessoalmente, acompanha o andamento e recebe a resposta (Lei nº 12.527/2011, art. 9º).",
     online: { rotulo: "Prefere pela internet? Faça o pedido no e-SIC", href: "/e-sic", icone: Send },
   },
   ouvidoria: {
-    slug: "informacoes-ouvidoria", conjunto: "informacoes-ouvidoria" as const, titulo: "Ouvidoria Municipal",
+    slug: "informacoes-ouvidoria", titulo: "Ouvidoria Municipal",
     oQue: "A Ouvidoria recebe denúncias, reclamações, sugestões e elogios, encaminha ao setor responsável e acompanha até a resposta (Lei nº 13.460/2017).",
     online: { rotulo: "Prefere pela internet? Registre na Ouvidoria on-line", href: "/contato", icone: MessageSquareText },
   },
@@ -25,22 +25,20 @@ const AtendimentoPresencialPage = ({ tipo }: { tipo: keyof typeof TEXTOS }) => {
   const t = TEXTOS[tipo];
   const item = findItem(t.slug)!;
   const cor = item.tema.color;
-  const locais = useLocaisAtendimento(t.conjunto);
-  const { data: inst } = useInstitutionalData();
-
-  const institucional = localDoSite(inst, tipo);
-  const usarInstitucional = temDados(institucional);
-  const lista = usarInstitucional ? [institucional] : locais ?? [];
+  const contato = useContactInfo();
+  const local: Local = {
+    endereco: contato.endereco,
+    telefones: [...new Set([contato.telefone, contato.whatsapp].filter(Boolean))],
+    email: contato.email,
+    horarios: contato.horario ? [contato.horario] : [],
+  };
 
   return (
     <TransparencyLayout title={item.label} description={item.desc}
       breadcrumbs={[{ label: "Início", href: "/" }, { label: "Transparência", href: "/transparencia" }, { label: item.tema.label, href: `/transparencia/tema/${item.tema.id}` }, { label: item.label }]}>
       <div className="grid gap-6 lg:grid-cols-[1fr_360px] items-start">
         <div className="space-y-6">
-          {!locais && !usarInstitucional ? (
-            <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-16"><Loader2 className="h-5 w-5 animate-spin" aria-hidden /> Carregando…</p>
-          ) : lista.map((l, i) => <CartaoLocal key={i} local={l} cor={cor} titulo={l.local && l.local !== "LAI" ? l.local : t.titulo} />)}
-          {locais && !lista.length && <p className="text-sm text-muted-foreground flex gap-1.5"><Info className="h-4 w-4 mt-0.5 shrink-0" aria-hidden /> O local de atendimento ainda não foi informado.</p>}
+          <CartaoLocal local={local} cor={cor} titulo={t.titulo} />
         </div>
         <aside className="space-y-4">
           <div className="rounded-3xl border border-border/60 bg-card p-6">

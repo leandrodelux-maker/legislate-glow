@@ -1,160 +1,188 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Users, Newspaper, Calendar, FileText, Gavel, TrendingUp, Eye, Activity } from "lucide-react";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
+import { AlertTriangle, ArrowRight, Calendar, CheckCircle2, Clock, FileText, Gavel, Inbox, Mail, MessageSquare, Newspaper, Plus, ScrollText, Users, type LucideIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PaginaModulo } from "@/components/admin/painel/PaginaModulo";
+import { supabase } from "@/integrations/supabase/client";
+import { useSupabaseAuth } from "@/hooks/use-supabase-auth";
 
 export const Route = createFileRoute("/admin/dashboard")({
   component: Dashboard,
 });
 
-type Stats = {
+type Dados = {
   vereadores: number;
   noticias: number;
   sessoes: number;
-  documentos: number;
   projetos: number;
+  esicAbertos: number;
+  esicVencidos: number;
+  ouvidoriaAbertos: number;
+  semAta: number;
+  rascunhos: number;
+  proximas: { id: string; titulo: string; data_sessao: string; local: string | null }[];
+  ultimas: { id: string; titulo: string; publicado: boolean; created_at: string }[];
 };
 
-function StatCard({ icon: Icon, label, value, accent, loading }: any) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-card transition-shadow">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</span>
-        <div className={`w-9 h-9 rounded-lg grid place-items-center ${accent}`}>
-          <Icon className="w-4 h-4 text-white" />
-        </div>
-      </div>
-      {loading ? (
-        <Skeleton className="h-8 w-20" />
-      ) : (
-        <p className="text-3xl font-display font-bold text-slate-900">{value}</p>
-      )}
-    </div>
-  );
-}
+const ATALHOS: { rotulo: string; to: string; icone: LucideIcon }[] = [
+  { rotulo: "Nova notícia", to: "/admin/noticias?novo=1", icone: Newspaper },
+  { rotulo: "Nova sessão", to: "/admin/sessoes?novo=1", icone: Calendar },
+  { rotulo: "Novo projeto", to: "/admin/projetos?novo=1", icone: Gavel },
+  { rotulo: "Nova portaria", to: "/admin/portarias?novo=1", icone: ScrollText },
+];
+
+const conta = (r: { count: number | null }) => r.count ?? 0;
 
 function Dashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [chartData, setChartData] = useState<Array<{ mes: string; noticias: number; sessoes: number }>>([]);
-  const [latest, setLatest] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user } = useSupabaseAuth();
+  const [d, setD] = useState<Dados | null>(null);
 
   useEffect(() => {
     (async () => {
-      const [v, n, s, d, p, news] = await Promise.all([
-        supabase.from("vereadores").select("id", { count: "exact", head: true }),
-        supabase.from("noticias").select("id", { count: "exact", head: true }),
-        supabase.from("sessoes").select("id", { count: "exact", head: true }),
-        supabase.from("transparencia_documentos").select("id", { count: "exact", head: true }),
-        supabase.from("projetos_legislativos").select("id", { count: "exact", head: true }),
-        supabase.from("noticias").select("id,titulo,categoria,publicado_em,created_at").order("created_at", { ascending: false }).limit(5),
+      const base = (t: string) => (supabase as any).from(t).select("id", { count: "exact", head: true });
+      const agora = new Date().toISOString();
+      const hoje = agora.slice(0, 10);
+      const [v, n, s, p, ea, ev, oa, sa, ra, pr, ul] = await Promise.all([
+        base("vereadores").eq("ativo", true),
+        base("noticias"),
+        base("sessoes"),
+        base("projetos_legislativos"),
+        base("esic_solicitacoes").in("status", ["pendente", "analise", "prorrogado"]),
+        base("esic_solicitacoes").in("status", ["pendente", "analise", "prorrogado"]).lt("prazo_resposta", hoje),
+        base("ouvidoria_protocolos").in("status", ["aberto", "em_andamento"]),
+        base("sessoes").eq("status", "realizada").eq("ata_publicada", false),
+        base("noticias").eq("publicado", false),
+        supabase.from("sessoes").select("id,titulo,data_sessao,local").gte("data_sessao", agora).order("data_sessao").limit(4),
+        supabase.from("noticias").select("id,titulo,publicado,created_at").order("created_at", { ascending: false }).limit(4),
       ]);
-
-      setStats({
-        vereadores: v.count ?? 0,
-        noticias: n.count ?? 0,
-        sessoes: s.count ?? 0,
-        documentos: d.count ?? 0,
-        projetos: p.count ?? 0,
+      setD({
+        vereadores: conta(v), noticias: conta(n), sessoes: conta(s), projetos: conta(p),
+        esicAbertos: conta(ea), esicVencidos: conta(ev), ouvidoriaAbertos: conta(oa), semAta: conta(sa), rascunhos: conta(ra),
+        proximas: (pr.data as Dados["proximas"]) ?? [],
+        ultimas: (ul.data as Dados["ultimas"]) ?? [],
       });
-      setLatest((news.data as any[]) ?? []);
-
-      // Gerar dados de gráfico dos últimos 6 meses
-      const months: Record<string, { noticias: number; sessoes: number }> = {};
-      const now = new Date();
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const key = d.toLocaleDateString("pt-BR", { month: "short" });
-        months[key] = { noticias: 0, sessoes: 0 };
-      }
-
-      const [allNoticias, allSessoes] = await Promise.all([
-        supabase.from("noticias").select("created_at").gte("created_at", new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString()),
-        supabase.from("sessoes").select("data_sessao").gte("data_sessao", new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString()),
-      ]);
-
-      (allNoticias.data ?? []).forEach((row: any) => {
-        const key = new Date(row.created_at).toLocaleDateString("pt-BR", { month: "short" });
-        if (months[key]) months[key].noticias++;
-      });
-      (allSessoes.data ?? []).forEach((row: any) => {
-        const key = new Date(row.data_sessao).toLocaleDateString("pt-BR", { month: "short" });
-        if (months[key]) months[key].sessoes++;
-      });
-
-      setChartData(Object.entries(months).map(([mes, v]) => ({ mes, ...v })));
-      setLoading(false);
     })();
   }, []);
 
+  const nome = String(user?.user_metadata?.full_name || "").split(" ")[0];
+  const hora = new Date().getHours();
+  const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+
+  const pendencias = d
+    ? [
+        d.esicVencidos > 0 && { icone: AlertTriangle, urgente: true, titulo: `${d.esicVencidos} ${d.esicVencidos === 1 ? "pedido do e-SIC com prazo vencido" : "pedidos do e-SIC com prazo vencido"}`, texto: "Responda ou registre a prorrogação.", to: "/admin/cms/esic" },
+        d.esicAbertos - d.esicVencidos > 0 && { icone: Mail, titulo: `${d.esicAbertos - d.esicVencidos} ${d.esicAbertos - d.esicVencidos === 1 ? "pedido do e-SIC aguardando" : "pedidos do e-SIC aguardando"}`, texto: "Dentro do prazo legal.", to: "/admin/cms/esic" },
+        d.ouvidoriaAbertos > 0 && { icone: MessageSquare, titulo: `${d.ouvidoriaAbertos} ${d.ouvidoriaAbertos === 1 ? "manifestação na Ouvidoria" : "manifestações na Ouvidoria"}`, texto: "Aguardando resposta.", to: "/admin/cms/ouvidoria" },
+        d.semAta > 0 && { icone: FileText, titulo: `${d.semAta} ${d.semAta === 1 ? "sessão realizada sem ata" : "sessões realizadas sem ata"}`, texto: "A Atricon avalia a publicação das atas.", to: "/admin/sessoes" },
+        d.rascunhos > 0 && { icone: Newspaper, titulo: `${d.rascunhos} ${d.rascunhos === 1 ? "notícia em rascunho" : "notícias em rascunho"}`, texto: "Ainda não aparecem no site.", to: "/admin/noticias" },
+      ].filter(Boolean) as { icone: LucideIcon; urgente?: boolean; titulo: string; texto: string; to: string }[]
+    : [];
+
   return (
-    <div className="space-y-8 animate-[fade-up_0.4s_ease-out]">
-      <div>
-        <h1 className="text-3xl font-display font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500">Visão geral do portal da Câmara Municipal.</p>
+    <PaginaModulo titulo={`${saudacao}${nome ? `, ${nome}` : ""}`} descricao="O que precisa da sua atenção hoje e os atalhos para o dia a dia.">
+      <div className="flex flex-wrap gap-2">
+        {ATALHOS.map((a) => (
+          <a key={a.to} href={a.to} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-semibold transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
+            <Plus className="h-4 w-4 text-primary" aria-hidden /> {a.rotulo}
+          </a>
+        ))}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <StatCard icon={Users} label="Vereadores" value={stats?.vereadores} accent="bg-blue-500" loading={loading} />
-        <StatCard icon={Newspaper} label="Notícias" value={stats?.noticias} accent="bg-emerald-500" loading={loading} />
-        <StatCard icon={Calendar} label="Sessões" value={stats?.sessoes} accent="bg-amber-500" loading={loading} />
-        <StatCard icon={FileText} label="Documentos" value={stats?.documentos} accent="bg-violet-500" loading={loading} />
-        <StatCard icon={Gavel} label="Projetos" value={stats?.projetos} accent="bg-rose-500" loading={loading} />
-        <StatCard icon={Eye} label="Acessos" value="—" accent="bg-slate-500" loading={false} />
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-display font-bold text-lg text-slate-900">Publicações</h3>
-              <p className="text-xs text-slate-500">Últimos 6 meses</p>
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-start">
+        <section aria-labelledby="titulo-atencao" className="rounded-2xl border border-border bg-card p-5">
+          <h2 id="titulo-atencao" className="font-display text-lg font-bold">Precisa de atenção</h2>
+          {!d ? (
+            <div className="mt-4 space-y-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-16 w-full rounded-xl" />)}</div>
+          ) : pendencias.length === 0 ? (
+            <div className="mt-4 flex items-center gap-3 rounded-xl bg-primary/5 p-5">
+              <CheckCircle2 className="h-7 w-7 shrink-0 text-primary" aria-hidden />
+              <div>
+                <p className="font-display font-semibold">Tudo em dia</p>
+                <p className="text-sm text-muted-foreground">Nenhum pedido aguardando e nenhuma ata pendente.</p>
+              </div>
             </div>
-            <TrendingUp className="w-5 h-5 text-emerald-500" />
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="mes" stroke="#64748b" fontSize={12} />
-                <YAxis stroke="#64748b" fontSize={12} />
-                <Tooltip />
-                <Line type="monotone" dataKey="noticias" stroke="#10b981" strokeWidth={2} name="Notícias" />
-                <Line type="monotone" dataKey="sessoes" stroke="#f59e0b" strokeWidth={2} name="Sessões" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-bold text-lg text-slate-900">Últimas Notícias</h3>
-            <Activity className="w-5 h-5 text-slate-400" />
-          </div>
-          <div className="space-y-3">
-            {loading
-              ? Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)
-              : latest.length === 0
-              ? <p className="text-sm text-slate-400">Nenhuma notícia ainda.</p>
-              : latest.map((n) => (
-                <div key={n.id} className="border-l-2 border-primary pl-3 py-1">
-                  <p className="text-sm font-medium text-slate-800 line-clamp-2">{n.titulo}</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">{n.categoria ?? "—"} · {new Date(n.publicado_em ?? n.created_at).toLocaleDateString("pt-BR")}</p>
-                </div>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {pendencias.map((p) => (
+                <li key={p.titulo}>
+                  <Link to={p.to as never} className={`group flex items-center gap-3 rounded-xl border p-3.5 transition hover:shadow-sm ${p.urgente ? "border-destructive/40 bg-destructive/5" : "border-border hover:border-primary/40"}`}>
+                    <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${p.urgente ? "bg-destructive text-white" : "bg-primary/10 text-primary"}`}><p.icone className="h-5 w-5" aria-hidden /></span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold leading-snug">{p.titulo}</span>
+                      <span className="block text-sm text-muted-foreground">{p.texto}</span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5" aria-hidden />
+                  </Link>
+                </li>
               ))}
+            </ul>
+          )}
+        </section>
+
+        <section aria-labelledby="titulo-agenda" className="rounded-2xl border border-border bg-card p-5">
+          <div className="flex items-center justify-between gap-2">
+            <h2 id="titulo-agenda" className="font-display text-lg font-bold">Próximas sessões</h2>
+            <Link to="/admin/sessoes" className="text-sm font-semibold text-primary hover:underline">Ver todas</Link>
           </div>
-        </div>
+          {!d ? (
+            <Skeleton className="mt-4 h-24 w-full rounded-xl" />
+          ) : d.proximas.length === 0 ? (
+            <div className="mt-4 rounded-xl bg-secondary/60 p-5 text-center">
+              <Inbox className="mx-auto h-7 w-7 text-muted-foreground" aria-hidden />
+              <p className="mt-2 text-sm text-muted-foreground">Nenhuma sessão agendada.</p>
+              <a href="/admin/sessoes?novo=1" className="mt-1 inline-block text-sm font-semibold text-primary hover:underline">Agendar sessão</a>
+            </div>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {d.proximas.map((s) => {
+                const dt = new Date(s.data_sessao);
+                return (
+                  <li key={s.id} className="flex items-center gap-3 rounded-xl border border-border p-3">
+                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary-deep text-center text-white">
+                      <span><span className="block font-display font-bold leading-none">{dt.toLocaleDateString("pt-BR", { day: "2-digit" })}</span><span className="block text-[11px] font-bold uppercase text-gold">{dt.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}</span></span>
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-semibold">{s.titulo}</span>
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" aria-hidden /> {dt.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}{s.local ? ` · ${s.local}` : ""}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
       </div>
-    </div>
+
+      <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[
+          { r: "Vereadores ativos", v: d?.vereadores, i: Users, to: "/admin/vereadores" },
+          { r: "Sessões", v: d?.sessoes, i: Calendar, to: "/admin/sessoes" },
+          { r: "Projetos", v: d?.projetos, i: Gavel, to: "/admin/projetos" },
+          { r: "Notícias", v: d?.noticias, i: Newspaper, to: "/admin/noticias" },
+        ].map((c) => (
+          <Link key={c.r} to={c.to as never} className="group rounded-2xl border border-border bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
+            <div className="flex items-center justify-between">
+              <dt className="text-sm text-muted-foreground">{c.r}</dt>
+              <c.i className="h-4 w-4 text-primary" aria-hidden />
+            </div>
+            <dd className="mt-1 font-display text-3xl font-bold tabular-nums">{c.v ?? <Skeleton className="h-9 w-14" />}</dd>
+          </Link>
+        ))}
+      </dl>
+
+      {d && d.ultimas.length > 0 && (
+        <section aria-labelledby="titulo-noticias" className="rounded-2xl border border-border bg-card p-5">
+          <h2 id="titulo-noticias" className="font-display text-lg font-bold">Últimas notícias</h2>
+          <ul className="mt-3 divide-y divide-border/70">
+            {d.ultimas.map((n) => (
+              <li key={n.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                <span className="min-w-0 truncate font-medium">{n.titulo}</span>
+                <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${n.publicado ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}>{n.publicado ? "Publicada" : "Rascunho"}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </PaginaModulo>
   );
 }

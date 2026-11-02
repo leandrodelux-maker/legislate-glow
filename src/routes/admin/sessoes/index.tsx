@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -80,32 +81,36 @@ function AdminSessoes() {
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
-            <UserCheck className="w-4 h-4" /> Lista de Presença
+            <UserCheck className="w-4 h-4" aria-hidden /> Presença
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Presenças na Sessão</DialogTitle>
+            <DialogTitle className="font-display text-xl">Lista de presença</DialogTitle>
+            <DialogDescription>Marque quem esteve presente. Cada clique já fica salvo e alimenta o perfil do vereador e o Ranking.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="max-h-[60vh] space-y-2 overflow-y-auto pr-1">
             {vereadores.map(v => (
-              <div key={v.id} className="flex items-center justify-between p-2 border rounded-lg">
-                <span className="font-medium">{v.nome}</span>
+              <div key={v.id} className="flex items-center justify-between gap-3 rounded-xl border border-border p-2.5 pl-3.5">
+                <span className="min-w-0 font-medium">{v.nome}</span>
                 <div className="flex gap-2">
                   <Button 
                     size="sm" 
                     variant={presencas[v.id] === true ? "default" : "outline"}
-                    className={presencas[v.id] === true ? "bg-emerald-600 hover:bg-emerald-700" : ""}
+                    className={`h-10 gap-1.5 ${presencas[v.id] === true ? "bg-emerald-600 hover:bg-emerald-700" : ""}`}
+                    aria-pressed={presencas[v.id] === true}
                     onClick={() => togglePresenca(v.id, true)}
                   >
-                    <Check className="w-4 h-4" />
+                    <Check className="w-4 h-4" aria-hidden /> Presente
                   </Button>
                   <Button 
                     size="sm" 
                     variant={presencas[v.id] === false ? "destructive" : "outline"}
+                    className="h-10 gap-1.5"
+                    aria-pressed={presencas[v.id] === false}
                     onClick={() => togglePresenca(v.id, false)}
                   >
-                    <XIcon className="w-4 h-4" />
+                    <XIcon className="w-4 h-4" aria-hidden /> Faltou
                   </Button>
                 </div>
               </div>
@@ -149,17 +154,18 @@ function AdminSessoes() {
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
-            <Vote className="w-4 h-4" /> Resumo dos Votos
+            <Vote className="w-4 h-4" aria-hidden /> Votos
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Resumo da Votação</DialogTitle>
+            <DialogTitle className="font-display text-xl">Votos da sessão</DialogTitle>
+            <DialogDescription>Escolha o voto de cada vereador. Cada escolha já fica salva e aparece nas Votações Nominais da Transparência.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
+          <div className="max-h-[60vh] space-y-2 overflow-y-auto pr-1">
             {vereadores.map(v => (
-              <div key={v.id} className="flex flex-col gap-3 p-3 border rounded-lg">
-                <span className="font-bold">{v.nome}</span>
+              <div key={v.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border p-3">
+                <span className="font-medium">{v.nome}</span>
                 <RadioGroup 
                   value={votos[v.id]} 
                   onValueChange={(val) => handleVoto(v.id, val)}
@@ -167,15 +173,15 @@ function AdminSessoes() {
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="sim" id={`sim-${v.id}`} />
-                    <Label htmlFor={`sim-${v.id}`} className="text-emerald-600 font-bold uppercase text-xs">Sim</Label>
+                    <Label htmlFor={`sim-${v.id}`} className="text-emerald-700 font-semibold text-sm">Sim</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="nao" id={`nao-${v.id}`} />
-                    <Label htmlFor={`nao-${v.id}`} className="text-red-600 font-bold uppercase text-xs">Não</Label>
+                    <Label htmlFor={`nao-${v.id}`} className="text-red-700 font-semibold text-sm">Não</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="abstencao" id={`abst-${v.id}`} />
-                    <Label htmlFor={`abst-${v.id}`} className="text-slate-500 font-bold uppercase text-xs">Abstenção</Label>
+                    <Label htmlFor={`abst-${v.id}`} className="text-muted-foreground font-semibold text-sm">Abstenção</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -189,10 +195,19 @@ function AdminSessoes() {
   return (
     <CrudPage<Sessao>
       title="Sessões"
-      description="Agenda e histórico das sessões plenárias."
+      description="Agenda, pauta, ata, presença e votos de cada sessão plenária."
       table="sessoes"
       orderBy={{ column: "data_sessao", ascending: false }}
       defaultValues={{ status: "agendada" }}
+      indicadores={(rows) => {
+        const agora = Date.now();
+        return [
+          { rotulo: "Agendadas", valor: rows.filter((r) => r.status === "agendada" && new Date(r.data_sessao).getTime() >= agora).length },
+          { rotulo: "Realizadas", valor: rows.filter((r) => r.status === "realizada").length },
+          { rotulo: "Sem ata publicada", valor: rows.filter((r) => r.status === "realizada" && !r.ata_publicada).length },
+          { rotulo: "Total", valor: rows.length },
+        ];
+      }}
       columns={[
         { key: "titulo", label: "Título" },
         { key: "tipo", label: "Tipo" },
@@ -202,20 +217,13 @@ function AdminSessoes() {
           render: (r) => new Date(r.data_sessao).toLocaleString("pt-BR"),
         },
         {
-          key: "qtd_presencas",
-          label: "Presenças",
-          render: (r) => (
-            <Badge variant="secondary">{r.qtd_presencas ?? 0} presentes</Badge>
-          ),
-        },
-        {
-          key: "qtd_votacoes",
-          label: "Votos",
-          render: (r) => <Badge variant="outline">{r.qtd_votacoes ?? 0}</Badge>,
+          key: "status",
+          label: "Situação",
+          render: (r) => <Badge variant={r.status === "agendada" ? "default" : r.status === "cancelada" ? "destructive" : "secondary"} className="capitalize">{r.status}</Badge>,
         },
         {
           key: "acoes_extra",
-          label: "Presença/Votos",
+          label: "Registrar",
           render: (r) => (
             <div className="flex gap-2">
               <PresencaManager sessaoId={r.id} />

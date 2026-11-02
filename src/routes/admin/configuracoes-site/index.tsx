@@ -1,3 +1,4 @@
+import { BarraSalvar, PaginaModulo } from "@/components/admin/painel/PaginaModulo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,27 +133,24 @@ function SiteSettingsAdmin() {
   if (loading || !settings) {
     return (
       <div className="p-12 grid place-items-center">
-        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <form onSubmit={save} className="space-y-8 animate-[fade-up_0.4s_ease-out] max-w-4xl">
-      <div>
-        <h2 className="text-3xl font-display font-bold text-slate-900">Configurações do Site</h2>
-        <p className="text-slate-500">Gerencie a mídia do hero, textos e contato exibidos no site público.</p>
-      </div>
+    <PaginaModulo titulo="Página Inicial e Logotipos" descricao="Imagem e textos do topo da página inicial, logotipos e transmissão ao vivo.">
+    <form onSubmit={save} className="space-y-5">
 
       {/* HERO MEDIA */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
         <div>
-          <h3 className="font-display font-bold text-lg text-slate-900">Mídia do Hero (Imagem ou Vídeo)</h3>
-          <p className="text-sm text-slate-500">Exibida no topo da página inicial.</p>
+          <h3 className="font-display font-bold text-lg text-foreground">Imagem do topo</h3>
+          <p className="text-sm text-muted-foreground">Fica atrás do título da página inicial. Use imagem na horizontal, com pelo menos 1600 pixels de largura, ou um vídeo curto.</p>
         </div>
 
         {settings.hero_media_url ? (
-          <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video">
+          <div className="relative rounded-xl overflow-hidden border border-border bg-secondary aspect-video">
             {settings.hero_media_type === "video" ? (
               <video src={settings.hero_media_url} controls className="w-full h-full object-cover" />
             ) : (
@@ -173,8 +171,8 @@ function SiteSettingsAdmin() {
             </span>
           </div>
         ) : (
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-10 text-center text-slate-500">
-            Nenhuma mídia. Faça upload abaixo.
+          <div className="rounded-xl border-2 border-dashed border-border bg-secondary/40 p-10 text-center text-muted-foreground">
+            Nenhuma imagem enviada. O site usa a foto padrão da cidade.
           </div>
         )}
 
@@ -197,7 +195,7 @@ function SiteSettingsAdmin() {
         </div>
 
         <div>
-          <Label>Ou cole uma URL externa</Label>
+          <Label>Ou cole o endereço de uma imagem</Label>
           <Input
             value={settings.hero_media_url ?? ""}
             placeholder="https://..."
@@ -209,7 +207,7 @@ function SiteSettingsAdmin() {
           <select
             value={settings.hero_media_type}
             onChange={(e) => setSettings({ ...settings, hero_media_type: e.target.value as "image" | "video" })}
-            className="w-full h-10 rounded-md border border-slate-200 px-3 text-sm bg-white"
+            className="w-full h-10 rounded-md border border-border px-3 text-sm bg-white"
           >
             <option value="image">Imagem</option>
             <option value="video">Vídeo</option>
@@ -218,22 +216,22 @@ function SiteSettingsAdmin() {
       </section>
 
       {/* LOGOTIPOS */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-6">
         <div>
-          <h3 className="font-display font-bold text-lg text-slate-900">Logotipos do Site</h3>
-          <p className="text-sm text-slate-500">Personalize a identidade visual no cabeçalho e rodapé.</p>
+          <h3 className="font-display font-bold text-lg text-foreground">Logotipos</h3>
+          <p className="text-sm text-muted-foreground">Prefira PNG com fundo transparente. Sem envio, o site usa o logotipo padrão da Câmara.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Header Logo */}
-          <div className="space-y-4 p-4 border rounded-xl bg-slate-50/50">
+          <div className="space-y-4 p-4 border rounded-xl bg-secondary/40">
             <Label className="text-base font-bold">Logotipo do Cabeçalho</Label>
             
             <div className="h-32 flex items-center justify-center border-2 border-dashed rounded-lg bg-white overflow-hidden">
               {settings.header_logo_url ? (
                 <div className="relative group w-full h-full flex items-center justify-center p-4">
                   <img 
-                    src={`${settings.header_logo_url}?t=${Date.now()}`} 
+                    src={settings.header_logo_url} 
                     alt="Logo Header" 
                     className="max-h-full max-w-full object-contain"
                   />
@@ -250,8 +248,8 @@ function SiteSettingsAdmin() {
                 </div>
               ) : (
                 <div className="text-center p-4">
-                  <ImageIcon className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                  <p className="text-xs text-slate-400">Sem logotipo</p>
+                  <ImageIcon className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-xs text-muted-foreground">Sem logotipo</p>
                 </div>
               )}
             </div>
@@ -285,8 +283,8 @@ function SiteSettingsAdmin() {
                 <div className="flex items-center gap-4">
                   <Input 
                     type="range" 
-                    min="30" 
-                    max="200" 
+                    min="40" 
+                    max="76" 
                     step="1"
                     value={settings.header_logo_height}
                     onChange={(e) => setSettings({ ...settings, header_logo_height: parseInt(e.target.value) })}
@@ -299,14 +297,14 @@ function SiteSettingsAdmin() {
           </div>
 
           {/* Footer Logo */}
-          <div className="space-y-4 p-4 border rounded-xl bg-slate-50/50">
+          <div className="space-y-4 p-4 border rounded-xl bg-secondary/40">
             <Label className="text-base font-bold">Logotipo do Rodapé</Label>
             
             <div className="h-32 flex items-center justify-center border-2 border-dashed rounded-lg bg-white overflow-hidden">
               {settings.footer_logo_url ? (
                 <div className="relative group w-full h-full flex items-center justify-center p-4">
                   <img 
-                    src={`${settings.footer_logo_url}?t=${Date.now()}`} 
+                    src={settings.footer_logo_url} 
                     alt="Logo Footer" 
                     className="max-h-full max-w-full object-contain"
                   />
@@ -323,8 +321,8 @@ function SiteSettingsAdmin() {
                 </div>
               ) : (
                 <div className="text-center p-4">
-                  <ImageIcon className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                  <p className="text-xs text-slate-400">Sem logotipo</p>
+                  <ImageIcon className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-xs text-muted-foreground">Sem logotipo</p>
                 </div>
               )}
             </div>
@@ -353,31 +351,16 @@ function SiteSettingsAdmin() {
                 {settings.footer_logo_url ? "Trocar Logotipo" : "Enviar Logotipo"}
               </Button>
 
-              <div>
-                <Label className="text-xs">Altura do Logotipo (px)</Label>
-                <div className="flex items-center gap-4">
-                  <Input 
-                    type="range" 
-                    min="20" 
-                    max="100" 
-                    step="1"
-                    value={settings.footer_logo_height}
-                    onChange={(e) => setSettings({ ...settings, footer_logo_height: parseInt(e.target.value) })}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-mono w-10">{settings.footer_logo_height}px</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* TEXTOS HERO */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-        <h3 className="font-display font-bold text-lg text-slate-900">Textos do Hero</h3>
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <h3 className="font-display font-bold text-lg text-foreground">Textos do topo</h3>
         <div>
-          <Label>Eyebrow (chip superior)</Label>
+          <Label>Frase pequena acima do título</Label>
           <Input value={settings.hero_eyebrow} onChange={(e) => setSettings({ ...settings, hero_eyebrow: e.target.value })} />
         </div>
         <div>
@@ -394,30 +377,12 @@ function SiteSettingsAdmin() {
         </div>
       </section>
 
-      {/* CONTATO */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-        <h3 className="font-display font-bold text-lg text-slate-900">Contato (barra superior)</h3>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label>Telefone</Label>
-            <Input value={settings.contact_phone ?? ""} onChange={(e) => setSettings({ ...settings, contact_phone: e.target.value })} />
-          </div>
-          <div>
-            <Label>E-mail</Label>
-            <Input value={settings.contact_email ?? ""} onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })} />
-          </div>
-          <div className="md:col-span-2">
-            <Label>Horário de atendimento</Label>
-            <Input value={settings.contact_hours ?? ""} onChange={(e) => setSettings({ ...settings, contact_hours: e.target.value })} />
-          </div>
-        </div>
-      </section>
-
       {/* TRANSMISSÃO AO VIVO */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-        <h3 className="font-display font-bold text-lg text-slate-900">Transmissão Ao Vivo</h3>
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <h3 className="font-display font-bold text-lg text-foreground">Transmissão ao vivo</h3>
+        <p className="text-sm text-muted-foreground">Link de um vídeo do YouTube aparece direto na página Ao Vivo. Link de canal abre em nova aba. Vazio, o site avisa que não há transmissão.</p>
         <div>
-          <Label>URL do Canal de Transmissão (YouTube/Facebook)</Label>
+          <Label>Link da transmissão</Label>
           <Input 
             value={settings.live_broadcast_url ?? ""} 
             placeholder="https://youtube.com/@seucanal/live"
@@ -427,12 +392,8 @@ function SiteSettingsAdmin() {
       </section>
 
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={saving} className="bg-primary-deep">
-          {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-          Salvar alterações
-        </Button>
-      </div>
+      <BarraSalvar salvando={saving} aviso="Imagens e logotipos enviados só valem depois de salvar." />
     </form>
+    </PaginaModulo>
   );
 }

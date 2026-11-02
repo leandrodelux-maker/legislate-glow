@@ -25,7 +25,7 @@ type Projeto = {
 function AdminProjetos() {
   return (
     <CrudPage<Projeto>
-      title="Fluxo Legislativo"
+      title="Projetos"
       description="Gerencie o trâmite de projetos de lei, indicações e outros documentos."
       table="projetos_legislativos"
       orderBy={{ column: "data_apresentacao", ascending: false }}

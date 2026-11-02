@@ -1,5 +1,4 @@
 import { MUNICIPIO } from "@/config/municipio";
-import { useInstitutionalData } from "@/hooks/useInstitutionalData";
 import { Clock, Mail, MapPin, MessageCircle, Navigation, Phone, User } from "lucide-react";
 import { formatarTelefone, type Local } from "./locais";
 
@@ -7,8 +6,7 @@ const celular = (t: string) => /^\d{2}9\d{8}$/.test(t.replace(/\D/g, ""));
 
 // Cartão de um local de atendimento presencial: endereço, horário, responsável e os atalhos de contato.
 const CartaoLocal = ({ local, cor, titulo }: { local: Local; cor: string; titulo: string }) => {
-  const { data: inst } = useInstitutionalData();
-  const cidadeUf = inst.municipio ? `${inst.municipio}${inst.uf ? ` - ${inst.uf}` : ""}` : MUNICIPIO.nomeComUf;
+  const cidadeUf = MUNICIPIO.nomeComUf;
   const mapa = local.endereco ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${local.endereco}, ${cidadeUf}`)}` : null;
   const linhas = [
     local.endereco && { icone: MapPin, rotulo: "Endereço", valor: local.endereco },

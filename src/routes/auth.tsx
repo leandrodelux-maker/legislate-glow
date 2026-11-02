@@ -13,12 +13,25 @@ export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Acessar Painel — Câmara Municipal" }] }),
 });
 
+/** Mensagens do serviço de login em português, com o que fazer em seguida. */
+function mensagemDeErro(mensagem: string) {
+  const m = mensagem.toLowerCase();
+  if (m.includes("invalid login")) return "E-mail ou senha incorretos. Confira os dados e tente novamente.";
+  if (m.includes("email not confirmed")) return "Este e-mail ainda não foi confirmado. Abra o link enviado para a sua caixa de entrada.";
+  if (m.includes("already registered")) return "Este e-mail já tem conta. Use a aba Entrar.";
+  if (m.includes("rate limit") || m.includes("too many")) return "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+  if (m.includes("fetch") || m.includes("network")) return "Não foi possível conectar. Verifique a internet e tente novamente.";
+  return mensagem;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
+  const [aviso, setAviso] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -29,9 +42,11 @@ function AuthPage() {
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErro("");
+    setAviso("");
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return setErro(mensagemDeErro(error.message));
     toast.success("Bem-vindo de volta!");
     navigate({ to: "/admin/dashboard" });
   };
@@ -39,6 +54,8 @@ function AuthPage() {
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErro("");
+    setAviso("");
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -48,8 +65,8 @@ function AuthPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Conta criada! Verifique seu e-mail para confirmar.");
+    if (error) return setErro(mensagemDeErro(error.message));
+    setAviso("Conta criada. Confirme o e-mail pelo link enviado. Depois, um administrador precisa liberar o seu acesso.");
   };
 
   return (
@@ -65,6 +82,9 @@ function AuthPage() {
           </div>
         </div>
 
+        {erro && <p role="alert" className="mb-4 rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">{erro}</p>}
+        {aviso && <p role="status" className="mb-4 rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-foreground">{aviso}</p>}
+
         <Tabs defaultValue="signin">
           <TabsList className="grid grid-cols-2 mb-6">
             <TabsTrigger value="signin">Entrar</TabsTrigger>
@@ -74,12 +94,12 @@ function AuthPage() {
           <TabsContent value="signin">
             <form onSubmit={signIn} className="space-y-4">
               <div>
-                <Label>E-mail</Label>
-                <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Label htmlFor="entrar-email">E-mail</Label>
+                <Input id="entrar-email" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div>
-                <Label>Senha</Label>
-                <Input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Label htmlFor="entrar-senha">Senha</Label>
+                <Input id="entrar-senha" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
               <Button type="submit" disabled={loading} className="w-full bg-primary-deep">
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Entrar

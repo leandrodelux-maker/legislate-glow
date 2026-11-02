@@ -20,6 +20,7 @@ import {
   ArrowDown,
   ArrowUp,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Copy,
@@ -27,6 +28,7 @@ import {
   FileText,
   Inbox,
   LayoutGrid,
+  Lightbulb,
   List,
   Loader2,
   Pencil,
@@ -110,13 +112,22 @@ type Props<T extends { id: string }> = {
   /** Mostra ao lado do formulário como o registro aparece no site. */
   previa?: (form: any) => ReactNode;
   nomeDe?: (row: T) => string;
-  acoesCartao?: (row: T) => ReactNode;
+  acoesCartao?: (row: T, recarregar: () => void) => ReactNode;
   acoesPagina?: ReactNode;
   /** Texto para quando ainda não há registros. */
   vazio?: string;
   repositorio?: Repositorio;
   /** Conteúdo acima dos indicadores. */
   antes?: ReactNode;
+  /** Filtro fixo (ex.: { categoria: "portarias" }), aplicado na listagem e ao salvar. */
+  filter?: Record<string, string | number | boolean>;
+  /** Orientação mostrada no topo do formulário. */
+  instrucoes?: { intro?: string; passos?: string[] };
+  /** Pedidos de cidadãos: não se criam pelo painel. */
+  semCriar?: boolean;
+  semExcluir?: boolean;
+  /** Ajusta o que vai para o banco antes de gravar. */
+  transformar?: (dados: Record<string, unknown>, editando: T | null) => Record<string, unknown>;
 };
 
 const POR_PAGINA = 12;
@@ -183,8 +194,13 @@ function CampoArquivo({ field, valor, onChange, cor, enviarPdf }: { field: Field
     const extensao = file.name.split(".").pop()?.toLowerCase() || (pdf ? "pdf" : "jpg");
     const nome = slugify(file.name.replace(/\.[^.]+$/, "")) || "arquivo";
     const caminho = `${pdf ? "anexos/" : ""}${Date.now()}-${nome}.${extensao}`;
-    const balde = pdf ? "documentos" : "vereadores";
-    const { error } = await supabase.storage.from(balde).upload(caminho, file, { cacheControl: "3600", upsert: true, contentType: file.type });
+    let balde = pdf ? "documentos" : "vereadores";
+    const opcoes = { cacheControl: "3600", upsert: true, contentType: file.type };
+    let { error } = await supabase.storage.from(balde).upload(caminho, file, opcoes);
+    if (error && pdf && /bucket/i.test(error.message)) {
+      balde = "vereadores";
+      ({ error } = await supabase.storage.from(balde).upload(caminho, file, opcoes));
+    }
     if (error) {
       setEnviando(false);
       return toast.error(`Não foi possível enviar: ${error.message}`);
@@ -273,6 +289,11 @@ export function CrudPage<T extends { id: string }>({
   vazio,
   repositorio,
   antes,
+  filter,
+  instrucoes,
+  semCriar,
+  semExcluir,
+  transformar,
 }: Props<T>) {
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -294,7 +315,7 @@ export function CrudPage<T extends { id: string }>({
   const [recuperado, setRecuperado] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const chaveRascunho = `painel-rascunho:${table}`;
+  const chaveRascunho = `painel-rascunho:${table}${filter ? `:${Object.values(filter).join(":")}` : ""}`;
   const nomeNovo = singular ? `${feminino ? "Nova" : "Novo"} ${singular}` : "Novo registro";
   const nomeEditar = singular ? `Editar ${singular}` : "Editar registro";
   const nomeRegistro = (r: T) => (nomeDe ? nomeDe(r) : String((r as any).titulo ?? (r as any).nome ?? singular ?? "registro"));
@@ -312,6 +333,7 @@ export function CrudPage<T extends { id: string }>({
       return;
     }
     let q = (supabase as any).from(table).select("*");
+    if (filter) for (const [k, v] of Object.entries(filter)) q = q.eq(k, v);
     if (orderBy) q = q.order(orderBy.column, { ascending: orderBy.ascending ?? false });
     const { data, error } = await q;
     if (error) setErroCarga(mensagemDeErro(error).replace("Não foi possível salvar", "Não foi possível carregar"));
@@ -339,7 +361,7 @@ export function CrudPage<T extends { id: string }>({
 
   // Atalhos do início do painel abrem direto o formulário (?novo=1)
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("novo")) {
+    if (!semCriar && new URLSearchParams(window.location.search).get("novo")) {
       startNew();
       window.history.replaceState(null, "", window.location.pathname);
     }
@@ -436,7 +458,7 @@ export function CrudPage<T extends { id: string }>({
       const preenchido = f.type === "checkbox" || (v !== undefined && v !== null && String(v).trim() !== "");
       if (f.required && !preenchido) novos[f.name] = `Informe: ${f.label}.`;
       else if (preenchido && f.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v))) novos[f.name] = "Digite um e-mail válido, como nome@dominio.com.";
-      else if (preenchido && f.type === "url" && !/^https?:\/\//i.test(String(v))) novos[f.name] = "O link deve começar com http:// ou https://.";
+      else if (preenchido && f.type === "url" && !/^(https?:\/\/|\/)/i.test(String(v))) novos[f.name] = "O link deve começar com https://.";
     }
     setErros(novos);
     const primeiro = fields.find((f) => novos[f.name]);
@@ -463,6 +485,8 @@ export function CrudPage<T extends { id: string }>({
       if (v === null && !editing) return;
       payload[f.name] = v;
     });
+    if (filter) Object.assign(payload, filter);
+    if (transformar) Object.assign(payload, transformar(payload, editing));
     if (repositorio) {
       try {
         await repositorio.salvar(editing ? editing.id : null, payload);
@@ -577,7 +601,7 @@ export function CrudPage<T extends { id: string }>({
     const v = form[f.name];
     const idErro = `${f.name}-erro`;
     const comum = { "aria-invalid": Boolean(erros[f.name]) || undefined, "aria-required": f.required || undefined, "aria-describedby": erros[f.name] ? idErro : f.ajuda ? `${f.name}-ajuda` : undefined };
-    if (f.somenteLeitura) return <p className="h-10 flex items-center px-3 rounded-lg bg-muted text-sm font-mono text-foreground">{String(v ?? "Gerado ao salvar")}</p>;
+    if (f.somenteLeitura) return <p className="min-h-10 flex items-center whitespace-pre-wrap [overflow-wrap:anywhere] px-3 py-2 rounded-lg bg-muted text-sm text-foreground">{String(v ?? "Não informado")}</p>;
     switch (f.type) {
       case "textarea":
         return <Textarea id={f.name} rows={5} placeholder={f.placeholder} value={String(v ?? "")} onChange={(e) => definir(f, e.target.value)} {...comum} />;
@@ -655,10 +679,10 @@ export function CrudPage<T extends { id: string }>({
 
   const acoesLinha = (row: T) => (
     <div className="flex items-center gap-0.5">
-      {acoesCartao?.(row)}
+      {acoesCartao?.(row, load)}
       <Button type="button" size="icon" variant="ghost" aria-label={`Editar ${nomeRegistro(row)}`} title="Editar" onClick={() => startEdit(row)}><Pencil className="w-4 h-4" /></Button>
-      <Button type="button" size="icon" variant="ghost" aria-label={`Duplicar ${nomeRegistro(row)}`} title="Duplicar" onClick={() => duplicar(row)}><Copy className="w-4 h-4" /></Button>
-      <Button type="button" size="icon" variant="ghost" aria-label={`Excluir ${nomeRegistro(row)}`} title="Excluir" className="text-destructive hover:text-destructive" onClick={() => setExcluindo(row)}><Trash2 className="w-4 h-4" /></Button>
+      {!semCriar && <Button type="button" size="icon" variant="ghost" aria-label={`Duplicar ${nomeRegistro(row)}`} title="Duplicar" onClick={() => duplicar(row)}><Copy className="w-4 h-4" /></Button>}
+      {!semExcluir && <Button type="button" size="icon" variant="ghost" aria-label={`Excluir ${nomeRegistro(row)}`} title="Excluir" className="text-destructive hover:text-destructive" onClick={() => setExcluindo(row)}><Trash2 className="w-4 h-4" /></Button>}
     </div>
   );
 
@@ -669,7 +693,7 @@ export function CrudPage<T extends { id: string }>({
       acoes={
         <>
           {acoesPagina}
-          <BotaoCabecalho onClick={startNew}><Plus className="w-4 h-4" aria-hidden /> {nomeNovo}</BotaoCabecalho>
+          {!semCriar && <BotaoCabecalho onClick={startNew}><Plus className="w-4 h-4" aria-hidden /> {nomeNovo}</BotaoCabecalho>}
         </>
       }
     >
@@ -721,9 +745,9 @@ export function CrudPage<T extends { id: string }>({
           <p className="font-display font-bold text-lg text-foreground mt-3">{temFiltro ? "Nada encontrado com esses filtros" : (vazio ?? "Nenhum registro ainda")}</p>
           {temFiltro ? (
             <Button type="button" variant="outline" className="mt-4" onClick={() => { setBusca(""); setSelecao({}); }}>Limpar filtros</Button>
-          ) : (
+          ) : !semCriar ? (
             <Button type="button" className="mt-4 text-white" style={{ backgroundColor: cor }} onClick={startNew}><Plus className="w-4 h-4 mr-1.5" /> {nomeNovo}</Button>
-          )}
+          ) : null}
         </div>
       ) : visao === "cartoes" && cartao ? (
         <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -802,7 +826,7 @@ export function CrudPage<T extends { id: string }>({
           <div className="px-6 py-5 text-white shrink-0" style={{ backgroundColor: cor }}>
             <SheetTitle className="text-white font-display text-xl font-bold pr-8">{editing ? nomeEditar : nomeNovo}</SheetTitle>
             <SheetDescription className="text-white/90 text-sm mt-0.5">
-              {editing ? nomeRegistro(editing) : obrigatorios.length ? `${preenchidos} de ${obrigatorios.length} campos obrigatórios preenchidos` : "Preencha as informações abaixo"}
+              {editing ? nomeRegistro(editing).slice(0, 110) : obrigatorios.length ? `${preenchidos} de ${obrigatorios.length} campos obrigatórios preenchidos` : "Preencha as informações abaixo"}
             </SheetDescription>
             {!editing && obrigatorios.length > 0 && (
               <div className="mt-3 h-1.5 rounded-full bg-white/25 overflow-hidden" aria-hidden>
@@ -814,6 +838,27 @@ export function CrudPage<T extends { id: string }>({
           <form ref={formRef} noValidate onSubmit={(e) => { e.preventDefault(); salvar(false); }} className="flex-1 min-h-0 flex flex-col">
             <div className={`flex-1 min-h-0 overflow-y-auto ${previa ? "lg:grid lg:grid-cols-[1fr_340px]" : ""}`}>
               <div className="p-6 space-y-8">
+                {instrucoes && (
+                  <details open className="group rounded-2xl border border-gold/40 bg-gold/10">
+                    <summary className="flex cursor-pointer list-none items-center gap-2.5 px-4 py-3 font-display text-sm font-bold text-foreground [&::-webkit-details-marker]:hidden">
+                      <Lightbulb className="w-4 h-4 shrink-0 text-[oklch(0.5_0.11_70)]" aria-hidden /> Como preencher
+                      <ChevronDown className="ml-auto w-4 h-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+                    </summary>
+                    <div className="px-4 pb-4 text-sm leading-relaxed text-foreground">
+                      {instrucoes.intro && <p>{instrucoes.intro}</p>}
+                      {instrucoes.passos && (
+                        <ol className="mt-3 space-y-2">
+                          {instrucoes.passos.map((p, i) => (
+                            <li key={p} className="flex gap-2.5">
+                              <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary-deep text-[11px] font-bold text-white" aria-hidden>{i + 1}</span>
+                              <span>{p}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      )}
+                    </div>
+                  </details>
+                )}
                 {recuperado && !editing && (
                   <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm">
                     <span className="text-foreground">Recuperamos o rascunho que você estava preenchendo.</span>
@@ -830,7 +875,7 @@ export function CrudPage<T extends { id: string }>({
                       {s.campos.map((nome) => {
                         const f = fields.find((c) => c.name === nome);
                         if (!f) return null;
-                        const largo = f.largo ?? (f.type === "textarea" || f.type === "file" || f.type === "custom" || f.type === "etapas");
+                        const largo = f.largo ?? (f.type === "textarea" || f.type === "file" || f.type === "custom" || f.type === "etapas" || f.type === "checkbox");
                         return (
                           <div key={f.name} data-campo={f.name} className={largo ? "sm:col-span-2" : ""}>
                             <label htmlFor={f.name} className="block text-sm font-semibold text-foreground mb-1.5">

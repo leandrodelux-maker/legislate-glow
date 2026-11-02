@@ -1,12 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { CrudPage, type CrudTab } from "@/components/admin/crud-page";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Selo } from "@/components/admin/painel/PaginaModulo";
+import { FotoEstudio } from "@/components/pagina-ui";
 import { VereadorAvatar } from "@/components/vereador-avatar";
 import { VereadorPhotoUploader } from "@/components/admin/VereadorPhotoUploader";
-import { History, Images } from "lucide-react";
 
 const tabs: CrudTab[] = [
   { id: "dados", label: "Dados", fieldNames: ["nome", "slug", "partido", "cargo", "legislatura", "comissoes", "biografia"] },
@@ -50,19 +50,6 @@ type Vereador = {
 
 function AdminVereadores() {
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2 justify-end">
-        <Button asChild variant="outline" size="sm">
-          <Link to="/admin/vereadores/mandatos">
-            <History className="w-3.5 h-3.5 mr-1" /> Histórico de mandatos
-          </Link>
-        </Button>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/admin/vereadores/galeria">
-            <Images className="w-3.5 h-3.5 mr-1" /> Galeria
-          </Link>
-        </Button>
-      </div>
       <CrudPage<Vereador>
         title="Vereadores"
         description="Cadastro completo: dados, contato, redes sociais e mandato."
@@ -97,7 +84,7 @@ function AdminVereadores() {
         fields={[
           {
             name: "foto_url",
-            label: "Foto do Vereador (crop + compressão automática)",
+            label: "Foto oficial",
             type: "custom",
             renderCustom: (_row, form, setForm) => (
               <VereadorPhotoUploader
@@ -135,15 +122,15 @@ function AdminVereadores() {
                 setForm({ ...form, redes_sociais: { ...redes, [key]: val } });
               const fields: [keyof typeof redes, string, string][] = [
                 ["instagram", "Instagram", "@perfil"],
-                ["facebook", "Facebook", "link"],
-                ["twitter", "Twitter / X", "link"],
-                ["youtube", "YouTube", "link"],
+                ["facebook", "Facebook", "https://facebook.com/..."],
+                ["twitter", "Twitter / X", "https://x.com/..."],
+                ["youtube", "YouTube", "https://youtube.com/..."],
               ];
               return (
-                <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {fields.map(([k, lbl, ph]) => (
                     <div key={k} className="space-y-1">
-                      <Label className="text-[10px] uppercase">{lbl}</Label>
+                      <Label className="font-semibold">{lbl}</Label>
                       <Input
                         placeholder={ph}
                         value={redes[k] || ""}
@@ -159,7 +146,23 @@ function AdminVereadores() {
           { name: "ativo", label: "Ativo", type: "checkbox", placeholder: "Mostrar no site" },
         ]}
         tabs={tabs}
+        indicadores={(rows) => {
+          const ativos = rows.filter((r) => r.ativo);
+          return [
+            { rotulo: "No site", valor: ativos.length },
+            { rotulo: "Fora do site", valor: rows.length - ativos.length },
+            { rotulo: "Partidos", valor: new Set(ativos.map((r) => r.partido).filter(Boolean)).size },
+            { rotulo: "Sem foto", valor: ativos.filter((r) => !r.foto_url).length },
+          ];
+        }}
+        cartao={{
+          imagem: (r) => <FotoEstudio nome={r.nome} foto={r.foto_url} partido={r.partido} className="h-20 w-16 rounded-xl" />,
+          titulo: (r) => r.nome,
+          subtitulo: (r) => r.cargo || "Vereador(a)",
+          texto: (r) => r.partido,
+          selo: (r) => (r.ativo ? null : <Selo>Fora do site</Selo>),
+          rodape: (r) => r.mandato_atual,
+        }}
       />
-    </div>
   );
 }

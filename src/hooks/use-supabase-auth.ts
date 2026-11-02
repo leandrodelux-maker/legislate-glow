@@ -9,30 +9,30 @@ export function useSupabaseAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ativo = true;
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
       setUser(s?.user ?? null);
-      if (s?.user) {
-        // defer to avoid deadlock
-        setTimeout(async () => {
-          const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", s.user.id);
-          setIsAdmin((data ?? []).some((r) => r.role === "admin" || r.role === "editor"));
-        }, 0);
-      } else {
+      if (!s?.user) {
         setIsAdmin(false);
+        setLoading(false);
+        return;
       }
+      // Fora do evento, para evitar travamento do cliente. `loading` só termina com o papel conhecido,
+      // senão quem é administrador vê "Acesso restrito" por um instante.
+      setTimeout(async () => {
+        const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", s.user.id);
+        if (!ativo) return;
+        // Falha temporária ao renovar a sessão não derruba quem já estava no painel.
+        if (!error) setIsAdmin((data ?? []).some((r) => r.role === "admin" || r.role === "editor"));
+        setLoading(false);
+      }, 0);
     });
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      ativo = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return { session, user, isAdmin, loading };

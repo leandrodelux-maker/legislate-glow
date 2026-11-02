@@ -313,7 +313,7 @@ const AtriconPage = () => {
               )}
             </section>
 
-            <section aria-label="Filtros" className="bg-card border border-border rounded-2xl p-3 space-y-3 md:sticky md:top-16 z-20 shadow-sm">
+            <section aria-label="Filtros" className="bg-card border border-border rounded-2xl p-3 space-y-3 md:sticky md:top-20 lg:top-[124px] xl:top-[122px] z-20 shadow-sm">
               <div className="flex flex-wrap gap-2">
                 <div className="relative flex-1 min-w-[240px]">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden />

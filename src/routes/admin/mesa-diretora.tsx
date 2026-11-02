@@ -66,7 +66,7 @@ function AdminMesaDiretora() {
   return (
     <CrudPage<MesaMember>
       title="Mesa Diretora"
-      description="Gerencie os membros da Mesa Diretora exibidos na página inicial."
+      description="Quem compõe a direção da Câmara no biênio atual."
       table="mesa_diretora"
       orderBy={{ column: "ordem", ascending: true }}
       defaultValues={{ ativo: true, ordem: 0 }}

@@ -23,8 +23,17 @@ export const Route = createFileRoute("/admin/cms/esic")({
     ];
     return (
       <CrudPage<any>
-        title="e-SIC — Solicitações de Informação"
-        description="Pedidos de acesso à informação (Lei nº 12.527/2011)."
+        title="e-SIC"
+        description="Pedidos de informação dos cidadãos (Lei nº 12.527/2011) e o prazo legal de cada resposta."
+        indicadores={(rows: any[]) => {
+          const abertos = rows.filter((r) => !["respondido", "negado"].includes(r.status));
+          return [
+            { rotulo: "Aguardando", valor: abertos.length },
+            { rotulo: "Prazo vencido", valor: abertos.filter((r) => r.prazo_resposta && new Date(r.prazo_resposta).getTime() < Date.now()).length },
+            { rotulo: "Respondidos", valor: rows.filter((r) => r.status === "respondido").length },
+            { rotulo: "Total", valor: rows.length },
+          ];
+        }}
         table="esic_solicitacoes"
         orderBy={{ column: "created_at", ascending: false }}
         defaultValues={{ status: "pendente" }}
@@ -33,11 +42,13 @@ export const Route = createFileRoute("/admin/cms/esic")({
           { key: "nome", label: "Solicitante" },
           { key: "pedido", label: "Pedido", render: (r: any) => <span className="line-clamp-1 max-w-xs">{r.pedido}</span> },
           { key: "prazo_resposta", label: "Prazo", render: (r: any) => {
+            if (!r.prazo_resposta) return "—";
+            if (["respondido", "negado"].includes(r.status)) return <Badge variant="outline">Encerrado</Badge>;
             const prazo = new Date(r.prazo_resposta);
             const days = Math.ceil((prazo.getTime() - Date.now()) / (1000*60*60*24));
-            return <Badge variant={days < 0 ? "destructive" : days < 5 ? "default" : "outline"}>{days < 0 ? `${Math.abs(days)}d vencido` : `${days}d`}</Badge>;
+            return <Badge variant={days < 0 ? "destructive" : days < 5 ? "default" : "outline"}>{days < 0 ? `Vencido há ${Math.abs(days)} dia(s)` : `${days} dia(s)`}</Badge>;
           } },
-          { key: "status", label: "Status", render: (r: any) => <Badge>{r.status}</Badge> },
+          { key: "status", label: "Status", render: (r: any) => <Badge variant="secondary">{({ pendente: "Pendente", analise: "Em análise", respondido: "Respondido", prorrogado: "Prorrogado", negado: "Negado" } as Record<string, string>)[r.status] ?? r.status}</Badge> },
         ]}
         fields={fields}
       />
