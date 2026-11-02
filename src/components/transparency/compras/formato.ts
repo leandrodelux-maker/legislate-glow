@@ -95,7 +95,7 @@ export function baixarCsv(nome: string, colunas: { campo: string; rotulo: string
   URL.revokeObjectURL(url);
 }
 
-/** Link de download de um arquivo anexado no portal, servido pela função portal-documento. */
+/** Link de download de um arquivo anexado no portal, servido por /api/portal-documento. */
 export function linkArquivo(arquivo: Registro, ver = false): string | null {
   // Arquivo publicado pelo painel do site: já tem o endereço pronto.
   if (typeof arquivo.url === "string") return arquivo.url;
@@ -104,8 +104,7 @@ export function linkArquivo(arquivo: Registro, ver = false): string | null {
   const ext = String(arquivo.extensao ?? "").replace(/^\./, "").toLowerCase();
   let nome = String(arquivo.nome ?? arquivo.descricao ?? `documento-${codigo}`).trim();
   if (ext && !nome.toLowerCase().endsWith(`.${ext}`)) nome += `.${ext}`;
-  const base = import.meta.env.VITE_TRANSPARENCIA_SUPABASE_URL as string;
-  return `${base}/functions/v1/portal-documento?codigo=${codigo}&nome=${encodeURIComponent(nome)}${ver ? "&ver=1" : ""}`;
+  return `/api/portal-documento?codigo=${codigo}&nome=${encodeURIComponent(nome)}${ver ? "&ver=1" : ""}`;
 }
 
 /**

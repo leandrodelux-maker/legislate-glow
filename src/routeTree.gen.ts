@@ -42,6 +42,7 @@ import { Route as AdminPortariasRouteImport } from './routes/admin/portarias'
 import { Route as AdminPublicacoesRouteImport } from './routes/admin/publicacoes'
 import { Route as AdminTransparenciaAtivaRouteImport } from './routes/admin/transparencia-ativa'
 import { Route as AdminTransparenciaLinksRouteImport } from './routes/admin/transparencia-links'
+import { Route as ApiPortalDocumentoRouteImport } from './routes/api.portal-documento'
 import { Route as AtosLegislativosCartaDeServicosRouteImport } from './routes/atos-legislativos.carta-de-servicos'
 import { Route as AtosLegislativosLeiOrganicaMunicipalRouteImport } from './routes/atos-legislativos.lei-organica-municipal'
 import { Route as AtosLegislativosPortariasRouteImport } from './routes/atos-legislativos.portarias'
@@ -256,6 +257,11 @@ const AdminTransparenciaLinksRoute = AdminTransparenciaLinksRouteImport.update({
   id: '/transparencia-links',
   path: '/transparencia-links',
   getParentRoute: () => AdminRoute,
+} as any)
+const ApiPortalDocumentoRoute = ApiPortalDocumentoRouteImport.update({
+  id: '/api/portal-documento',
+  path: '/api/portal-documento',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AtosLegislativosCartaDeServicosRoute =
   AtosLegislativosCartaDeServicosRouteImport.update({
@@ -537,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/admin/publicacoes': typeof AdminPublicacoesRoute
   '/admin/transparencia-ativa': typeof AdminTransparenciaAtivaRoute
   '/admin/transparencia-links': typeof AdminTransparenciaLinksRoute
+  '/api/portal-documento': typeof ApiPortalDocumentoRoute
   '/atos-legislativos/carta-de-servicos': typeof AtosLegislativosCartaDeServicosRoute
   '/atos-legislativos/lei-organica-municipal': typeof AtosLegislativosLeiOrganicaMunicipalRoute
   '/atos-legislativos/portarias': typeof AtosLegislativosPortariasRoute
@@ -618,6 +625,7 @@ export interface FileRoutesByTo {
   '/admin/publicacoes': typeof AdminPublicacoesRoute
   '/admin/transparencia-ativa': typeof AdminTransparenciaAtivaRoute
   '/admin/transparencia-links': typeof AdminTransparenciaLinksRoute
+  '/api/portal-documento': typeof ApiPortalDocumentoRoute
   '/atos-legislativos/carta-de-servicos': typeof AtosLegislativosCartaDeServicosRoute
   '/atos-legislativos/lei-organica-municipal': typeof AtosLegislativosLeiOrganicaMunicipalRoute
   '/atos-legislativos/portarias': typeof AtosLegislativosPortariasRoute
@@ -702,6 +710,7 @@ export interface FileRoutesById {
   '/admin/publicacoes': typeof AdminPublicacoesRoute
   '/admin/transparencia-ativa': typeof AdminTransparenciaAtivaRoute
   '/admin/transparencia-links': typeof AdminTransparenciaLinksRoute
+  '/api/portal-documento': typeof ApiPortalDocumentoRoute
   '/atos-legislativos/carta-de-servicos': typeof AtosLegislativosCartaDeServicosRoute
   '/atos-legislativos/lei-organica-municipal': typeof AtosLegislativosLeiOrganicaMunicipalRoute
   '/atos-legislativos/portarias': typeof AtosLegislativosPortariasRoute
@@ -787,6 +796,7 @@ export interface FileRouteTypes {
     | '/admin/publicacoes'
     | '/admin/transparencia-ativa'
     | '/admin/transparencia-links'
+    | '/api/portal-documento'
     | '/atos-legislativos/carta-de-servicos'
     | '/atos-legislativos/lei-organica-municipal'
     | '/atos-legislativos/portarias'
@@ -868,6 +878,7 @@ export interface FileRouteTypes {
     | '/admin/publicacoes'
     | '/admin/transparencia-ativa'
     | '/admin/transparencia-links'
+    | '/api/portal-documento'
     | '/atos-legislativos/carta-de-servicos'
     | '/atos-legislativos/lei-organica-municipal'
     | '/atos-legislativos/portarias'
@@ -951,6 +962,7 @@ export interface FileRouteTypes {
     | '/admin/publicacoes'
     | '/admin/transparencia-ativa'
     | '/admin/transparencia-links'
+    | '/api/portal-documento'
     | '/atos-legislativos/carta-de-servicos'
     | '/atos-legislativos/lei-organica-municipal'
     | '/atos-legislativos/portarias'
@@ -1022,6 +1034,7 @@ export interface RootRouteChildren {
   ACamaraHistoriaRoute: typeof ACamaraHistoriaRoute
   ACamaraMesaDiretoraRoute: typeof ACamaraMesaDiretoraRoute
   ACamaraRoteiroDasSessoesRoute: typeof ACamaraRoteiroDasSessoesRoute
+  ApiPortalDocumentoRoute: typeof ApiPortalDocumentoRoute
   AtosLegislativosCartaDeServicosRoute: typeof AtosLegislativosCartaDeServicosRoute
   AtosLegislativosLeiOrganicaMunicipalRoute: typeof AtosLegislativosLeiOrganicaMunicipalRoute
   AtosLegislativosPortariasRoute: typeof AtosLegislativosPortariasRoute
@@ -1267,6 +1280,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/transparencia-links'
       preLoaderRoute: typeof AdminTransparenciaLinksRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/api/portal-documento': {
+      id: '/api/portal-documento'
+      path: '/api/portal-documento'
+      fullPath: '/api/portal-documento'
+      preLoaderRoute: typeof ApiPortalDocumentoRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/atos-legislativos/carta-de-servicos': {
       id: '/atos-legislativos/carta-de-servicos'
@@ -1756,6 +1776,7 @@ const rootRouteChildren: RootRouteChildren = {
   ACamaraHistoriaRoute: ACamaraHistoriaRoute,
   ACamaraMesaDiretoraRoute: ACamaraMesaDiretoraRoute,
   ACamaraRoteiroDasSessoesRoute: ACamaraRoteiroDasSessoesRoute,
+  ApiPortalDocumentoRoute: ApiPortalDocumentoRoute,
   AtosLegislativosCartaDeServicosRoute: AtosLegislativosCartaDeServicosRoute,
   AtosLegislativosLeiOrganicaMunicipalRoute:
     AtosLegislativosLeiOrganicaMunicipalRoute,

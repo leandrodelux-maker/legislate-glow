@@ -82,7 +82,7 @@ async function verificar(itens: Item[]): Promise<Verificacao> {
   const [sec, dir, rel] = await Promise.all([
     (supabase as any).from("secretarias").select("id", { count: "exact", head: true }),
     (supabase as any).from("dirigentes").select("id", { count: "exact", head: true }),
-    fetch(`${import.meta.env.VITE_TRANSPARENCIA_SUPABASE_URL}/functions/v1/portal-documento?lrf-periodos=2`).then((r) => r.ok).catch(() => false),
+    fetch("/api/portal-documento?lrf-periodos=2").then((r) => r.ok).catch(() => false),
   ]);
   return { totais, estrutura: (sec.count ?? 0) + (dir.count ?? 0) > 0, relatorios: rel, dadosAbertos: (copias ?? []).some((c: { total_gravado: number | null }) => (c.total_gravado ?? 0) > 0) };
 }

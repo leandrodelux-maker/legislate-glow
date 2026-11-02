@@ -14,12 +14,11 @@ export type OrigemLei =
   | { anexo: number; tipo: number; ano: number; mes?: number };
 
 export const linkDocumento = (origem: OrigemLei, nome: string, ver: boolean) => {
-  const base = import.meta.env.VITE_TRANSPARENCIA_SUPABASE_URL as string;
   const q = "tela" in origem ? `tela=${encodeURIComponent(origem.tela)}`
     : "local" in origem ? `local=${origem.local}&tipo=${origem.tipo}`
     : "lrf" in origem ? `lrf=${origem.lrf}&ano=${origem.ano}`
     : `anexo=${origem.anexo}&tipo=${origem.tipo}&ano=${origem.ano}${origem.mes ? `&mes=${origem.mes}` : ""}`;
-  return `${base}/functions/v1/portal-documento?${q}&nome=${encodeURIComponent(nome)}${ver ? "&ver=1" : ""}`;
+  return `/api/portal-documento?${q}&nome=${encodeURIComponent(nome)}${ver ? "&ver=1" : ""}`;
 };
 
 type Estado = { fase: "carregando" } | { fase: "pronto"; url: string; tipo: string } | { fase: "ausente" } | { fase: "erro" };

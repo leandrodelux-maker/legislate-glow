@@ -10,12 +10,7 @@ Enquanto estes passos não forem feitos, as páginas abrem, mas as listas ficam 
 
 1. **Crie um banco analítico só de Cachoeira.** Não reaproveite o de outro órgão: a sincronização apaga e regrava os registros.
 2. **Rode no SQL Editor**, nesta ordem, os arquivos de `banco-transparencia/migrations/`, de `001` a `007`.
-3. **Publique a função de documentos.** Sem ela, RREO, RGF, PPA, LDO, LOA e anexos não abrem:
-   ```sh
-   supabase functions deploy portal-documento --no-verify-jwt --project-ref <id-do-banco>
-   supabase secrets set PORTAL_BASE_URL=https://camaracachoeiradegoias.megasofttransparencia.com.br --project-ref <id-do-banco>
-   ```
-   Em banco auto-hospedado, publique `banco-transparencia/functions/portal-documento` no servidor, com o mesmo secret e a verificação de JWT desligada.
+3. **Função de documentos:** nada a publicar. RREO, RGF, PPA, LDO, LOA e anexos passam pelo próprio site, em `/api/portal-documento`, usando o portal de `src/config/municipio.json`.
 4. **Configure o site**, no `.env` e na hospedagem:
    ```env
    VITE_TRANSPARENCIA_SUPABASE_URL=https://endereco-do-banco

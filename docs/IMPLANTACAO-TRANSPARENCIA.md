@@ -75,23 +75,9 @@ No SQL Editor, rode uma vez cada arquivo, nesta ordem:
 
 **Antes de rodar o 007:** os links dos critérios são caminhos deste site, como `/transparencia/estrutura`, e servem para outro órgão se as rotas não mudarem. Confira se a avaliação de 2026 ainda é a vigente. Ajustes podem ser feitos depois na tela Matriz Atricon.
 
-### 4. Publique a função de documentos
+### 4. Função de documentos
 
-Publique `banco-transparencia/functions/portal-documento` no banco analítico. Sem ela, RREO, RGF, PPA, LDO, LOA e anexos não abrem.
-
-| Configuração | Valor |
-|---|---|
-| Secret `PORTAL_BASE_URL` | Endereço do portal Megasoft |
-| Verificação de JWT | **Desligada** (`verify_jwt = false`), pois o navegador abre o link sem login |
-
-Em Supabase na nuvem:
-
-```sh
-supabase functions deploy portal-documento --no-verify-jwt --project-ref <id-do-banco-analitico>
-supabase secrets set PORTAL_BASE_URL=https://cidade.megasofttransparencia.com.br --project-ref <id-do-banco-analitico>
-```
-
-Em Supabase auto-hospedado, como o de Adelândia, o processo depende do servidor. Este repositório não registra como foi feito lá.
+Nada a publicar neste modelo: RREO, RGF, PPA, LDO, LOA e anexos passam pelo próprio site, em `/api/portal-documento` (`src/lib/portal-documento.ts`), usando o portal de `src/config/municipio.json`. A versão para o Supabase continua em `banco-transparencia/functions/portal-documento`, caso a hospedagem do site não aguente arquivos grandes.
 
 ### 5. Ajuste os dados do órgão
 
@@ -271,7 +257,7 @@ FIRECRAWL_API_KEY=... node scripts/sync-transparencia/sync.mjs licitacoes 2026 -
 | Telas do painel | `src/routes/admin/publicacoes.tsx`, `src/routes/admin/matriz-atricon.tsx` |
 | Estrutura do painel | `src/components/admin/painel/modulos.ts`, `src/components/admin/painel/PaginaModulo.tsx` |
 | Sincronização | `.github/workflows/sync-transparencia.yml`, `scripts/sync-transparencia/` |
-| Documentos do portal | `banco-transparencia/functions/portal-documento/index.ts` |
+| Documentos do portal | `src/lib/portal-documento.ts`, `src/routes/api.portal-documento.ts` |
 
 Mais detalhes em [TRANSPARENCIA.md](TRANSPARENCIA.md) (origem dos dados e diferenças para Prefeitura) e [CHECKLIST-PAINEL.md](CHECKLIST-PAINEL.md) (telas do painel e pendências).
 
@@ -282,7 +268,7 @@ Mais detalhes em [TRANSPARENCIA.md](TRANSPARENCIA.md) (origem dos dados e difere
 | Listas vazias em todas as páginas | Faltam as variáveis `VITE_TRANSPARENCIA_*` ou a primeira carga | Revise os passos 6 e 8 |
 | Workflow aparece como ignorado | Falta a variável `SUPABASE_URL` no GitHub | Revise o passo 6 |
 | `Unexpected token '<'` ou `não fez a consulta de dados (/paginado)` em muitos conjuntos | Portal indisponível ou bloqueando o acesso. Em Adelândia, passou sozinho | Teste o portal e rode de novo. O script não repete essa chamada sozinho |
-| Relatórios e anexos não abrem | `portal-documento` ausente, sem `PORTAL_BASE_URL` ou com JWT ligado | Revise o passo 4 |
+| Relatórios e anexos não abrem | Portal indisponível, ou o portal recusa chamadas da hospedagem | Abra `/api/portal-documento?lrf-periodos=2` e leia a mensagem |
 | `Falta configurar no servidor a chave...` no painel | Secret ausente no servidor do site | Revise o passo 6 |
 | `Sua conta não tem permissão` | Conta sem papel ou sem aprovação | Revise o passo 2 |
 | `N registro(s) não puderam ser lidos` | Erro na API do próprio portal | Não é falha da sincronização. Confira se o dado abre no portal |

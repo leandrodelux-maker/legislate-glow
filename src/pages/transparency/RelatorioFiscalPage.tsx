@@ -7,7 +7,7 @@ import { TODOS_ITENS, itemHref, portalUrl } from "@/data/transparenciaCatalogo";
 import { useTransparenciaUrls } from "@/hooks/useTransparenciaUrls";
 import { supabase } from "@/integrations/transparencia/client";
 
-// Relatórios periódicos publicados pelo sistema contábil do portal (função portal-documento, ?lrf-periodos=):
+// Relatórios periódicos publicados pelo sistema contábil do portal (/api/portal-documento?lrf-periodos=):
 // RREO a cada bimestre (tipo 1), RGF a cada quadrimestre (tipo 2), Movimentação Orçamentária (4) e PCASP (6)
 // a cada mês e o Balanço Anual (5). Com prazo legal (`prazoDias`), o exercício atual mostra a situação de cada
 // período frente ao prazo; os demais mostram o que foi publicado. Os anteriores ficam no histórico.
@@ -87,7 +87,7 @@ const RelatorioFiscalPage = () => {
   useEffect(() => {
     if (!rel) return;
     setEstado({ carregando: true, indice: null, erro: false });
-    fetch(`${import.meta.env.VITE_TRANSPARENCIA_SUPABASE_URL}/functions/v1/portal-documento?lrf-periodos=${rel.tipo}`)
+    fetch(`/api/portal-documento?lrf-periodos=${rel.tipo}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((indice: Indice) => setEstado({ carregando: false, indice, erro: false }))
       .catch(() => setEstado({ carregando: false, indice: null, erro: true }));
